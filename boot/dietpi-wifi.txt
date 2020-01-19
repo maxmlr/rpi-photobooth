@@ -1,9 +1,9 @@
 #---------------------------------------------------------------
 # - Entry 0
 #	WiFi SSID (Case Sensitive)
-aWIFI_SSID[0]='BrombergLab'
+aWIFI_SSID[0]=''
 #	Key options: If no key (open), leave this blank
-aWIFI_KEY[0]='Br0mbergLab'
+aWIFI_KEY[0]=''
 #	Available options: NONE (no key/open) | WPA-PSK | WEP | WPA-EAP (then use settings below)
 aWIFI_KEYMGR[0]='WPA-PSK'
 # - WPA-EAP Options
@@ -20,9 +20,9 @@ aWIFI_CERT[0]=''
 #---------------------------------------------------------------
 # - Entry 1
 #	WiFi SSID (Case Sensitive)
-aWIFI_SSID[1]='penthouse_2.4'
+aWIFI_SSID[1]=''
 #	Key options: If no key (open), leave this blank
-aWIFI_KEY[1]='pleaseletmein2018'
+aWIFI_KEY[1]=''
 #	Available options: NONE (no key/open) | WPA-PSK | WEP | WPA-EAP (then use settings below)
 aWIFI_KEYMGR[1]='WPA-PSK'
 # - WPA-EAP Options
