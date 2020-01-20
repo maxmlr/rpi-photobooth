@@ -21,11 +21,17 @@ apt install -y \
     unclutter \
     mosquitto-clients \
     xdotool
-# optional: if photobooth should be build from source, uncomment:
+# optional: if photobooth should be build from source, uncomment the next command.
+# note: if the python uinput library should be used for remote trigger (send key_press)
+# only build-essential is required.
 # apt install -y yarn build-essential
 
 # install required python modules
 pip install paho-mqtt
+# if the python uinput library should be used for remote trigger (send key_press),
+# uncomment the following commands:
+# pip install python-uinput
+# echo 'uinput' | tee -a /etc/modules
 
 # move lighttpd default files
 mkdir /var/www/admin && mv /var/www/*.php /var/www/*.html -t /var/www/admin
