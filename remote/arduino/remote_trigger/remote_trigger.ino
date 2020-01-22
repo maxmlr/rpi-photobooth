@@ -1,7 +1,8 @@
 /*
- Wemos D1 mini (v3.1.0) [ESP8266] MQTT notifications triggered by gpio based push buttons
+ Wemos D1 mini (v3.1.0) [ESP8266] MQTT notifications
+ Uses gpio5,6 based push buttons
  @author maximilian miller (miller.deutschland@gmail.com)
- @version 0.1
+ @version 0.11
 
  Requires:
  - ESP8266 board/library

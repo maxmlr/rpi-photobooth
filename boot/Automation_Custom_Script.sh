@@ -2,15 +2,15 @@
 # Automatic setup photobooth and DietPi
 # @maxmlr
 
-PHOTOBOOTH_RELEASE="2.1.0"
+# Read photobooth config
+source /boot/photobooth.conf
+
+# Install RaspAP WiFi AccessPoint Manager
+/boot/install/setup-raspap.sh
 
 # setup access point
-/boot/Automation_Custom_Script-wifi.sh -a photobooth "" -u photobooth
-
-# add repository for yarn; install yarn and other dependencies
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-apt update && \
+# deprecated: /boot/install/setup-wifi-ap.sh -a photobooth "" -u photobooth
+apt -y update && \
 apt install -y \
     gphoto2 \
     cups \
@@ -21,10 +21,23 @@ apt install -y \
     unclutter \
     mosquitto-clients \
     xdotool
+
 # optional: if photobooth should be build from source, uncomment the next command.
 # note: if the python uinput library should be used for remote trigger (send key_press)
 # only build-essential is required.
+# curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+# echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 # apt install -y yarn build-essential
+
+# Configure managed services
+bash -c 'cat >> /DietPi/dietpi/.dietpi-services_include_exclude' << EOF
+- hostapd
+- dnsmasq
+- raspap
+EOF
+
+# Edit /DietPi/config.txt
+[[ -z "$HDMI_OUT" ]] || echo "$HDMI_OUT" >> /DietPi/config.txt
 
 # install required python modules
 pip install paho-mqtt
@@ -32,6 +45,9 @@ pip install paho-mqtt
 # uncomment the following commands:
 # pip install python-uinput
 # echo 'uinput' | tee -a /etc/modules
+
+# create lighttpd webroot directory
+mkdir -p /var/www/html
 
 # move lighttpd default files
 mkdir /var/www/admin && mv /var/www/*.php /var/www/*.html -t /var/www/admin
@@ -47,7 +63,7 @@ cd ~/
 
 # install photobooth
 echo "Installing photobooth"
-mkdir /var/www/html && cd /var/www/html
+cd /var/www/html
 wget https://github.com/andreknieriem/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && rm photobooth-${PHOTOBOOTH_RELEASE}.tar.gz
 # optional: if photobooth should be build from source, uncomment:
 # PHOTOBOOTH_RELEASE="build-latest"
@@ -86,6 +102,7 @@ bash -c 'cat > /var/www/html/config/my.config.inc.php' << EOF
   ),
 );
 EOF
+chown -R www-data:www-data /var/www/html/config/my.config.inc.php
 
 # Pi Camera setup - not required for dietpi
 #bash -c 'cat >> /etc/modules' << EOF
@@ -95,14 +112,11 @@ EOF
 # Enable Pi Camera
 sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
  
-# access to USB device and printer and picam
+# access to USB device and printer and Pi Camera
 gpasswd -a www-data plugdev
 gpasswd -a www-data lp
 gpasswd -a www-data lpadmin
 gpasswd -a www-data video
-
-# mask accesspoint service
-dietpi-services mask hostapd
 
 # change www root in /etc/lighttpd/lighttpd.conf
 sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/lighttpd/lighttpd.conf
@@ -119,8 +133,6 @@ mqtt_clientid   = 'mqtt-launcher-1'
 mqtt_username   = None
 mqtt_password   = None
 mqtt_tls        = None              # default: No TLS
-# mqtt_username = 'jane'
-# mqtt_password = 'secret'
 
 topiclist = {
 
@@ -176,3 +188,14 @@ sleep 10 && startx /root/.xinitrc &
 sleep 3 && mosquitto_sub -v -t 'photobox/#' &
 sleep 3 && MQTTLAUNCHERCONFIG=/opt/mqtt-launcher/launcher.photobooth.conf /opt/mqtt-launcher/mqtt-launcher.py &
 EOF
+
+# Populate /var/lib/dietpi/dietpi-autostart/custom.sh
+bash -c 'cat > /var/lib/dietpi/postboot.d/20-timesync.sh' << EOF
+#!/bin/bash
+# Start timesync in background
+echo "Starting manual timesync (async)"
+systemctl start systemd-timesyncd.service & sleep 60 && systemctl stop systemd-timesyncd.service &
+EOF
+
+# Optimizations
+sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=2/g' /DietPi/dietpi.txt

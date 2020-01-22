@@ -37,7 +37,7 @@ AUTO_SETUP_NET_STATIC_GATEWAY=192.168.0.1
 AUTO_SETUP_NET_STATIC_DNS=8.8.8.8
 
 # Hostname
-AUTO_SETUP_NET_HOSTNAME=photobooth
+AUTO_SETUP_NET_HOSTNAME=rpi-photobooth
 
 ##### Misc Options #####
 # Swapfile size to generate: 0=disable | 1=auto (2GB-RAM = size) | 2+=manual (MB)
@@ -165,7 +165,7 @@ CONFIG_CHECK_CONNECTION_IP=1.1.1.1
 CONFIG_CHECK_DNS_DOMAIN=one.one.one.one
 
 # DietPi checks for updates: Allows DietPi to check for updates on a daily basis and boot using a <1kb file download.
-CONFIG_CHECK_DIETPI_UPDATES=1
+CONFIG_CHECK_DIETPI_UPDATES=0
 # Optional: Automatically update DietPi when updates are available. Requires: CONFIG_CHECK_DIETPI_UPDATES=1
 CONFIG_AUTO_DIETPI_UPDATES=0
 
@@ -226,9 +226,9 @@ SOFTWARE_OWNCLOUD_DATADIR=/mnt/dietpi_userdata/owncloud_data
 SOFTWARE_NEXTCLOUD_DATADIR=/mnt/dietpi_userdata/nextcloud_data
 
 # WiFi Hotspot
-SOFTWARE_WIFI_HOTSPOT_SSID=photobooth
+SOFTWARE_WIFI_HOTSPOT_SSID=DietPi-HotSpot
 # - Key requires a minimum of 8 characters
-SOFTWARE_WIFI_HOTSPOT_KEY=photobooth
+SOFTWARE_WIFI_HOTSPOT_KEY=dietpihotspot
 SOFTWARE_WIFI_HOTSPOT_CHANNEL=3
 
 # X.org
