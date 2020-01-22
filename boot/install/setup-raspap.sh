@@ -112,6 +112,8 @@ cp /boot/install/dhcpcd.conf /etc/dhcpcd.conf
 cp /boot/install/raspap.config.php /var/www/html/rpi/includes/config.php
 chown /var/www/html/rpi/includes/config.php
 chown www-data:www-data /etc/raspap/hostapd/servicestart.sh
+
+# Add Wifi-AP postboot service
 cp /boot/service/start-wifi-ap.sh /var/lib/dietpi/postboot.d/10-start-wifi-ap.sh
 
 # add photobooth host to /etc/banner_add_hosts

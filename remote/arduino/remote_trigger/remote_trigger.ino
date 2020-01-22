@@ -83,6 +83,7 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  led_blink(2,500);
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -146,8 +147,7 @@ void reconnect() {
       client.publish("photobooth/remote", "connected");
       // ... and resubscribe
       client.subscribe("photobooth/remote_callback");
-      led_blink(5,100);
-      digitalWrite(BUILTIN_LED, HIGH);
+      led_blink(3,100);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -177,8 +177,7 @@ void setup() {
   setup_buttons();
   client.setServer(MQTT_SERVER, 1883);
   client.setCallback(callback);
-  led_blink(2,100);
-  digitalWrite(BUILTIN_LED, LOW);
+  digitalWrite(BUILTIN_LED, HIGH);
 }
 
 void loop() {

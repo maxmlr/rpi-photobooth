@@ -181,16 +181,31 @@ EOF
 # Populate /var/lib/dietpi/dietpi-autostart/custom.sh
 bash -c 'cat > /var/lib/dietpi/dietpi-autostart/custom.sh' << EOF
 #!/bin/bash
-echo "Starting mosquito server with topic photobox/#"
-echo "Starting mqtt-launcher [/opt/mqtt-launcher/launcher.photobooth.conf]"
-echo "Starting chromium browser in kiosk mode for photobooth app (`cat /var/www/html/version.html`)"
-sleep 10 && startx /root/.xinitrc &
-sleep 3 && mosquitto_sub -v -t 'photobox/#' &
-sleep 3 && MQTTLAUNCHERCONFIG=/opt/mqtt-launcher/launcher.photobooth.conf /opt/mqtt-launcher/mqtt-launcher.py &
+# photobooth custom start
+# see /var/lib/dietpi/postboot.d/
 EOF
 
-# Populate /var/lib/dietpi/dietpi-autostart/custom.sh
-bash -c 'cat > /var/lib/dietpi/postboot.d/20-timesync.sh' << EOF
+# Add photobooth kiosk autostart postboot service
+bash -c 'cat > /var/lib/dietpi/postboot.d/20-start-kiosk.sh' << EOF
+#!/bin/bash
+# photobooth auto startup
+
+source /boot/photobooth.conf
+
+echo
+echo --- RPI-photobooth ---
+echo
+
+echo "Starting mosquito server with topic photobox/#"
+HOME=/root mosquitto_sub -v -t 'photobox/#' & sleep 3
+echo "Starting mqtt-launcher [/opt/mqtt-launcher/launcher.photobooth.conf]"
+MQTTLAUNCHERCONFIG=/opt/mqtt-launcher/launcher.photobooth.conf /opt/mqtt-launcher/mqtt-launcher.py &
+echo "Starting chromium browser in kiosk mode for photobooth app (v\${PHOTOBOOTH_RELEASE})"
+startx /root/.xinitrc &
+EOF
+
+# Add manual timesync postboot service
+bash -c 'cat > /var/lib/dietpi/postboot.d/30-timesync.sh' << EOF
 #!/bin/bash
 # Start timesync in background
 echo "Starting manual timesync (async)"
