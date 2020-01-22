@@ -151,6 +151,11 @@ EOF
 chmod +x bin/trigger.sh mqtt-launcher.py
 cd ~/
 
+# chromium settings
+# TODO check if required
+#sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /root/.config/chromium/Default/Preferences
+#sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /root/.config/chromium/Default/Preferences
+
 # add xorg settings=
 bash -c 'cat > /root/.xinitrc' << EOF
 #!/bin/sh
@@ -158,7 +163,7 @@ xset -dpms
 xset s off
 xset s noblank
 
-/usr/bin/unclutter & \
+/usr/bin/unclutter -idle 0 -root & \
 chromium-browser \
         --no-sandbox \
         --start-fullscreen \
@@ -212,5 +217,12 @@ echo "Starting manual timesync (async)"
 systemctl start systemd-timesyncd.service & sleep 60 && systemctl stop systemd-timesyncd.service &
 EOF
 
+# Services
+systemctl disable hostapd.service
+
 # Optimizations
-sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=2/g' /DietPi/dietpi.txt
+sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
+
+# Cleanup
+apt-get clean
+apt-get autoremove -y

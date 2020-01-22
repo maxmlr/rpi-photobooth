@@ -106,11 +106,12 @@ mv /var/www/html/rpi/config/dhcpcd.conf /etc/dhcpcd.conf
 mv /var/www/html/rpi/config/config.php /var/www/html/rpi/includes/
 
 # Change according to photobooth requirements
-cp /boot/install/hostapd.conf /etc/hostapd/hostapd.conf
-cp /boot/install/dnsmasq.conf /etc/dnsmasq.conf
-cp /boot/install/dhcpcd.conf /etc/dhcpcd.conf
-cp /boot/install/raspap.config.php /var/www/html/rpi/includes/config.php
-chown /var/www/html/rpi/includes/config.php
+cp /boot/config/hostapd.conf /etc/hostapd/hostapd.conf
+cp /boot/config/dnsmasq.conf /etc/dnsmasq.conf
+cp /boot/config/dhcpcd.conf /etc/dhcpcd.conf
+cp /boot/config/raspap.config.php /var/www/html/rpi/includes/config.php
+chown www-data:www-data /var/www/html/rpi/includes/config.php
+cp /boot/service/raspap.servicestart.sh /etc/raspap/hostapd/servicestart.sh
 chown www-data:www-data /etc/raspap/hostapd/servicestart.sh
 
 # Add Wifi-AP postboot service
