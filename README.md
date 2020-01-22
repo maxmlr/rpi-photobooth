@@ -20,7 +20,7 @@ sudo dd if=/<PATH_TO_FOLDER>/DietPi_RPi-ARMv6-Buster/DietPi_RPi-ARMv6-Buster.img
 3. Copy all files from the boot folder of this repository to the root of the mounted MicroSD card volume
 
 ```
-copy boot/* /Volumes/boot
+copy -rf boot/* /Volumes/boot
 ```
 
 4. Insert MicroSD card in Raspberry and boot up. The automated installation might take up to 60 minues.
