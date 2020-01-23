@@ -2,7 +2,7 @@
 # Automatic setup photobooth and DietPi
 # @maxmlr
 
-# Read photobooth config
+# Source photobooth config
 source /boot/photobooth.conf
 
 # Install RaspAP WiFi AccessPoint Manager
@@ -38,6 +38,7 @@ EOF
 
 # Edit /DietPi/config.txt
 [[ -z "$HDMI_OUT" ]] || echo "$HDMI_OUT" >> /DietPi/config.txt
+sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
 
 # install required python modules
 pip install paho-mqtt
@@ -108,9 +109,6 @@ chown -R www-data:www-data /var/www/html/config/my.config.inc.php
 #bash -c 'cat >> /etc/modules' << EOF
 #bcm2835-v4l2
 #EOF
-
-# Enable Pi Camera
-sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
  
 # access to USB device and printer and Pi Camera
 gpasswd -a www-data plugdev
@@ -156,7 +154,7 @@ cd ~/
 #sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /root/.config/chromium/Default/Preferences
 #sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /root/.config/chromium/Default/Preferences
 
-# add xorg settings=
+# add xorg settings
 bash -c 'cat > /root/.xinitrc' << EOF
 #!/bin/sh
 xset -dpms
@@ -219,6 +217,9 @@ EOF
 
 # Services
 systemctl disable hostapd.service
+
+# Copy scripts to /usr/bin
+for binary in /boot/bin/*.sh; do cp $binary /usr/bin/`basename $binary .sh`; done
 
 # Optimizations
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt

@@ -112,7 +112,8 @@ cp /boot/config/dhcpcd.conf /etc/dhcpcd.conf
 cp /boot/config/raspap.config.php /var/www/html/rpi/includes/config.php
 chown www-data:www-data /var/www/html/rpi/includes/config.php
 cp /boot/service/raspap.servicestart.sh /etc/raspap/hostapd/servicestart.sh
-chown www-data:www-data /etc/raspap/hostapd/servicestart.sh
+chown root:www-data /etc/raspap/hostapd/servicestart.sh
+chmod 750 /etc/raspap/hostapd/servicestart.sh
 
 # Add Wifi-AP postboot service
 cp /boot/service/start-wifi-ap.sh /var/lib/dietpi/postboot.d/10-start-wifi-ap.sh
