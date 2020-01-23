@@ -52,6 +52,7 @@ const char* MQTT_SERVER = "photobooth";
 
 #define D5_BUTTON_PIN D5
 #define D6_BUTTON_PIN D6
+#define D7_LED_PIN D7
 
 volatile bool D5ButtonPressedFlag = false;
 volatile bool D6ButtonPressedFlag = false;
@@ -60,6 +61,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long D5lastMsg = 0;
 long D6lastMsg = 0;
+int countdown = 5000;
 char msg[50];
 int value = 0;
 
@@ -83,7 +85,7 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-  led_blink(2,500);
+  led_blink(BUILTIN_LED,2,500,true);
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -96,9 +98,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println();
 
   if ((char)payload[0] == '1') {
-    led_blink(1,100);
+    led_blink(BUILTIN_LED,1,100,true);
   } else {
-    led_blink(2,100);
+    led_blink(BUILTIN_LED,2,100,true);
   }
 }
 
@@ -124,6 +126,7 @@ void setup_buttons() {
   // Initialize the buttons
   pinMode(D5_BUTTON_PIN, INPUT);
   pinMode(D6_BUTTON_PIN, INPUT);
+  pinMode(D7_LED_PIN, OUTPUT);
 
   // NOTE:
   // It is important to use interupts when making network calls in thr sketch.
@@ -147,7 +150,7 @@ void reconnect() {
       client.publish("photobooth/remote", "connected");
       // ... and resubscribe
       client.subscribe("photobooth/remote_callback");
-      led_blink(3,100);
+      led_blink(BUILTIN_LED,3,100,true);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -158,12 +161,20 @@ void reconnect() {
   }
 }
 
-void led_blink(int count, int rate) {
+void led_blink(int led, int count, int rate, bool inverse) {
   for (int i = 0; i < count; i++)
   {
-    digitalWrite(BUILTIN_LED, LOW);
+    if (inverse) {
+      digitalWrite(led, LOW);
+    } else {
+      digitalWrite(led, HIGH);
+    }
     delay(rate);
-    digitalWrite(BUILTIN_LED, HIGH);
+    if (inverse) {
+      digitalWrite(led, HIGH);
+    } else {
+      digitalWrite(led, LOW);
+    }
     delay(rate);
   }
   return;
@@ -185,28 +196,29 @@ void loop() {
     reconnect();
   }
   client.loop();
-  
   long now = millis();
   if ( D5ButtonPressedFlag ) {
-    if (now - D5lastMsg > 2000) {
+    if (now - D5lastMsg > countdown) {
       D5lastMsg = now;
       int trigger_state = 2;
       snprintf (msg, 50, "trigger-%ld", trigger_state);
       Serial.print("D5 - sending: ");
       Serial.println(msg);
       client.publish("photobooth/remote", msg);
-      led_blink(1,50);
+      led_blink(BUILTIN_LED,1,50,true);
     }
     D5ButtonPressedFlag = false;
   }
   
   if ( D6ButtonPressedFlag ) {
-    if (now - D6lastMsg > 2000) {
+    if (now - D6lastMsg > countdown) {
       D6lastMsg = now;
       Serial.println("D6 - sending: trigger");
       client.publish("photobooth/remote", "trigger");
-      led_blink(1,50);
+      led_blink(BUILTIN_LED,1,50,true);
+      led_blink(D7_LED_PIN,(countdown/1000)-1,1000,false);
+      led_blink(D7_LED_PIN,5,50,false);
     }
     D6ButtonPressedFlag = false;
-  } 
+  }
 }
