@@ -41,7 +41,8 @@ EOF
 sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
 
 # install required python modules
-pip install paho-mqtt
+# TODO change to pip3 
+pip3 install paho-mqtt gpiozero
 # if the python uinput library should be used for remote trigger (send key_press),
 # uncomment the following commands:
 # pip install python-uinput
@@ -121,13 +122,14 @@ sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/lighttpd/lighttpd.conf
 
 # install mqtt-launcher
 cd /opt
-git clone https://github.com/jpmens/mqtt-launcher.git
+git clone https://github.com/maxmlr/mqtt-launcher.git
 cd mqtt-launcher
 bash -c 'cat > /opt/mqtt-launcher/launcher.photobooth.conf' << EOF
 logfile         = '/var/log/mqtt_launcher.photobooth.log'
+loglevel        = 'debug'
 mqtt_broker     = 'localhost'       # default: 'localhost'.
 mqtt_port       = 1883              # default: 1883
-mqtt_clientid   = 'mqtt-launcher-1'
+mqtt_clientid   = 'mqtt-launcher-photobooth'
 mqtt_username   = None
 mqtt_password   = None
 mqtt_tls        = None              # default: No TLS
