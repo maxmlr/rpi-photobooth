@@ -1,0 +1,24 @@
+#!/bin/sh
+
+xset -dpms
+xset s off
+xset s noblank
+
+/usr/bin/unclutter -idle 0 -root & \
+chromium-browser \
+        --no-sandbox \
+        --start-fullscreen \
+        --window-size=1920,1080 \
+        --kiosk \
+        --incognito \
+        --noerrdialogs \
+        --disable-infobars \
+        --disable-translate \
+        --use-fake-ui-for-media-stream \
+        --no-first-run \
+        --fast \
+        --fast-start \
+        --disable-features=TranslateUI \
+        --disk-cache-dir=/dev/null \
+        --password-store=basic \
+        --app=http://localhost/
