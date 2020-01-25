@@ -30,17 +30,15 @@ apt install -y \
 # apt install -y yarn build-essential
 
 # Configure managed services
-bash -c 'cat >> /DietPi/dietpi/.dietpi-services_include_exclude' << EOF
-- hostapd
-- dnsmasq
-- raspap
-EOF
+cat /boot/config/dietpi-services_include_exclude >> /DietPi/dietpi/.dietpi-services_include_exclude
 
-# Edit /DietPi/config.txt
+# Edit /DietPi/config.txt:
+# - set HDMI monitor resolution
 [[ -z "$HDMI_OUT" ]] || echo "$HDMI_OUT" >> /DietPi/config.txt
+# - enable Pi Camera
 sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
 
-# install required python modules
+# install required Python 3 modules
 # TODO change to pip3 
 pip3 install paho-mqtt gpiozero
 # if the python uinput library should be used for remote trigger (send key_press),
@@ -66,11 +64,11 @@ cd ~/
 # install photobooth
 echo "Installing photobooth"
 cd /var/www/html
-wget https://github.com/andreknieriem/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && rm photobooth-${PHOTOBOOTH_RELEASE}.tar.gz
+wget https://github.com/maxmlr/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && rm photobooth-${PHOTOBOOTH_RELEASE}.tar.gz
 # optional: if photobooth should be build from source, uncomment:
 # PHOTOBOOTH_RELEASE="build-latest"
 # cd /var/www/ && rm -rf html
-# git clone https://github.com/andreknieriem/photobooth html
+# git clone https://github.com/maxmlr/photobooth html
 # cd /var/www/html
 # git submodule update --init
 # rm yarn.lock
@@ -81,35 +79,11 @@ chown -R www-data:www-data /var/www/
 cd ~/
 
 # photobooth config
-bash -c 'cat > /var/www/html/config/my.config.inc.php' << EOF
-<?php
-\$config = array (
-  'show_fork' => false,
-  'previewFromCam' => true,
-  'previewCamTakesPic' => false,
-  'background_image' => 'url(../img/bg.jpg)',
-  'background_admin' => 'url(../img/bg.jpg)',
-  'background_chroma' => 'url(../img/bg.jpg)',
-  'webserver_ip' => 'photobooth',
-  'rounded_corners' => true,
-  'photo_key' => '32',
-  'collage_key' => '67',
-  'start_screen_subtitle' => 'By Max and Max',
-  'take_picture' =>
-  array (
-    'cmd' => 'raspistill -n -o %s -q 100 -t 1 | echo Done',
-    //'cmd' => 'gphoto2 --capture-image-and-download --filename=%s',
-    'msg' => 'Done',
-    //'msg' => 'New file is in location',
-  ),
-);
-EOF
+cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc.php
 
 # Pi Camera setup - not required for dietpi
-#bash -c 'cat >> /etc/modules' << EOF
-#bcm2835-v4l2
-#EOF
+#echo "bcm2835-v4l2" >> /etc/modules'
  
 # access to USB device and printer and Pi Camera
 gpasswd -a www-data plugdev
@@ -121,35 +95,10 @@ gpasswd -a www-data video
 sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/lighttpd/lighttpd.conf
 
 # install mqtt-launcher
-cd /opt
-git clone https://github.com/maxmlr/mqtt-launcher.git
-cd mqtt-launcher
-bash -c 'cat > /opt/mqtt-launcher/launcher.photobooth.conf' << EOF
-logfile         = '/var/log/mqtt_launcher.photobooth.log'
-loglevel        = 'debug'
-mqtt_broker     = 'localhost'       # default: 'localhost'.
-mqtt_port       = 1883              # default: 1883
-mqtt_clientid   = 'mqtt-launcher-photobooth'
-mqtt_username   = None
-mqtt_password   = None
-mqtt_tls        = None              # default: No TLS
-
-topiclist = {
-
-    # topic                     payload value       program & arguments
-    "photobooth/remote" :   {
-                                'trigger'       :   [ '/opt/mqtt-launcher/bin/trigger.sh' ],
-                            },
-}
-EOF
-mkdir bin
-bash -c 'cat > /opt/mqtt-launcher/bin/trigger.sh' << EOF
-#!/bin/bash
-XAUTH_FILE=\`ls /tmp/serverauth* | head -n1\`
-XAUTHORITY=\${XAUTH_FILE} DISPLAY=:0.0 xdotool search --sync --class --onlyvisible chromium-browser windowfocus key space
-EOF
-chmod +x bin/trigger.sh mqtt-launcher.py
-cd ~/
+cd /opt && git clone https://github.com/maxmlr/mqtt-launcher.git
+cp /boot/config/photobooth.mqtt.conf /opt/mqtt-launcher/launcher.photobooth.conf
+chmod +x /opt/mqtt-launcher/mqtt-launcher.py
+cd -
 
 # chromium settings
 # TODO check if required
@@ -157,71 +106,22 @@ cd ~/
 #sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /root/.config/chromium/Default/Preferences
 
 # add xorg settings
-bash -c 'cat > /root/.xinitrc' << EOF
-#!/bin/sh
-xset -dpms
-xset s off
-xset s noblank
+cp /boot/config/xinitrc /root/.xinitrc
 
-/usr/bin/unclutter -idle 0 -root & \
-chromium-browser \
-        --no-sandbox \
-        --start-fullscreen \
-        --window-size=1920,1080 \
-        --kiosk \
-        --incognito \
-        --noerrdialogs \
-        --disable-infobars \
-        --disable-translate \
-        --use-fake-ui-for-media-stream \
-        --no-first-run \
-        --fast \
-        --fast-start \
-        --disable-features=TranslateUI \
-        --disk-cache-dir=/dev/null \
-        --password-store=basic \
-        --app=http://localhost/
-EOF
-
-# Populate /var/lib/dietpi/dietpi-autostart/custom.sh
-bash -c 'cat > /var/lib/dietpi/dietpi-autostart/custom.sh' << EOF
-#!/bin/bash
-# photobooth custom start
-# see /var/lib/dietpi/postboot.d/
-EOF
+# Add /var/lib/dietpi/dietpi-autostart/custom.sh
+cp /boot/scripts/dietpi-custom.sh /var/lib/dietpi/dietpi-autostart/custom.sh
 
 # Add photobooth kiosk autostart postboot service
-bash -c 'cat > /var/lib/dietpi/postboot.d/20-start-kiosk.sh' << EOF
-#!/bin/bash
-# photobooth auto startup
-
-source /boot/photobooth.conf
-
-echo
-echo --- RPI-photobooth ---
-echo
-
-echo "Starting mosquito server with topic photobox/#"
-HOME=/root mosquitto_sub -v -t 'photobox/#' & sleep 3
-echo "Starting mqtt-launcher [/opt/mqtt-launcher/launcher.photobooth.conf]"
-MQTTLAUNCHERCONFIG=/opt/mqtt-launcher/launcher.photobooth.conf /opt/mqtt-launcher/mqtt-launcher.py &
-echo "Starting chromium browser in kiosk mode for photobooth app (v\${PHOTOBOOTH_RELEASE})"
-startx /root/.xinitrc &
-EOF
+cp /boot/scripts/start-kiosk.sh /var/lib/dietpi/postboot.d/20-start-kiosk.sh
 
 # Add manual timesync postboot service
-bash -c 'cat > /var/lib/dietpi/postboot.d/30-timesync.sh' << EOF
-#!/bin/bash
-# Start timesync in background
-echo "Starting manual timesync (async)"
-systemctl start systemd-timesyncd.service & sleep 60 && systemctl stop systemd-timesyncd.service &
-EOF
+cp /boot/scripts/timesync.sh /var/lib/dietpi/postboot.d/30-timesync.sh
 
 # Services
 systemctl disable hostapd.service
 
 # Copy scripts to /usr/bin
-for binary in /boot/bin/*.sh; do cp $binary /usr/bin/`basename $binary .sh`; done
+for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`; chmod +x /usr/bin/`basename $binary .sh`; done
 
 # Optimizations
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
