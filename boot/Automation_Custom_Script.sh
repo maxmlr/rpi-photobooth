@@ -64,7 +64,9 @@ cd ~/
 # install photobooth
 echo "Installing photobooth"
 cd /var/www/html
-wget https://github.com/maxmlr/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && rm photobooth-${PHOTOBOOTH_RELEASE}.tar.gz
+wget -O photobooth.tar.gz https://github.com/andreknieriem/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth.tar.gz && rm photobooth.tar.gz
+wget -O photobooth_update.tar.gz https://github.com/maxmlr/photobooth/archive/v${PHOTOBOOTH_UPDATE}.tar.gz && tar xzf photobooth_update.tar.gz && rm photobooth_update.tar.gz
+cp -r photobooth-${PHOTOBOOTH_UPDATE}/. . && rm -rf photobooth-${PHOTOBOOTH_UPDATE}/
 # optional: if photobooth should be build from source, uncomment:
 # PHOTOBOOTH_RELEASE="build-latest"
 # cd /var/www/ && rm -rf html
@@ -74,9 +76,9 @@ wget https://github.com/maxmlr/photobooth/releases/download/v${PHOTOBOOTH_RELEAS
 # rm yarn.lock
 # yarn install
 # yarn build
-echo "v${PHOTOBOOTH_RELEASE}" > /var/www/html/version.html
+echo "v${PHOTOBOOTH_RELEASE} [${PHOTOBOOTH_UPDATE}]" > /var/www/html/version.html
 chown -R www-data:www-data /var/www/
-cd ~/
+cd -
 
 # photobooth config
 cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
