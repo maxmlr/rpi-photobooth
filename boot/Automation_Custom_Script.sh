@@ -122,8 +122,18 @@ cp /boot/scripts/timesync.sh /var/lib/dietpi/postboot.d/30-timesync.sh
 # Services
 systemctl disable hostapd.service
 
-# Copy scripts to /usr/bin
+# Copy binaries to /usr/bin
 for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`; chmod +x /usr/bin/`basename $binary .sh`; done
+
+# Copy python scripts to /opt/photobooth/python
+mkdir -p /opt/photobooth/python
+for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript .sh`; chmod +x /opt/photobooth/python/`basename $pyscript .sh`; done
+
+# Add sudo permissions
+bash -c 'cat > /etc/sudoers.d/raspap' << EOF
+www-data ALL=(ALL) NOPASSWD:/usr/bin/gpio
+www-data ALL=(ALL) NOPASSWD:/usr/bin/relay
+EOF
 
 # Optimizations
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt

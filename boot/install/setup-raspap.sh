@@ -17,13 +17,10 @@ SUBSYSTEM=="ieee80211", ACTION=="add|change", ATTR{macaddress}=="${MAC_ADDRESS}"
   RUN+="/bin/ip link set uap0 address ${MAC_ADDRESS}
 EOF
 
-echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
-echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
 apt -y update && \
 apt install -y \
     dnsmasq \
     hostapd \
-    iptables-persistent \
     vnstat
 
 bash -c 'cat > /etc/sudoers.d/raspap' << EOF
