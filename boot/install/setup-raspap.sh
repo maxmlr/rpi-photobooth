@@ -21,6 +21,7 @@ apt -y update && \
 apt install -y \
     dnsmasq \
     hostapd \
+    nftables \
     vnstat
 
 bash -c 'cat > /etc/sudoers.d/raspap' << EOF

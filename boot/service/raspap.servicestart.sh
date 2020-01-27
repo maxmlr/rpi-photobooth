@@ -48,9 +48,13 @@ if [ -r "$CONFIGFILE" ]; then
             # Bring up uap0 interface
             #ifup uap0
 
-            echo "Enabling IP forwarding..."
+            echo "Enabling IP forwarding and NAT..."
             sysctl -w net.ipv4.ip_forward=1
-            iptables -t nat -A POSTROUTING -s 192.168.50.0/24 ! -d 192.168.50.0/24 -j MASQUERADE
+            #iptables -t nat -A POSTROUTING -s 192.168.50.0/24 ! -d 192.168.50.0/24 -j MASQUERADE
+            nft add table nat
+            nft add chain nat postrouting { type nat hook postrouting priority 100 \; }
+            nft add rule nat postrouting ip saddr 192.168.50.0/24 oif wlan0 masquerade
+            #nft list ruleset
         fi
     fi
 fi
