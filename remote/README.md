@@ -4,8 +4,6 @@
 
 Uses MQTT notifications
 Uses gpio5,6 based push buttons
-@author maximilian miller (miller.deutschland@gmail.com)
-@version 0.11
 
 ### Requires:
     - ESP8266 board/library
@@ -26,7 +24,7 @@ To install the ESP8266 board, (using Arduino 1.8.10+):
 - Download and install Arduino from https://www.arduino.cc/en/Main/Software
 - Add the following 3rd party board manager under "File -> Preferences -> Additional Boards Manager URLs":
     http://arduino.esp8266.com/stable/package_esp8266com_index.json
-- Open the "Arduino -> Board -> Board Manager" and click install for the ESP8266"
+- Open the "Tools -> Board -> Board Manager" and click install for the ESP8266"
 - Select your ESP8266 in "Tools -> Board"
 - Open "Tools → Port:xxx" and in the dropdown, select the option with "usb" in its name
 
