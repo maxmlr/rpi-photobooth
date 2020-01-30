@@ -4,8 +4,6 @@
 
 Uses MQTT notifications
 Uses gpio5,6 based push buttons
-@author maximilian miller (miller.deutschland@gmail.com)
-@version 0.11
 
 ### Requires:
     - ESP8266 board/library
