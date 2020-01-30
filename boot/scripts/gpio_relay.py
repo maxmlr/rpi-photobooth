@@ -2,9 +2,8 @@
 
 import sys
 import time
-from signal import pause
-
 import gpiozero
+from signal import pause
 
 
 relay = None

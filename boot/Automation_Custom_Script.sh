@@ -127,7 +127,7 @@ for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`
 
 # Copy python scripts to /opt/photobooth/python
 mkdir -p /opt/photobooth/python
-for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript .sh`; chmod +x /opt/photobooth/python/`basename $pyscript .sh`; done
+for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript .py`; chmod +x /opt/photobooth/python/`basename $pyscript .py`; done
 
 # Add sudo permissions
 bash -c 'cat > /etc/sudoers.d/raspap' << EOF

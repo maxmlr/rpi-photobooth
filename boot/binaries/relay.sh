@@ -1,12 +1,18 @@
 #!/bin/bash
+# If required export GPIO, then set state
 
 ACTION=$1
-GPIO=$2
-STATE=$3
-echo "GPIO: ${ACTION}, ${GPIO} -> ${STATE}" >> /tmp/gpio.log
+IFS=',' read -ra GPIOS <<< "$2"
+IFS=',' read -ra STATES <<< "$3"
+PARAMS="${@:4}"
+for i in "${!GPIOS[@]}"; do
+    GPIO=${GPIOS[$i]}
+    STATE=${STATES[$i]}
+    echo "GPIO: ${ACTION}, ${GPIO} -> ${STATE} [${PARAMS}]" >> /tmp/gpio.log
 
-[[ -e /sys/class/gpio/gpio${GPIO} ]] || echo "${GPIO}" > /sys/class/gpio/export && echo "out" > /sys/class/gpio/gpio${GPIO}/di$
+    [[ -e /sys/class/gpio/gpio${GPIO} ]] || echo "${GPIO}" > /sys/class/gpio/export && echo "out" > /sys/class/gpio/gpio${GPIO}/direction
 
-echo "${STATE}" > /sys/class/gpio/gpio${GPIO}/value
+    echo "${STATE}" > /sys/class/gpio/gpio${GPIO}/value
 
-#echo "${GPIO}" > /sys/class/gpio/unexport
+    #echo "${GPIO}" > /sys/class/gpio/unexport
+done
