@@ -37,7 +37,7 @@ apt install -y \
 
 # disable debian networking (and dhcpcd if availabe/enabled)
 systemctl mask networking.service dhcpcd.service
-mv /etc/network/interfaces /etc/network/interfaces~
+mv /etc/network/interfaces /etc/network/interfaces~ && touch /etc/network/interfaces
 
 # This not required as systemd-resolved.service will not be enabled
 #sed -i '1i resolvconf=NO' /etc/resolv.conf
