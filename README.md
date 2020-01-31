@@ -17,10 +17,14 @@ open -a Keka DietPi_RPi-ARMv6-Buster.7z
 sudo dd if=/<PATH_TO_FOLDER>/DietPi_RPi-ARMv6-Buster/DietPi_RPi-ARMv6-Buster.img of=/dev/rdisk2 bs=1m
 ```
 
-3. Copy all files from the boot folder of this repository to the root of the mounted MicroSD card volume
+3. Open `boot/dietpi-wifi.txt` and add your local WiFi SSID and Password. Further, a variety of settings regarding the basic setup of the operating system can be adjusted in `boot/dietpi.txt`.
+
+4. Settings regarding the photobooth app can be changed in `boot/photobooth.conf`
+
+5. Copy all files from the boot folder of this repository to the root of the mounted MicroSD card volume. Replace <YourMicroSD> with the respective mountpoint of your MicroSD card.
 
 ```
-copy -rf boot/* /Volumes/boot
+copy -rf boot/* /Volumes/<YourMicroSD>
 ```
 
-4. Insert MicroSD card in Raspberry and boot up. The automated installation might take up to 60 minues.
+6. Insert MicroSD card in Raspberry and boot up. The automated installation might take up to 60 minues.
