@@ -69,14 +69,18 @@ ln -s /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant
 systemctl disable wpa_supplicant.service
 systemctl enable wpa_supplicant@wlan0.service
 
+mkdir -p /etc/systemd/system/wpa_supplicant@wlan0.service.d
 cat > /etc/systemd/system/wpa_supplicant@wlan0.service.d/override.conf << EOF
 [Unit]
 BindsTo=hostapd.service
 After=hostapd.service
 
 [Service]
-ExecStartPost=/usr/sbin/nft add table nat && /usr/sbin/nft add chain nat postrouting { type nat hook postrouting priority 100 \; } && /usr/sbin/nft add rule nat postrouting i$
-ExecStopPost=-/usr/sbin/nft flush table nat && /usr/sbin/nft delete table nat
+ExecStartPost=/usr/sbin/nft add table nat
+ExecStartPost=/usr/sbin/nft add chain nat postrouting { type nat hook postrouting priority 100 \; }
+ExecStartPost=/usr/sbin/nft add rule nat postrouting ip saddr 192.168.50.0/24 oif wlan0 masquerade
+ExecStopPost=-/usr/sbin/nft flush table nat
+ExecStopPost=-/usr/sbin/nft delete table nat
 EOF
 
 # Reload systemctl deamon

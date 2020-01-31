@@ -1,6 +1,6 @@
 #!/bin/bash
 # When wireless client AP mode is enabled, this script handles starting
-# up network services in a specific order and timing to avoid race condi$
+# up network services in a specific order and timing to avoid race conditions
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 NAME=raspap
