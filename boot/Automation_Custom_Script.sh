@@ -135,7 +135,7 @@ mkdir -p /opt/photobooth/python
 for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript`; chmod +x /opt/photobooth/python/`basename $pyscript`; done
 
 # Copy services to /lib/systemd/system/, reload daemon and enable services
-for service in /boot/service/*.service; do cp $binary /lib/systemd/system/`basename $service`; done
+for service in /boot/service/*.service; do cp $service /lib/systemd/system/`basename $service`; done
 systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 
