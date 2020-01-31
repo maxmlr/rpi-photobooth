@@ -1,0 +1,11 @@
+[Unit]
+Description=GPIO - local trigger daemon
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/photobooth/python/gpio_trigger.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

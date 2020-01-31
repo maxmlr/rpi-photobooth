@@ -1,0 +1,14 @@
+[Unit]
+Description=MQTT Launcher
+Requires=mqtt-client.service
+After=mqtt-client.service
+
+[Service]
+Environment=MQTTLAUNCHERCONFIG=/opt/mqtt-launcher/launcher.photobooth.conf
+Type=simple
+ExecStart=/usr/bin/python3 /opt/mqtt-launcher/mqtt-launcher.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

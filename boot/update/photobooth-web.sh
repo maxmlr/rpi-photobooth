@@ -4,7 +4,7 @@ echo "Currently installed photobooth release: v`cat /var/www/html/version.html`"
 
 if [ $# -eq 0 ]
   then
-    echo "Please specify photobooth release and udpate for upgrade (e.g. `cat /var/www/html/version.html`)."
+    echo "Please specify desired photobooth release and udpate versions: (e.g. `cat /var/www/html/version.html`)."
     exit
 fi
 
@@ -21,4 +21,4 @@ echo "v${PHOTOBOOTH_RELEASE} [${PHOTOBOOTH_UPDATE}]" > /var/www/html/version.htm
 chown -R www-data:www-data /var/www/
 cd -
 
-echo "Upgrade successful."
+echo "Update successful."

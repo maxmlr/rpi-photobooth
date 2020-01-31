@@ -9,7 +9,6 @@ source /boot/photobooth.conf
 /boot/install/setup-raspap.sh
 
 # setup access point
-# deprecated: /boot/install/setup-wifi-ap.sh -a photobooth "" -u photobooth
 apt -y update && \
 apt install -y \
     gphoto2 \
@@ -35,8 +34,15 @@ cat /boot/config/dietpi-services_include_exclude >> /DietPi/dietpi/.dietpi-servi
 # Edit /DietPi/config.txt:
 # - set HDMI monitor resolution
 [[ -z "$HDMI_OUT" ]] || echo "$HDMI_OUT" >> /DietPi/config.txt
+[[ -z "$DT_OVERLAY" ]] || echo "$DT_OVERLAY" >> /DietPi/config.txt
 # - enable Pi Camera
 sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
+# - adjust memory split
+if [ "$HEADLESS" -eq "0" ]; then
+    sed -i -e 's/gpu_mem_256=.*/gpu_mem_256=64/g' /DietPi/config.txt 
+    sed -i -e 's/gpu_mem_512=.*/gpu_mem_512=128/g' /DietPi/config.txt 
+    sed -i -e 's/gpu_mem_1024=.*/gpu_mem_1024=256/g' /DietPi/config.txt 
+fi
 
 # install required Python 3 modules
 # TODO change to pip3 
@@ -113,21 +119,25 @@ cp /boot/config/xinitrc /root/.xinitrc
 # Add /var/lib/dietpi/dietpi-autostart/custom.sh
 cp /boot/scripts/dietpi-custom.sh /var/lib/dietpi/dietpi-autostart/custom.sh
 
-# Add photobooth kiosk autostart postboot service
-cp /boot/scripts/start-kiosk.sh /var/lib/dietpi/postboot.d/20-start-kiosk.sh
-
-# Add manual timesync postboot service
-cp /boot/scripts/timesync.sh /var/lib/dietpi/postboot.d/30-timesync.sh
+# Add scripts
+mkdir -p /opt/photobooth/bin
+cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
+cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 
 # Services
-systemctl disable hostapd.service
+# ...
 
 # Copy binaries to /usr/bin
 for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`; chmod +x /usr/bin/`basename $binary .sh`; done
 
 # Copy python scripts to /opt/photobooth/python
 mkdir -p /opt/photobooth/python
-for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript .py`; chmod +x /opt/photobooth/python/`basename $pyscript .py`; done
+for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript`; chmod +x /opt/photobooth/python/`basename $pyscript`; done
+
+# Copy services to /lib/systemd/system/, reload daemon and enable services
+for service in /boot/service/*.service; do cp $binary /lib/systemd/system/`basename $service`; done
+systemctl daemon-reload
+for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 
 # Add sudo permissions
 bash -c 'cat > /etc/sudoers.d/raspap' << EOF
@@ -141,3 +151,8 @@ sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
 # Cleanup
 apt-get clean
 apt-get autoremove -y
+
+# ---- DEV ---- #
+#cd /tmp
+#wget https://project-downloads.drogon.net/wiringpi-latest.deb && dpkg -i wiringpi-latest.deb
+#cd -

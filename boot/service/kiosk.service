@@ -1,0 +1,15 @@
+[Unit]
+Description=Photobooth Chromium Kiosk
+After=graphical.target
+Wants=graphical.target
+
+[Service]
+Environment=DISPLAY=:0.0
+Environment=XAUTHORITY=/root/.Xauthority
+Type=simple
+ExecStart=/opt/photobooth/bin/start-kiosk.sh
+ExecReload=/bin/kill -HUP $MAINPID
+#Restart=on-failure
+
+[Install]
+WantedBy=graphical.target

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ACTION=${1:-"rpi-photobooth"}
+
 echo "Downloading current rpi-photobooth..."
 cd /tmp
 [ -d "/tmp/rpi-photobooth" ] && rm -rf /tmp/rpi-photobooth
@@ -9,39 +11,20 @@ find /tmp/rpi-photobooth/boot -maxdepth 1 -not -iname '*.txt' -exec cp -rf '{}' 
     cp /tmp/rpi-photobooth/release-notes.txt /boot/release-notes.txt && \
     cat /boot/release-notes.txt && \
     echo
-echo "Release notes were also save at: /boot/release-notes.txt"
+echo "Release notes can be found at: /boot/release-notes.txt"
 echo
 rm -rf /tmp/rpi-photobooth
 cd -
 
-echo "Upgrading rpi-photobooth base system (reboot required)..."
 source /boot/photobooth.conf
 
-# TODO update RaspAP ?
-
-# TODO update photobooth web-interface ?
-
-# TODO update managed services
-
-# TODO update /DietPi/config.txt
-
-# TODO update python modules
-
-# TODO update lighttpd
-
-# TODO update mqtt-launcher
-
-# TODO update xorg settings
-
-# TODO update /var/lib/dietpi/dietpi-autostart/custom.sh
-
-# TODO update /var/lib/dietpi/postboot.d/
-
-# TODO update systemctl services
-
-# TODO update /DietPi/dietpi.txt
+# Run update depending on specified action
+[[ "$ACTION" == "rpi-photobooth" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/rpi-photobooth.sh
+[[ "$ACTION" == "photobooth-web" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/photobooth-web.sh
+[[ "$ACTION" == "raspap.sh" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/raspap.sh
 
 # Cleanup
+#...
 
 # Reboot
 read -p "-> Press enter to reboot <-"

@@ -69,4 +69,11 @@ sleep "${seconds}"
 
 systemctl restart dnsmasq.service
 
+sleep 1
+
+ifdown --force wlan0 > /tmp/ap-startup.log 2>&1
+ifdown --force uap0 > /tmp/ap-startup.log 2>&1
+ifup uap0 > /tmp/ap-startup.log 2>&1
+ifup wlan0 > /tmp/ap-startup.log 2>&1
+
 echo "RaspAP service start DONE"

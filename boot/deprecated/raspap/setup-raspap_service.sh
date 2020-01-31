@@ -1,31 +1,20 @@
 #!/bin/bash
 
-#########################
-# --- Network Setup --- #
-#########################
-
-# Setup wlan0 interface
-cat > /etc/systemd/network/08-wlan0.network << EOF
-[Match]
-Name=wlan0
-[Network]
-IPForward=yes
-# If you need a static ip address, then toggle commenting next four lines (example)
-DHCP=yes
-#Address=192.168.10.60/24
-#Gateway=192.168.10.1
-#DNS=84.200.69.80 1.1.1.1
+# Populate `/etc/network/interfaces.d/ap0`
+bash -c 'cat > /etc/network/interfaces.d/uap0' << EOF
+auto uap0
+allow-hotplug uap0
+iface uap0 inet static
+address 192.168.50.1
+netmask 255.255.255.0
 EOF
 
-# Setup uap0 interface
-cat > /etc/systemd/network/12-uap0.network << EOF
-[Match]
-Name=uap0
-[Network]
-Address=192.168.50.1/24
-DHCPServer=yes
-[DHCPServer]
-#DNS=8.8.8.8 1.1.1.1
+# Populate `/etc/udev/rules.d/70-persistent-net.rules`
+MAC_ADDRESS="$(cat /sys/class/net/wlan0/address)"
+bash -c 'cat > /etc/udev/rules.d/70-persistent-net.rules' << EOF
+SUBSYSTEM=="ieee80211", ACTION=="add|change", ATTR{macaddress}=="${MAC_ADDRESS}", KERNEL=="phy0", \
+  RUN+="/sbin/iw phy phy0 interface add uap0 type __ap", \
+  RUN+="/bin/ip link set uap0 address ${MAC_ADDRESS}
 EOF
 
 apt -y update && \
@@ -35,60 +24,7 @@ apt install -y \
     nftables \
     vnstat
 
-# disable debian networking (and dhcpcd if availabe/enabled)
-systemctl mask networking.service dhcpcd.service
-mv /etc/network/interfaces /etc/network/interfaces~
-
-# This not required as systemd-resolved.service will not be enabled
-#sed -i '1i resolvconf=NO' /etc/resolv.conf
-
-# enable systemd-networkd but not: systemd-resolved.service
-systemctl enable systemd-networkd.service
-
-# This not required as systemd-resolved.service will not be enabled
-#ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-
-# Note: DAEMON_CONF in /etc/default/hostapd is set later to /etc/hostapd/hostapd.conf
-
-# Resolve conflict with network.target
-sed -i -e 's/After=network.target/#After=network.target/g' /etc/systemd/system/hostapd.service
-
-# Add interface uap0 to the hostapd.service
-mkdir -p /etc/systemd/system/hostapd.service.d
-cat > /etc/systemd/system/hostapd.service.d/override.conf << EOF
-[Unit]
-Wants=wpa_supplicant@wlan0.service
-
-[Service]
-ExecStartPre=/sbin/iw dev wlan0 interface add uap0 type __ap
-ExecStopPost=-/sbin/iw dev uap0 del
-EOF
-
-# Extend wpa_supplicant
-ln -s /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-systemctl disable wpa_supplicant.service
-systemctl enable wpa_supplicant@wlan0.service
-
-cat > /etc/systemd/system/wpa_supplicant@wlan0.service.d/override.conf << EOF
-[Unit]
-BindsTo=hostapd.service
-After=hostapd.service
-
-[Service]
-ExecStartPost=/usr/sbin/nft add table nat && /usr/sbin/nft add chain nat postrouting { type nat hook postrouting priority 100 \; } && /usr/sbin/nft add rule nat postrouting i$
-ExecStopPost=-/usr/sbin/nft flush table nat && /usr/sbin/nft delete table nat
-EOF
-
-# Reload systemctl deamon
-systemctl daemon-reload 
-
-
-########################
-# --- RaspAP Setup --- #
-########################
-
-# Add RaspAP commands required by www-data user to sudoers list
-cat > /etc/sudoers.d/raspap << EOF
+bash -c 'cat > /etc/sudoers.d/raspap' << EOF
 www-data ALL=(ALL) NOPASSWD:/sbin/ifdown
 www-data ALL=(ALL) NOPASSWD:/sbin/ifup
 www-data ALL=(ALL) NOPASSWD:/bin/cat /etc/wpa_supplicant/wpa_supplicant.conf
@@ -154,11 +90,11 @@ chmod 750 /etc/raspap/hostapd/*.sh
 
 # Unmask and enable the hostapd service.
 systemctl unmask hostapd.service
-systemctl enable hostapd.service
+#systemctl enable hostapd.service
 
-# Move the raspap service to the correct location and enable it. (deprecated)
-#mv /boot/service/raspap.service /lib/systemd/system
-#systemctl daemon-reload && systemctl enable raspap.service
+# Move the raspap service to the correct location and enable it.
+mv /boot/service/raspap.service /lib/systemd/system
+systemctl daemon-reload && systemctl enable raspap.service
 
 # Copy the configuration files for dhcpcd, dnsmasq, and hostapd.
 mv /var/www/html/rpi/config/default_hostapd /etc/default/hostapd

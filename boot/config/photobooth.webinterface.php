@@ -13,9 +13,9 @@ $config = array (
   'start_screen_subtitle' => 'By Max and Max',
   'take_picture' =>
   array (
-    'cmd' => 'raspistill -n -o %s -q 100 -t 1 | echo Done',
-    //'cmd' => 'gphoto2 --capture-image-and-download --filename=%s',
-    'msg' => 'Done',
-    //'msg' => 'New file is in location',
+    //cmd' => 'raspistill -n -o %s -q 100 -t 1 | echo Done',
+    'cmd' => 'gphoto2 --capture-image-and-download --filename=%s',
+    //'msg' => 'Done',
+    'msg' => 'New file is in location',
   ),
 );
