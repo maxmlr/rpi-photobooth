@@ -51,7 +51,7 @@ systemctl enable systemd-networkd.service
 # Note: DAEMON_CONF in /etc/default/hostapd is set later to /etc/hostapd/hostapd.conf
 
 # Resolve conflict with network.target
-sed -i -e 's/After=network.target/#After=network.target/g' /etc/systemd/system/hostapd.service
+sed -i -e 's/After=network.target/#After=network.target/g' /lib/systemd/system/hostapd.service
 
 # Add interface uap0 to the hostapd.service
 mkdir -p /etc/systemd/system/hostapd.service.d
