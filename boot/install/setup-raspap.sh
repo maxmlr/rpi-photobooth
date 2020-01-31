@@ -182,12 +182,12 @@ chown root:www-data /etc/raspap/hostapd/servicestart.sh
 chmod 750 /etc/raspap/hostapd/servicestart.sh
 
 # add photobooth host to /etc/banner_add_hosts
-bash -c 'cat > /etc/banner_add_hosts' << EOF
+cat > /etc/banner_add_hosts << EOF
 192.168.50.1 photobooth
 EOF
 
 # Populate web-manager hostapd config
-bash -c 'cat > /etc/raspap/hostapd.ini' << EOF
+cat > /etc/raspap/hostapd.ini << EOF
 LogEnable = 1
 WifiAPEnable = 1
 WifiManaged = wlan0

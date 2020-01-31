@@ -140,7 +140,7 @@ systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 
 # Add sudo permissions
-bash -c 'cat > /etc/sudoers.d/raspap' << EOF
+cat > /etc/sudoers.d/gpio << EOF
 www-data ALL=(ALL) NOPASSWD:/usr/bin/gpio
 www-data ALL=(ALL) NOPASSWD:/usr/bin/relay
 EOF
