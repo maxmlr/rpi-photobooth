@@ -23,9 +23,9 @@ cat > /etc/systemd/network/12-uap0.network << EOF
 Name=uap0
 [Network]
 Address=192.168.50.1/24
-DHCPServer=yes
+DHCPServer=no
 [DHCPServer]
-#DNS=8.8.8.8 1.1.1.1
+DNS=8.8.8.8 1.1.1.1
 EOF
 
 apt -y update && \
@@ -46,7 +46,7 @@ mv /etc/network/interfaces /etc/network/interfaces~ && touch /etc/network/interf
 systemctl enable systemd-networkd.service
 
 # This not required as systemd-resolved.service will not be enabled
-#ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+#ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
 
 # Note: DAEMON_CONF in /etc/default/hostapd is set later to /etc/hostapd/hostapd.conf
 
