@@ -52,20 +52,20 @@ pip3 install paho-mqtt gpiozero
 # pip install python-uinput
 # echo 'uinput' | tee -a /etc/modules
 
-# create lighttpd webroot directory
+# create webroot directory
 mkdir -p /var/www/html
 
-# move lighttpd default files
+# move default files
 mkdir /var/www/admin && mv /var/www/*.php /var/www/*.html -t /var/www/admin
 
 # create self signed ssl certificates
-cd /etc/lighttpd
-openssl req -x509 -nodes -new -sha256 -days 365 -newkey rsa:2048 \
-    -keyout server.pem -out server.pem \
-    -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=photobooth"
-chmod 400 server.pem
-lighty-enable-mod ssl
-cd ~/
+# cd /etc/lighttpd
+# openssl req -x509 -nodes -new -sha256 -days 365 -newkey rsa:2048 \
+#     -keyout server.pem -out server.pem \
+#     -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=photobooth"
+# chmod 400 server.pem
+# lighty-enable-mod ssl
+# cd ~/
 
 # install photobooth
 echo "Installing photobooth"
@@ -90,8 +90,9 @@ cd -
 cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc.php
 
-# Pi Camera setup - not required for dietpi
-#echo "bcm2835-v4l2" >> /etc/modules'
+# Loading the v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
+#echo "bcm2835-v4l2" >> /etc/modules
+mv /etc/modprobe.d/dietpi-disable_rpi_camera.conf /etc/modprobe.d/dietpi-disable_rpi_camera.conf~
  
 # access to USB device and printer and Pi Camera
 gpasswd -a www-data plugdev
@@ -99,8 +100,8 @@ gpasswd -a www-data lp
 gpasswd -a www-data lpadmin
 gpasswd -a www-data video
 
-# change www root in /etc/lighttpd/lighttpd.conf
-sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/lighttpd/lighttpd.conf
+# change www root
+sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/nginx/sites-enabled/default
 
 # install mqtt-launcher
 cd /opt && git clone https://github.com/maxmlr/mqtt-launcher.git
