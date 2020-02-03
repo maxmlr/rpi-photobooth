@@ -6,7 +6,7 @@ echo "Downloading current rpi-photobooth..."
 cd /tmp
 [ -d "/tmp/rpi-photobooth" ] && rm -rf /tmp/rpi-photobooth
 git clone https://github.com/maxmlr/rpi-photobooth.git
-find /tmp/rpi-photobooth/boot -maxdepth 1 -not -iname '*.txt' -exec cp -rf '{}' /boot \;
+find /tmp/rpi-photobooth/boot -maxdepth 1 -not -iname '*.txt' -not -iname "*.conf" -exec cp -rf '{}' /boot \;
 [ -e "/tmp/rpi-photobooth/release-notes.txt" ] && \
     cp /tmp/rpi-photobooth/release-notes.txt /boot/release-notes.txt && \
     cat /boot/release-notes.txt && \
@@ -16,6 +16,9 @@ echo
 rm -rf /tmp/rpi-photobooth
 cd -
 
+# TODO merge /boot/photobooth.conf
+
+# Source photobooth config
 source /boot/photobooth.conf
 
 # Run update depending on specified action

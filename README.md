@@ -1,6 +1,12 @@
 # rpi-photobooth
 
-## Installation on Raspberry Zero W (v1.1)
+## Documentation
+
+### Compatibility
+- Raspberry Zero W (v1.1)
+- Raspberry 4B (v1.2)
+
+### Installation
 
 1. Download latest DietPi and extract image (e.g. using https://www.keka.io/en/) 
 

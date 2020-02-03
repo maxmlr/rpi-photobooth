@@ -8,7 +8,7 @@ source /boot/photobooth.conf
 # Install RaspAP WiFi AccessPoint Manager
 /boot/install/setup-raspap.sh
 
-# setup access point
+# install dependencies
 apt -y update && \
 apt install -y \
     gphoto2 \
@@ -46,7 +46,6 @@ if [ "$HEADLESS" -eq "0" ]; then
 fi
 
 # install required Python 3 modules
-# TODO change to pip3 
 pip3 install paho-mqtt gpiozero
 # if the python uinput library should be used for remote trigger (send key_press),
 # uncomment the following commands:
