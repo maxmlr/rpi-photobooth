@@ -19,7 +19,8 @@ apt install -y \
     xinit \
     unclutter \
     mosquitto-clients \
-    xdotool
+    xdotool \
+    rsync
 
 # optional: if photobooth should be build from source, uncomment the next command.
 # note: if the python uinput library should be used for remote trigger (send key_press)
@@ -102,6 +103,9 @@ gpasswd -a www-data video
 
 # change www root
 sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/nginx/sites-enabled/default
+
+# copy nginx config
+cp /boot/config/nginx-photobooth-manager.conf /etc/nginx/sites-dietpi/photobooth-manager.conf
 
 # install mqtt-launcher
 cd /opt && git clone https://github.com/maxmlr/mqtt-launcher.git

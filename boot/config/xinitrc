@@ -1,4 +1,11 @@
 #!/bin/sh
+# start xserver with chromium in kiosk mode
+
+# Source photobooth config
+# In order to selectively set
+# specific arguments use:
+# `[[ "$VAR" -eq 1 ]] && echo "-h "`
+source /boot/photobooth.conf
 
 xset -dpms
 xset s off

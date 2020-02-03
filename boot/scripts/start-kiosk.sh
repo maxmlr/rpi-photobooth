@@ -3,5 +3,10 @@
 
 source /boot/photobooth.conf
 
-echo "Photobooth v${PHOTOBOOTH_RELEASE}"
-startx /root/.xinitrc
+if [[ "$BOOT_TO_KIOSK" -eq 1 ]] || [[ "$KIOSK_ENABLED" -eq 1 ]]
+then
+    echo "Photobooth v${PHOTOBOOTH_RELEASE}"
+    startx /root/.xinitrc
+else
+    echo "Kiosk mode disabled via config file (/boot/photobooth.conf)."
+fi
