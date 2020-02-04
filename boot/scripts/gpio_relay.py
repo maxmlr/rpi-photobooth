@@ -35,7 +35,7 @@ def main_loop():
 
 if __name__ == "__main__":
 
-    global realy
+    global relay
 
     RELAY_PIN = int(sys.argv[1])
     STATUS = int(sys.argv[2])
