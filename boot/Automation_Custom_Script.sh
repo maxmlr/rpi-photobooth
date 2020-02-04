@@ -56,7 +56,7 @@ pip3 install paho-mqtt gpiozero
 mkdir -p /var/www/html
 
 # move default files
-mkdir /var/www/admin && mv /var/www/*.php /var/www/*.html -t /var/www/admin
+mkdir /var/www/dietpi && mv /var/www/*.php /var/www/*.html -t /var/www/dietpi
 
 # create self signed ssl certificates
 # cd /etc/lighttpd
@@ -72,7 +72,7 @@ echo "Installing photobooth"
 cd /var/www/html
 wget -O photobooth.tar.gz https://github.com/andreknieriem/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth.tar.gz && rm photobooth.tar.gz
 wget -O photobooth_update.tar.gz https://github.com/maxmlr/photobooth/archive/v${PHOTOBOOTH_UPDATE}.tar.gz && tar xzf photobooth_update.tar.gz && rm photobooth_update.tar.gz
-cp -r photobooth-${PHOTOBOOTH_UPDATE}/. . && rm -rf photobooth-${PHOTOBOOTH_UPDATE}/
+cp -r photobooth-${PHOTOBOOTH_UPDATE}/* . && rm -rf photobooth-${PHOTOBOOTH_UPDATE}/
 # optional: if photobooth should be build from source, uncomment:
 # PHOTOBOOTH_RELEASE="build-latest"
 # cd /var/www/ && rm -rf html
