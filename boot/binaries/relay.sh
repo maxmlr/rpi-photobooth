@@ -4,7 +4,8 @@
 ACTION=$1
 IFS=',' read -ra GPIOS <<< "$2"
 IFS=',' read -ra STATES <<< "$3"
-PARAMS="${@:4}"
+IFS=',' read -ra FUNCSS <<< "$4"
+PARAMS="${@:5}"
 for i in "${!GPIOS[@]}"; do
     GPIO=${GPIOS[$i]}
     STATE=${STATES[$i]}
