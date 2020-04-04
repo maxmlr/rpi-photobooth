@@ -31,8 +31,6 @@ DHCPServer=no
 DNS=8.8.8.8 1.1.1.1
 EOF
 
-# Note: DAEMON_CONF in /etc/default/hostapd is set later to /etc/hostapd/hostapd.conf
-
 # disable debian networking (and dhcpcd if availabe/enabled)
 systemctl mask networking.service dhcpcd.service
 mv /etc/network/interfaces /etc/network/interfaces~ && touch /etc/network/interfaces
@@ -76,6 +74,20 @@ ExecStartPost=/usr/sbin/nft add rule nat postrouting ip saddr 192.168.50.0/24 oi
 ExecStopPost=-/usr/sbin/nft flush table nat
 ExecStopPost=-/usr/sbin/nft delete table nat
 EOF
+
+# add photobooth host to /etc/banner_add_hosts
+cat > /etc/banner_add_hosts << EOF
+192.168.50.1 photobooth
+EOF
+
+# Copy configs
+cp /boot/config/hostapd.conf /etc/hostapd/hostapd.conf
+cp /boot/config/dnsmasq.conf /etc/dnsmasq.conf
+cp /boot/config/dhcpcd.conf /etc/dhcpcd.conf
+
+# Unmask and enable the hostapd service.
+systemctl unmask hostapd.service
+systemctl enable hostapd.service
 
 # Reload systemctl deamon
 systemctl daemon-reload

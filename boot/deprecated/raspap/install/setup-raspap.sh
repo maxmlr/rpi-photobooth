@@ -72,13 +72,7 @@ cp /boot/config/hostapd.conf /etc/hostapd/hostapd.conf
 cp /boot/config/dnsmasq.conf /etc/dnsmasq.conf
 cp /boot/config/dhcpcd.conf /etc/dhcpcd.conf
 cp /boot/config/raspap.config.php /var/www/html/rpi/includes/config.php
-sed -i -E "s/('RASPI_VERSION', )'.*'/\1'$RASPAP_RELEASE'/g" /var/www/html/rpi/includes/config.php
 chown www-data:www-data /var/www/html/rpi/includes/config.php
-
-# add photobooth host to /etc/banner_add_hosts
-cat > /etc/banner_add_hosts << EOF
-192.168.50.1 photobooth
-EOF
 
 # Populate web-manager hostapd config
 cat > /etc/raspap/hostapd.ini << EOF
@@ -87,3 +81,6 @@ WifiAPEnable = 1
 WifiManaged = wlan0
 EOF
 chown www-data:www-data /etc/raspap/hostapd.ini
+
+# Update Version
+sed -i -E "s/('RASPI_VERSION', )'.*'/\1'$RASPAP_RELEASE'/g" /var/www/html/rpi/includes/config.php
