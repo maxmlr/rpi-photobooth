@@ -5,8 +5,8 @@
 # Source photobooth config
 source /boot/photobooth.conf
 
-# Install RaspAP WiFi AccessPoint Manager
-/boot/install/setup-raspap.sh
+# Setup WiFi AccessPoint
+/boot/install/setup_wifi_ap.sh
 
 # install dependencies
 apt -y update && \
@@ -20,7 +20,8 @@ apt install -y \
     unclutter \
     mosquitto-clients \
     xdotool \
-    rsync
+    rsync \
+    qrencode
 
 # optional: if photobooth should be build from source, uncomment the next command.
 # note: if the python uinput library should be used for remote trigger (send key_press)
