@@ -26,7 +26,6 @@ source /boot/photobooth.conf
 # Run update depending on specified action
 [[ "$ACTION" == "rpi-photobooth" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/rpi-photobooth.sh
 [[ "$ACTION" == "photobooth-web" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/photobooth-web.sh $PHOTOBOOTH_RELEASE $PHOTOBOOTH_UPDATE
-[[ "$ACTION" == "raspap.sh" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/raspap.sh
 
 # Cleanup
 #...
