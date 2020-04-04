@@ -75,7 +75,7 @@ ExecStopPost=-/usr/sbin/nft flush table nat
 ExecStopPost=-/usr/sbin/nft delete table nat
 EOF
 
-# add photobooth host to /etc/banner_add_hosts
+# Add photobooth host to /etc/banner_add_hosts
 cat > /etc/banner_add_hosts << EOF
 192.168.50.1 photobooth
 EOF
@@ -84,6 +84,9 @@ EOF
 cp /boot/config/hostapd.conf /etc/hostapd/hostapd.conf
 cp /boot/config/dnsmasq.conf /etc/dnsmasq.conf
 cp /boot/config/dhcpcd.conf /etc/dhcpcd.conf
+
+# Update hostapd defaults
+sed -i -e 's/#DAEMON_CONF=.*/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/g' /etc/default/hostapd
 
 # Unmask and enable the hostapd service.
 systemctl unmask hostapd.service
