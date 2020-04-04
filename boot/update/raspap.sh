@@ -2,7 +2,9 @@
 
 # git pull - update repo at /var/www/html/rpi.
 echo "Upgrading RaspAP..."
-git --work-tree=/var/www/html/rpi --git-dir=/var/www/html/rpi/.git pull origin master
+git --work-tree=/var/www/html/rpi --git-dir=/var/www/html/rpi/.git checkout master
+git --work-tree=/var/www/html/rpi --git-dir=/var/www/html/rpi/.git pull master
+git --work-tree=/var/www/html/rpi --git-dir=/var/www/html/rpi/.git checkout tags/$RASPAP_RELEASE -b $RASPAP_RELEASE
 
 # Move the high-res favicons to the web root.
 mv /var/www/html/rpi/app/icons/* /var/www/html/rpi
@@ -30,9 +32,6 @@ cp /boot/config/dnsmasq.conf /etc/dnsmasq.conf
 cp /boot/config/dhcpcd.conf /etc/dhcpcd.conf
 cp /boot/config/raspap.config.php /var/www/html/rpi/includes/config.php
 chown www-data:www-data /var/www/html/rpi/includes/config.php
-cp /boot/scripts/raspap.servicestart.sh /etc/raspap/hostapd/servicestart.sh
-chown root:www-data /etc/raspap/hostapd/servicestart.sh
-chmod 750 /etc/raspap/hostapd/servicestart.sh
 
 # Restart the hostapd and raspap service.
 echo "Restarting hostapd and raspap services..."
