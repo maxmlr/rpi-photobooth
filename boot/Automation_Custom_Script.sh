@@ -47,7 +47,7 @@ if [ "$HEADLESS" -eq "0" ]; then
 fi
 
 # install required Python 3 modules
-pip3 install paho-mqtt gpiozero
+pip3 install paho-mqtt gpiozero adafruit-circuitpython-neopixel
 # if the python uinput library should be used for remote trigger (send key_press),
 # uncomment the following commands:
 # pip install python-uinput
