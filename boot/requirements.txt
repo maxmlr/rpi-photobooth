@@ -1,0 +1,7 @@
+setuptools
+paho-mqtt
+gpiozero
+adafruit-circuitpython-neopixel
+Pyro5
+supervisor
+pystemd

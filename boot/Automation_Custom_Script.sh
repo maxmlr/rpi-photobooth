@@ -47,11 +47,21 @@ if [ "$HEADLESS" -eq "0" ]; then
 fi
 
 # install required Python 3 modules
-pip3 install paho-mqtt gpiozero adafruit-circuitpython-neopixel
+pip3 install --upgrade pip && \
+ pip3 install --trusted-host pypi.python.org -r /boot/requirements.txt
+
 # if the python uinput library should be used for remote trigger (send key_press),
 # uncomment the following commands:
 # pip install python-uinput
 # echo 'uinput' | tee -a /etc/modules
+
+# install supervisord
+mkdir -p /etc/supervisor && echo_supervisord_conf > /etc/supervisor/supervisord.conf
+sed -i -e 's/;\[include\]/\[include\]/g' /etc/supervisor/supervisord.conf
+sed -i -e 's/;files =.*/files = conf.d\/*.ini/g' /etc/supervisor/supervisord.conf
+mkdir -p /etc/supervisor/conf.d
+for ini in /boot/config/supervisor/*.ini; do cp $ini /etc/supervisor/conf.d/; done
+mkdir -p /var/log/supervisor
 
 # create webroot directory
 mkdir -p /var/www/html
@@ -140,7 +150,7 @@ mkdir -p /opt/photobooth/python
 for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript`; chmod +x /opt/photobooth/python/`basename $pyscript`; done
 
 # Copy services to /lib/systemd/system/, reload daemon and enable services
-for service in /boot/service/*.service; do cp $service /lib/systemd/system/`basename $service`; done
+for service in /boot/service/*.service; do cp $service /lib/systemd/system/`basename $service`; chmod -x /lib/systemd/system/`basename $service`; done
 systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 
