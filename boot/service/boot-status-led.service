@@ -1,12 +1,12 @@
 [Unit]
-Description=Active Status LED
+Description=LED Panel
 Before=basic.target
 After=local-fs.target sysinit.target
 DefaultDependencies=no
 
 [Service]
 Type=simple
-ExecStart=/opt/photobooth/python/gpio_led.py pulsate -c blue -i 100
+ExecStart=/opt/photobooth/python/gpio_led.py boot
 
 [Install]
 WantedBy=basic.target
