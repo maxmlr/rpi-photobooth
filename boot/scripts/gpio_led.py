@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import sys
+import argparse
 from signal import signal, SIGINT
 import time
 import datetime
 import board
 import neopixel
+from colors import Color
 
 
 def frange(start, stop, step):
@@ -18,14 +20,6 @@ def frange(start, stop, step):
 
 
 class LEDPanel:
-
-    colors = {
-        'black' : (0,0,0),
-        'white' : (255,255,255),
-        'red' : (255,0,0),
-        'green' : (0,255,0),
-        'blue' : (0,0,255)
-    }
 
     def __init__(self, pixel_pin=board.D18, num_pixels=64, order=neopixel.GRB, brightness=1.0, auto_write=False):
         self.pixel_pin = pixel_pin
@@ -48,17 +42,12 @@ class LEDPanel:
         sys.exit(0)
 
     def get_color(self, color, brightness=None):
-        color_ = self.colors.get(color, self.colors['black'])
+        color_ = Color.colors.get(color, Color.colors.get(f'{color.lower()}1', Color.RGB(255, 255, 255))).rgb_format()
         return self.adjust_color_brightness(color_, brightness)
 
     def adjust_color_brightness(self, color, brightness=None):
         brightness_ = brightness if brightness != None else self.brightness_adjusted
         return tuple([round(_ * brightness_) for _ in color])
-
-    def clear(self):
-        for i in range(self.num_pixels):
-            self.pixels[i % self.num_pixels] = self.get_color('black')
-        self.pixels.show()
 
     def setPixelColor(self, pixels=[], color=None):
         if not color or isinstance(color, str):
@@ -72,13 +61,6 @@ class LEDPanel:
                 self.pixels[i % self.num_pixels] = color_
         else:
             self.pixels.fill(color_)
-
-    def setPanelColor(self, color=None):
-        self.setPixelColor(pixels=None, color=color)
-
-    def setBrightness(self, brightness):
-        for idx, (r,g,b) in enumerate(self.pixels):
-            self.pixels[idx] = (brightness if r else 0, brightness if g else 0, brightness if b else 0)
 
     def wheel(self, pos, brightness=None):
         """Generate rainbow colors across 0-255 positions."""
@@ -95,6 +77,21 @@ class LEDPanel:
     def get_effects(self):
         return Effects(panel=self)
 
+    def get(self, func_name):
+        return getattr(self, func_name, None) 
+
+    def clear(self, **kwargs):
+        for i in range(self.num_pixels):
+            self.pixels[i % self.num_pixels] = self.get_color('black')
+        self.pixels.show()
+
+    def setPanelColor(self, color=None, **kwargs):
+        self.setPixelColor(pixels=None, color=color)
+
+    def setBrightness(self, brightness, **kwargs):
+        for idx, (r,g,b) in enumerate(self.pixels):
+            self.pixels[idx] = (brightness * 255 if r else 0, brightness * 255 if g else 0, brightness * 255 if b else 0)
+
 
 class Effects(LEDPanel):
 
@@ -104,14 +101,14 @@ class Effects(LEDPanel):
     def show(self):
         self.pixels.show()
 
-    def switchColors(self, colors=['red', 'green', 'blue'], wait=0.5, iterations=1):
+    def switchColors(self, colors=['red', 'green', 'blue'], wait=0.5, iterations=1, **kwargs):
         for _ in range(iterations):
             for c in colors:
                 self.pixels.fill(self.get_color(c))
                 self.show()
                 time.sleep(wait)
 
-    def pulsate(self, color, start_brightness=0, stop_brightness=1, steps=150, wait=0.01, iterations=1):
+    def pulsate(self, color, start_brightness=0, stop_brightness=1, steps=150, wait=0.01, iterations=1, **kwargs):
         brightness_steps = list(frange(start_brightness, stop_brightness, steps))
         if iterations > 1 and brightness_steps[0] == 0:
             brightness_steps = brightness_steps[1:]
@@ -129,7 +126,7 @@ class Effects(LEDPanel):
                 self.show()
                 time.sleep(wait)
 
-    def circleChase(self, color, wait=0.05, iterations=1):
+    def circleChase(self, color, wait=0.05, iterations=1, **kwargs):
         ring = [0,15,16,31,32,47,48,63] + [62,61,60,59,58,57] + [56,55,40,39,24,23,8] + [7,6,5,4,3,2,1]
         for _ in range(iterations):
             for i in range(len(ring)):
@@ -143,7 +140,7 @@ class Effects(LEDPanel):
                 self.pixels.show()
                 time.sleep(wait)
 
-    def cycle(self, color, wait=0.025, iterations=1):
+    def cycle(self, color, wait=0.025, iterations=1, **kwargs):
         for i in range(iterations * self.num_pixels):
             for j in range(self.num_pixels):
                 self.pixels[j] = self.get_color('black')
@@ -151,7 +148,7 @@ class Effects(LEDPanel):
             self.pixels.write()
             time.sleep(wait)
 
-    def bounce(self, wait=0.025, iterations=1):
+    def bounce(self, wait=0.025, iterations=1, **kwargs):
         n = self.pixels.n
         for i in range(iterations * n):
             for j in range(n):
@@ -163,7 +160,7 @@ class Effects(LEDPanel):
             self.pixels.write()
             time.sleep(wait)
 
-    def fadeInOut(self, wait=0.025, iterations=3):
+    def fadeInOut(self, wait=0.025, iterations=3, **kwargs):
         n = self.pixels.n
         for i in range(0, iterations * 256, 8):
             for j in range(n):
@@ -175,7 +172,7 @@ class Effects(LEDPanel):
             self.pixels.write()
             time.sleep(wait)
 
-    def colorWipe(self, color, wait=0.05, iterations=1):
+    def colorWipe(self, color, wait=0.05, iterations=1, **kwargs):
         """Wipe color across display a pixel at a time."""
         last_color = None
         for _ in range(iterations):
@@ -187,7 +184,7 @@ class Effects(LEDPanel):
                 time.sleep(wait)
             last_color = color
 
-    def theaterChase(self, color, wait=0.05, iterations=1):
+    def theaterChase(self, color, wait=0.05, iterations=1, **kwargs):
         """Movie theater light style chaser animation."""
         for _ in range(iterations):
             for q in range(3):
@@ -198,7 +195,7 @@ class Effects(LEDPanel):
                 for i in range(0, self.num_pixels, 3):
                     self.setPixelColor(i + q)
 
-    def rainbow(self, wait=0.02, iterations=1):
+    def rainbow(self, wait=0.02, iterations=1, **kwargs):
         """Draw rainbow that fades across all pixels at once."""
         for j in range(256 * iterations):
             for i in range(self.num_pixels):
@@ -206,7 +203,7 @@ class Effects(LEDPanel):
             self.show()
             time.sleep(wait)
 
-    def rainbowCycle(self, wait=0.02, iterations=1):
+    def rainbowCycle(self, wait=0.02, iterations=1, **kwargs):
         """Draw rainbow that uniformly distributes itself across all pixels."""
         for j in range(256 * iterations):
             for i in range(self.num_pixels):
@@ -216,7 +213,7 @@ class Effects(LEDPanel):
             self.show()
             time.sleep(wait)
 
-    def theaterChaseRainbow(self, wait=0.05, iterations=1):
+    def theaterChaseRainbow(self, wait=0.05, iterations=1, **kwargs):
         """Rainbow movie theater light style chaser animation."""
         for j in range(256 * iterations):
             for q in range(3):
@@ -227,7 +224,7 @@ class Effects(LEDPanel):
                 for i in range(0, self.num_pixels, 3):
                     self.setPixelColor(i + q, 0)
 
-    def clock(self):
+    def clock(self, **kwargs):
         for i in range(0, self.num_pixels, 1):
             self.setPixelColor(i, 'black')
         while True:
@@ -235,9 +232,9 @@ class Effects(LEDPanel):
 
             # Low light during 19-8 o'clock
             if(8 < now.hour < 19):
-                self.setBrightness(200)
+                self.setBrightness(0.75)
             else:
-                self.setBrightness(25)
+                self.setBrightness(0.1)
 
             hour = now.hour % 12
             minute = now.minute / 5
@@ -275,7 +272,7 @@ class Effects(LEDPanel):
             self.show()
             time.sleep(0.1)
 
-    def demo(self, brightness=1, iterations=2):
+    def demo(self, brightness=1, iterations=2, **kwargs):
         self.brightness_adjusted = brightness
 
         self.clear()
@@ -304,15 +301,27 @@ class Effects(LEDPanel):
 
 
 if __name__ == "__main__":
-    action = sys.argv[1] if len(sys.argv) > 1 else ''
+    parser = argparse.ArgumentParser(description='LED Panel COntroller.')
+    parser.add_argument("action")
+    parser.add_argument("-c", "--color", type=str, default='black')
+    parser.add_argument("-b", "--brightness", type=float, default=1)
+    parser.add_argument("-i", "--iterations", type=int, default=1)
+    args, argv  = parser.parse_known_args()
 
-    panel = LEDPanel()
+    args_dict = vars(args)
+    action = args_dict.pop('action')
+    brightness = args_dict.pop('brightness')
+
+    panel = LEDPanel(brightness=brightness)
     effects = panel.get_effects()
+    change = False
 
-    if action == "demo":
-        effects.demo()
-    if action.startswith("color:"):
-        effects.setPanelColor(action.split(':')[1])
-        effects.show()
+    func = effects.get(action)
+    if func:
+        func(**args_dict)
+        change = True
     else:
-        print('no valid action specified')
+        print(f'ERROR: "{action}" is not a valid action.')
+
+    if change:
+        effects.show()

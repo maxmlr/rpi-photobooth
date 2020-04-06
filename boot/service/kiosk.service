@@ -8,6 +8,7 @@ Environment=DISPLAY=:0.0
 Environment=XAUTHORITY=/root/.Xauthority
 Type=simple
 ExecStart=/opt/photobooth/bin/start-kiosk.sh
+ExecStartPost=/opt/photobooth/python/gpio_led.py setPanelColor -c yellow -b 0.1
 ExecReload=/bin/kill -HUP $MAINPID
 #Restart=on-failure
 

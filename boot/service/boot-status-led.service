@@ -1,0 +1,12 @@
+[Unit]
+Description=Active Status LED
+Before=basic.target
+After=local-fs.target sysinit.target
+DefaultDependencies=no
+
+[Service]
+Type=simple
+ExecStart=/opt/photobooth/python/gpio_led.py pulsate -c blue -i 100
+
+[Install]
+WantedBy=basic.target
