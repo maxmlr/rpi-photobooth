@@ -306,22 +306,22 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--color", type=str, default='black')
     parser.add_argument("-b", "--brightness", type=float, default=1)
     parser.add_argument("-i", "--iterations", type=int, default=1)
+    parser.add_argument("-r", "--resume", action='store_true')
     args, argv  = parser.parse_known_args()
 
     args_dict = vars(args)
     action = args_dict.pop('action')
     brightness = args_dict.pop('brightness')
+    resume = args_dict.pop('resume')
 
     panel = LEDPanel(brightness=brightness)
     effects = panel.get_effects()
-    change = False
 
     func = effects.get(action)
     if func:
+        if not resume:
+            effects.clear()
         func(**args_dict)
-        change = True
+        effects.show()
     else:
         print(f'ERROR: "{action}" is not a valid action.')
-
-    if change:
-        effects.show()
