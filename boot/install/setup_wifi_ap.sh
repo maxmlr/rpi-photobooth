@@ -88,9 +88,9 @@ cp /boot/config/dhcpcd.conf /etc/dhcpcd.conf
 # Update hostapd defaults
 sed -i -e 's/#DAEMON_CONF=.*/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/g' /etc/default/hostapd
 
+# Reload systemctl deamon
+systemctl daemon-reload
+
 # Unmask and enable the hostapd service.
 systemctl unmask hostapd.service
 systemctl enable hostapd.service
-
-# Reload systemctl deamon
-systemctl daemon-reload

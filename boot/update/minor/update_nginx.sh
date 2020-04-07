@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# install rsync
-apt install rsync
-
 # edit photobooth.conf
 echo "BOOT_TO_KIOSK=1" >> /boot/photobooth.conf
 

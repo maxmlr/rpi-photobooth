@@ -199,8 +199,7 @@ EOF
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
 
 # Cleanup
-apt-get clean
-apt-get autoremove -y
+apt-get clean && apt-get autoremove -y
 
 # ---- DEV ---- #
 #cd /tmp
