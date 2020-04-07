@@ -11,6 +11,9 @@ source /boot/photobooth.conf
 # install dependencies
 apt -y update && \
 apt install -y \
+    build-essential \
+    libmicrohttpd-dev \
+    iptables \
     python3-dev \
     python3-venv \
     gphoto2 \
@@ -63,7 +66,7 @@ python3 -m venv /opt/photobooth/flask/apienv
 source /opt/photobooth/flask/apienv/bin/activate
 pip install --upgrade pip && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install flask flask-cors uwsgi
+ pip install flask flask-cors uwsgi bootstrap-flask Flask-FontAwesome pip install qrcode[pil]
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
@@ -78,6 +81,18 @@ sed -i -e 's/;files =.*/files = conf.d\/*.ini/g' /etc/supervisor/supervisord.con
 mkdir -p /etc/supervisor/conf.d
 for ini in /boot/config/supervisor/*.ini; do cp $ini /etc/supervisor/conf.d/; done
 mkdir -p /var/log/supervisor
+
+# install nodogsplash
+wget -O nodogsplash.tar.gz https://github.com/nodogsplash/nodogsplash/archive/v${NODOGSPLASH_RELEASE}.tar.gz && tar xzf nodogsplash.tar.gz && rm nodogsplash.tar.gz
+cd nodogsplash-${NODOGSPLASH_RELEASE}
+make && make install
+cd -
+rm -rf nodogsplash-${NODOGSPLASH_RELEASE}
+cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
+# TODOs:
+# - test
+# - setup nodogsplash.service
+# - /etc/nodogsplash/htdocs/splash.html
 
 # create webroot directory
 mkdir -p /var/www/html
