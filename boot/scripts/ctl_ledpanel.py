@@ -12,7 +12,7 @@ ENDPOINT = 'ledpanel.control'
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='LED Panel COntroller.')
+    parser = argparse.ArgumentParser(description='LED Panel Controller.')
     parser.add_argument("action")
     parser.add_argument("-c", "--color", type=str, default='black')
     parser.add_argument("-b", "--brightness", type=float, default=1)
