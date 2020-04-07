@@ -74,14 +74,6 @@ cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth <<
 EOF
 chown -R www-data:www-data /opt/photobooth/flask/api
 
-# install supervisord
-mkdir -p /etc/supervisor && echo_supervisord_conf > /etc/supervisor/supervisord.conf
-sed -i -e 's/;\[include\]/\[include\]/g' /etc/supervisor/supervisord.conf
-sed -i -e 's/;files =.*/files = conf.d\/*.ini/g' /etc/supervisor/supervisord.conf
-mkdir -p /etc/supervisor/conf.d
-for ini in /boot/config/supervisor/*.ini; do cp $ini /etc/supervisor/conf.d/; done
-mkdir -p /var/log/supervisor
-
 # install nodogsplash
 wget -O nodogsplash.tar.gz https://github.com/nodogsplash/nodogsplash/archive/v${NODOGSPLASH_RELEASE}.tar.gz && tar xzf nodogsplash.tar.gz && rm nodogsplash.tar.gz
 cd nodogsplash-${NODOGSPLASH_RELEASE}

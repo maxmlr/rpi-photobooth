@@ -1,0 +1,19 @@
+[Unit]
+Description=Pyro - Python Remote Objects
+Documentation=https://pyro5.readthedocs.io
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/photobooth/python
+ExecStart=/opt/photobooth/python/daemon.py
+#ExecStop=
+#ExecReload=
+KillMode=process
+Restart=on-failure
+RestartSec=50s
+
+
+[Install]
+WantedBy=multi-user.target
