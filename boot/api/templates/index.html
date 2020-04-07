@@ -17,7 +17,10 @@
 
     <!-- FontAwsome CSS -->
     {{ fontawesome_html() }}
-
+  
+    <!-- App CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  
     <title>Your page title</title>
     {% endblock %}
   </head>
@@ -26,17 +29,15 @@
     {% block content %}
     <div class="container-fluid">
       <div class="d-flex justify-content-center">
-        <div class="card my-5 px-5 py-2">
+        <div class="card my-3">
           <form class="form">
             <div class="card-body">
-              <h1 class="card-title display-4">WiFi</h1>
               <div class="row">
                 <div class="col">
-                  <div>
-                    <small id="wifiHelpBlock" class="form-text text-muted">
-                      {{wifi_cnt}} WiFis with public SSIDs
-                    </small>
-                  </div>
+                  <h1 class="d-inline card-title display-4">WiFi</h1>
+                  <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+                    {{wifi_cnt}} WiFis with public SSIDs
+                  </small>
                   <div class="input-group mb-3">
                     <div class="input-group-prepend">
                       <div class="input-group-text">
@@ -57,7 +58,7 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="input-group mb-3">
+                  <div class="input-group mb-2">
                     <input type="password" id="inputPassword6" class="form-control" placeholder="Password">
                     <div class="input-group-append">
                       <button type="submit" class="btn btn-primary">Connect</button>
@@ -69,34 +70,25 @@
                 <div class="col">
                   <div class="row">
                     <div class="col">
-                        <h1 class="card-title display-4 mt-5">Access Point</h1>
+                      <h1 class="d-inline card-title display-4 mt-1">Hotspot</h1>
+                      <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+                        {{ ap_connections_cnt }} connected
+                      </small>
+                      <img src="/api/v1/qr/get/{{ wifi_active }}?box_size=10&border=0" class="rounded mx-auto d-block my-2" alt="QRcode">
                     </div>
                   </div>
-                  <div class="row mb-3">
+                  <div class="row justify-content-md-center">
+                    <div class="col col-sm-3 text-center font-weight-bold">SSID</div>
+                    <div class="col col-sm-5 text-left font-weight-bold">{{ ap_name }}</div>
+                  </div>
+                  <div class="row justify-content-md-center mt-3">
                     <div class="col">
-                      <img src="/api/v1/qr/get/{{ wifi_active }}" class="rounded mx-auto d-block" alt="...">
+                      <h6>Hide Hotspot</h6>
+                      <label class="switch">
+                        <input type="checkbox" class="form-check-input" id="hideAP">
+                        <span class="slider round"></span>
+                      </label>
                     </div>
-                  </div>
-                  <dl class="row">
-                    <dt class="col-sm-3">
-                      SSID
-                    </dt>
-                    <dd class="col-sm-9">
-                      {{ ap_name }}
-                    </dd>
-                    <dt class="col-sm-3">
-                      Users
-                    </dt>
-                    <dd class="col-sm-9">
-                      {{ ap_connections_cnt }}
-                    </dd>
-                  </dl>
-                  <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="hideAP">
-                    <label class="form-check-label" for="hideAP">Hide Access Point SSID</label>
-                  </div>
-                  <div class="d-flex flex-row-reverse mt-3">
-                    <button type="submit" class="btn btn-primary">Update</button>
                   </div>
                 </div>
               </div>

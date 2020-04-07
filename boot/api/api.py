@@ -44,9 +44,9 @@ def get_wifis(action):
     template_args['ap_connections_cnt'] = ap_connections_cnt
     return render_template('index.html', **template_args)
 
-@app.route("/v1/qr/get/<data>")
+@app.route('/v1/qr/get/<data>', methods=['GET'])
 def get_qr(data):
-    ap_qr_bytes = getQRCodeImage(data, returnAs='bytes')
+    ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes
     print (out)
     return send_file(out, mimetype='image/png', as_attachment=False)
