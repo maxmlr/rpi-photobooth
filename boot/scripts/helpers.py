@@ -1,7 +1,9 @@
 import os
+import io
 import shlex
 import subprocess
 import time
+import qrcode
 from functools import wraps
 
 
@@ -112,3 +114,22 @@ def run_command(command, shell=False, print_output=False, env_exports={}, logger
             stderr.append(line)
         print_(f'Error while executing command: {" ".join(stderr)}')
     return stdout
+
+
+def getQRCodeImage(data, version=1, box_size=10, border=4, fit=True, fill_color='black', back_color='white', returnAs='image'):
+    qr = qrcode.QRCode(
+        version = version,
+        error_correction = qrcode.constants.ERROR_CORRECT_L,
+        box_size = box_size,
+        border = border,
+    )
+    qr.add_data(data)
+    qr.make(fit=fit)
+    img = qr.make_image(fill_color=fill_color, back_color=back_color)
+    if returnAs == 'bytes':
+        file_object = io.BytesIO()
+        img.save(file_object, 'PNG')
+        file_object.seek(0)
+        return file_object
+    else:
+        return img

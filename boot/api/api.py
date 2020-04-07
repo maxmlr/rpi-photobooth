@@ -1,16 +1,55 @@
-from flask import Flask, render_template, request, jsonify
-# from wpa_cli import WPAcli
+from flask import Flask, render_template, request, send_file, jsonify
+from flask_cors import CORS
+from flask_bootstrap import Bootstrap
+from flask_fontawesome import FontAwesome
+from helpers import getQRCodeImage
+from wpa_cli import WPAcli
 
+
+# configuration
+DEBUG = True
+BOOTSTRAP_SERVE_LOCAL = True
+
+# instantiate the app
 app = Flask(__name__)
+app.config.from_object(__name__)
+bootstrap = Bootstrap(app)
+fa = FontAwesome(app)
 
+# enable CORS
+CORS(app, resources={r'/*': {'origins': '*'}})
+
+# sanity check route
+@app.route('/ping', methods=['GET'])
+def ping_pong():
+    return jsonify('pong!')
+
+# main root
 @app.route("/")
 def hello():
-    return "<h1 style='color:blue'>Hello There!</h1>"
+    wifi_list = None
+    return render_template('index.html')
 
-# @app.route("/api/v1/manager/wifi/<action>")
-# def get_wifis(action):
-#     wifi_list = WPAcli().scan()
-#     return render_template('index.html', wifi_list = wifi_list)
+@app.route("/v1/manager/wifi/<action>")
+def get_wifis(action):
+    template_args = {}
+    wifi_list = [ _ for _ in WPAcli().scan() if _['ssid'] not in ['', 'hidden'] ]
+    wifi_active = 'penthouse_2.4'
+    ap_name = 'photobooth'
+    ap_connections_cnt = 0
+    template_args['wifi_list'] = wifi_list
+    template_args['wifi_cnt'] = len(wifi_list)
+    template_args['wifi_active'] = wifi_active
+    template_args['ap_name'] = ap_name
+    template_args['ap_connections_cnt'] = ap_connections_cnt
+    return render_template('index.html', **template_args)
+
+@app.route("/v1/qr/get/<data>")
+def get_qr(data):
+    ap_qr_bytes = getQRCodeImage(data, returnAs='bytes')
+    out = ap_qr_bytes
+    print (out)
+    return send_file(out, mimetype='image/png', as_attachment=False)
 
 # # handling form data
 # @app.route('/form-handler', methods=['POST', 'GET'])
