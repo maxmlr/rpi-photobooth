@@ -63,7 +63,7 @@ python3 -m venv /opt/photobooth/flask/apienv
 source /opt/photobooth/flask/apienv/bin/activate
 pip install --upgrade pip && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install flask uwsgiflask uwsgi
+ pip install flask flask-cors uwsgi
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
