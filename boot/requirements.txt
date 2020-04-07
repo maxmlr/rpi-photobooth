@@ -1,4 +1,5 @@
 setuptools
+virtualenv
 paho-mqtt
 gpiozero
 adafruit-circuitpython-neopixel

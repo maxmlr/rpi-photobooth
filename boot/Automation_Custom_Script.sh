@@ -11,6 +11,8 @@ source /boot/photobooth.conf
 # install dependencies
 apt -y update && \
 apt install -y \
+    python3-dev \
+    python3-venv \
     gphoto2 \
     cups \
     chromium-browser \
@@ -55,6 +57,20 @@ pip3 install --upgrade pip && \
 # pip install python-uinput
 # echo 'uinput' | tee -a /etc/modules
 
+# install flask
+mkdir -p /opt/photobooth/flask
+python3 -m venv /opt/photobooth/flask/apienv
+source /opt/photobooth/flask/apienv/bin/activate
+pip install --upgrade pip && \
+ pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
+ pip install flask uwsgiflask uwsgi
+deactivate
+cp -rf /boot/api /opt/photobooth/flask/
+cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
+/opt/photobooth/python
+EOF
+chown -R www-data:www-data /opt/photobooth/flask/api
+
 # install supervisord
 mkdir -p /etc/supervisor && echo_supervisord_conf > /etc/supervisor/supervisord.conf
 sed -i -e 's/;\[include\]/\[include\]/g' /etc/supervisor/supervisord.conf
@@ -82,8 +98,10 @@ mkdir /var/www/dietpi && mv /var/www/*.php /var/www/*.html -t /var/www/dietpi
 echo "Installing photobooth"
 cd /var/www/html
 wget -O photobooth.tar.gz https://github.com/andreknieriem/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth.tar.gz && rm photobooth.tar.gz
-wget -O photobooth_update.tar.gz https://github.com/maxmlr/photobooth/archive/v${PHOTOBOOTH_UPDATE}.tar.gz && tar xzf photobooth_update.tar.gz && rm photobooth_update.tar.gz
-cp -r photobooth-${PHOTOBOOTH_UPDATE}/* . && rm -rf photobooth-${PHOTOBOOTH_UPDATE}/
+# TODO: replace master with v${PHOTOBOOTH_UPDATE}
+wget -O photobooth_update.tar.gz https://github.com/maxmlr/photobooth/archive/master.tar.gz && tar xzf photobooth_update.tar.gz && rm photobooth_update.tar.gz
+# TODO: replace master with ${PHOTOBOOTH_UPDATE}
+cp -r photobooth-master/* . && rm -rf photobooth-master/
 # optional: if photobooth should be build from source, uncomment:
 # PHOTOBOOTH_RELEASE="build-latest"
 # cd /var/www/ && rm -rf html
@@ -112,7 +130,9 @@ gpasswd -a www-data lpadmin
 gpasswd -a www-data video
 
 # change www root
-sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/nginx/sites-enabled/default
+sed -i -e 's/\/var\/www/\/var\/www\/html/g' /etc/nginx/sites-available/default
+rm /etc/nginx/sites-enabled/default
+ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled
 
 # copy nginx config
 cp /boot/config/nginx-photobooth-manager.conf /etc/nginx/sites-dietpi/photobooth-manager.conf
