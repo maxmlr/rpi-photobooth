@@ -42,16 +42,16 @@ create_sd () {
         of="${sd_card}" bs=1m
     sleep 5
     cp -rf "${repo}"/boot/* ${mountpoint}
-    if [ -z ${wifi_config+x} ]
+    if [ ! -z ${wifi_config+x} ]
     then
-        echo "Using user defined wifi config: ${wifi_config}"
+        echo "Copying user defined wifi config: ${wifi_config}"
         cp -f ${wifi_config} ${mountpoint}
     else
         echo "Using default wifi config"
     fi
-    if [ -z ${photobooth_config+x} ]
+    if [ ! -z ${photobooth_config+x} ]
     then
-        echo "Using user defined photobooth config: ${photobooth_config}"
+        echo "Copying user defined photobooth config: ${photobooth_config}"
         cp -f ${photobooth_config} ${mountpoint}
     else
         echo "Using default photobooth config"
