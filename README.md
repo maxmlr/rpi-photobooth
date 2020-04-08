@@ -3,7 +3,7 @@
 ## Documentation
 
 ### Compatibility
-- Raspberry Pi Zero (v1.3)
+- Raspberry Pi Zero (v1.3) [+ EW-7811Un USB WiFi Adapter]
 - Raspberry Pi Zero W (v1.1)
 - Raspberry Pi 2B (v1.1)
 - Raspberry Pi 4B (v1.2)
