@@ -9,5 +9,8 @@ Type=simple
 ExecStart=/usr/bin/mosquitto_sub -v -t 'photobox/#'
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
+RestartSec=30
+StartLimitInterval=10
+StartLimitBurst=3
 
 [Install]
