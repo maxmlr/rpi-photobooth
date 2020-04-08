@@ -17,7 +17,7 @@ open -a Keka DietPi_RPi-ARMv6-Buster.7z
 
 2. Write image to MicroSD card
 
-- Note: Unmount any volumes associated with the MicroSD card first, e.g. `diskutil unmount /Volumes/boot`.
+- Note: Unmount any volumes associated with the MicroSD card first, e.g. `diskutil unmountDisk /Volumes/boot`.
 - Important: Replace *rdisk2* which the appropriate disk (use: `diskutil list` to see all disks)
 ```
 sudo dd if=/<PATH_TO_FOLDER>/DietPi_RPi-ARMv6-Buster/DietPi_RPi-ARMv6-Buster.img of=/dev/rdisk2 bs=1m
