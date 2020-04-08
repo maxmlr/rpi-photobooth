@@ -3,8 +3,10 @@
 ## Documentation
 
 ### Compatibility
-- Raspberry Zero W (v1.1)
-- Raspberry 4B (v1.2)
+- Raspberry Pi Zero (v1.3)
+- Raspberry Pi Zero W (v1.1)
+- Raspberry Pi 2B (v1.1)
+- Raspberry Pi 4B (v1.2)
 
 ### Installation
 
