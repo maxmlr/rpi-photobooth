@@ -74,7 +74,8 @@
                       <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
                         {{ ap_connections_cnt }} connected
                       </small>
-                      <img src="/api/v1/qr/get/{{ wifi_active }}?box_size=10&border=0" class="rounded mx-auto d-block my-2" alt="QRcode">
+                      <img src="{{ url_for('qr.create', data=wifi_active, box_size=10, border=0) }}" class="rounded mx-auto d-block my-2" alt="QRcode">
+                      
                     </div>
                   </div>
                   <div class="row justify-content-md-center">

@@ -21,7 +21,7 @@ class WPAcli():
         else:
             print(f'ERROR: {func_name}() not available.')
 
-    def scan(self):
+    def scan(self, isRecursive=False):
 
         @retry(RuntimeError, tries=5, delay=1, backoff=1, verbose=True)
         def scan_():
@@ -39,7 +39,10 @@ class WPAcli():
                     val = ('hidden' if entry[idx].find('x00') != -1 else entry[idx]) if idx < len(entry) else ''
                     _wifi[label] = val
                 wifis += [_wifi]
-            return wifis
+            if not isRecursive and len(wifis) == 1:
+                return self.scan(isRecursive=True)
+            else:
+                return wifis
 
         try:
             return scan_()

@@ -30,7 +30,7 @@ def hello():
     wifi_list = None
     return render_template('index.html')
 
-@app.route("/v1/manager/wifi/<action>")
+@app.route("/manager/wifi/<string:action>", endpoint='wifi.scan')
 def get_wifis(action):
     template_args = {}
     wifi_list = [ _ for _ in WPAcli().scan() if _['ssid'] not in ['', 'hidden'] ]
@@ -44,7 +44,7 @@ def get_wifis(action):
     template_args['ap_connections_cnt'] = ap_connections_cnt
     return render_template('index.html', **template_args)
 
-@app.route('/v1/qr/get/<data>', methods=['GET'])
+@app.route('/qr/get/<string:data>', methods=['GET'], endpoint='qr.create')
 def get_qr(data):
     ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes

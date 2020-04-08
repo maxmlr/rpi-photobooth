@@ -189,6 +189,12 @@ cat > /etc/sudoers.d/gpio << EOF
 www-data ALL=(ALL) NOPASSWD:/usr/bin/gpio
 www-data ALL=(ALL) NOPASSWD:/usr/bin/relay
 EOF
+cat > /etc/sudoers.d/api << EOF
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] scan_results
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] scan
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] reconfigure
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] select_network
+EOF
 
 # Optimizations
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
