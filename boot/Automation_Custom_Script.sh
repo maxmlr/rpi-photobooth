@@ -66,7 +66,7 @@ python3 -m venv /opt/photobooth/flask/apienv
 source /opt/photobooth/flask/apienv/bin/activate
 pip install --upgrade pip && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install flask flask-cors uwsgi bootstrap-flask Flask-FontAwesome pip install qrcode[pil]
+ pip install flask flask-cors uwsgi bootstrap-flask Flask-FontAwesome qrcode[pil]
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
@@ -175,6 +175,9 @@ for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`
 # Copy python scripts to /opt/photobooth/python
 mkdir -p /opt/photobooth/python
 for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript`; chmod +x /opt/photobooth/python/`basename $pyscript`; done
+
+# Add symlinks to  /usr/local/bin/
+ln -s /opt/photobooth/python/ctl_ledpanel.py /usr/local/bin/ledpanel
 
 # Copy services to /lib/systemd/system/, reload daemon and enable services
 for service in /boot/service/*.service; do cp $service /lib/systemd/system/`basename $service`; chmod -x /lib/systemd/system/`basename $service`; done
