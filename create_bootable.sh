@@ -21,6 +21,8 @@ else
 fi
 
 create_sd () {
+    sd_card=$1
+    mountpoint=$2
     repo=/tmp/rpi-photobooth
     if [[ $git =~ ^server$ ]]
     then
@@ -33,37 +35,39 @@ create_sd () {
     else
         repo="${git}"
     fi
-    diskutil umount ${MOUNT_POINT}
-    echo "Copying image..."
+    diskutil umount ${mountpoint}
+    echo "Writing image `basename ${dietpi}` to [${sd_card}]"
     sudo dd \
         if="${dietpi}" \
-        of="${device}" bs=1m
+        of="${sd_card}" bs=1m
     sleep 5
-    cp -rf "${repo}"/boot/* ${MOUNT_POINT}
+    cp -rf "${repo}"/boot/* ${mountpoint}
     if [ -z ${wifi_config+x} ]
     then
         echo "Using user defined wifi config: ${wifi_config}"
-        cp -f ${wifi_config} ${MOUNT_POINT}
+        cp -f ${wifi_config} ${mountpoint}
     else
         echo "Using default wifi config"
     fi
     if [ -z ${photobooth_config+x} ]
     then
         echo "Using user defined photobooth config: ${photobooth_config}"
-        cp -f ${photobooth_config} ${MOUNT_POINT}
+        cp -f ${photobooth_config} ${mountpoint}
     else
         echo "Using default photobooth config"
     fi
     echo "Unmounting..."
-    diskutil umount ${MOUNT_POINT}
+    diskutil umount ${mountpoint}
     echo "Done."
 }
+if [ -z ${device+x} ]
+then
+    read -r -n 1 -p "Formatting device ${device} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
+fi
 
-read -r -n 1 -p "Formatting device ${device} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
-echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-    create_sd
+    create_sd "${device}" "${MOUNT_POINT}"
 else
     if [ -z ${device+x} ]
     then
@@ -72,7 +76,7 @@ else
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]
         then
-            create_sd
+            create_sd "${device}" "${MOUNT_POINT}"
         else
             echo "Aborted."
         fi
@@ -82,7 +86,7 @@ else
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]
         then
-            create_sd
+            create_sd "${device}" "${MOUNT_POINT}"
         else
             echo "Aborted."
         fi
