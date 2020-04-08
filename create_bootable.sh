@@ -1,6 +1,7 @@
 #!/bin/bash
 
 MOUNT_POINT=/Volumes/boot
+DEVICE_SDCARD=`mount | grep "${MOUNT_POINT} " | sed "s|\(/dev/disk[0-9]\).*|\1|"`
 GIT_REPOSITORY_SERVER=https://github.com/maxmlr/rpi-photobooth.git
 GIT_REPOSITORY_CLIENT=https://github.com/maxmlr/rpi-photobooth-client.git
 
@@ -8,7 +9,6 @@ dietpi=${1}
 git=${2:-'server'}
 wifi_config=${3}
 photobooth_config=${4}
-device=`mount | grep ${MOUNT_POINT} | cut -d" " -f1`
 
 if [[ $git =~ ^server$ ]]
 then
@@ -21,7 +21,7 @@ else
 fi
 
 create_sd () {
-    sd_card=$1
+    device_sdcard=$1
     mountpoint=$2
     repo=/tmp/rpi-photobooth
     if [[ $git =~ ^server$ ]]
@@ -36,10 +36,10 @@ create_sd () {
         repo="${git}"
     fi
     diskutil umount ${mountpoint}
-    echo "Writing image `basename ${dietpi}` to [${sd_card}]"
+    echo "Writing image `basename ${dietpi}` to [${device_sdcard}]"
     sudo dd \
         if="${dietpi}" \
-        of="${sd_card}" bs=1m
+        of="${device_sdcard}" bs=1m
     sleep 5
     cp -rf "${repo}"/boot/* ${mountpoint}
     if [ ! -z ${wifi_config+x} ]
@@ -56,37 +56,42 @@ create_sd () {
     else
         echo "Using default photobooth config"
     fi
-    echo "Unmounting..."
-    diskutil umount ${mountpoint}
+    if [[ -d "${mountpoint}" ]]
+    then
+        echo "Unmounting..."
+        diskutil umount ${mountpoint}
+    fi
     echo "Done."
 }
-if [ -z ${device+x} ]
+
+if [ ! -z "${DEVICE_SDCARD+x}" ]
 then
-    read -r -n 1 -p "Formatting device ${device} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
+    read -r -n 1 -p "Formatting device ${DEVICE_SDCARD} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
+    echo
 fi
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-    create_sd "${device}" "${MOUNT_POINT}"
+    create_sd "${DEVICE_SDCARD}" "${MOUNT_POINT}"
 else
-    if [ -z ${device+x} ]
+    if [ -z "${DEVICE_SDCARD+x}" ]
     then
         read -r -p "Enter absolute path of mount point: " MOUNT_POINT
-        read -r -n 1 -p "Formatting device ${device} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
+        read -r -n 1 -p "Formatting device ${DEVICE_SDCARD} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]
         then
-            create_sd "${device}" "${MOUNT_POINT}"
+            create_sd "${DEVICE_SDCARD}" "${MOUNT_POINT}"
         else
             echo "Aborted."
         fi
     else
-        read -r -p "Enter device: " device
-        read -r -n 1 -p "Formatting device ${device} [Y/n]? "
+        read -r -p "Enter device: " DEVICE_SDCARD
+        read -r -n 1 -p "Formatting device ${DEVICE_SDCARD} [Y/n]? "
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]
         then
-            create_sd "${device}" "${MOUNT_POINT}"
+            create_sd "${DEVICE_SDCARD}" "${MOUNT_POINT}"
         else
             echo "Aborted."
         fi
