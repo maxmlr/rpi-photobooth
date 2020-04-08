@@ -39,7 +39,7 @@ create_sd () {
         if="${dietpi}" \
         of="${device}" bs=1m
     sleep 5
-    cp -rf "${repo}/boot/*" ${MOUNT_POINT}
+    cp -rf "${repo}"/boot/* ${MOUNT_POINT}
     if [ -z ${wifi_config+x} ]
     then
         echo "Using user defined wifi config: ${wifi_config}"
@@ -65,13 +65,26 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     create_sd
 else
-    read -r -p "Enter absolute path of mount point: " MOUNT_POINT
-    read -r -n 1 -p "Formatting device ${device} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]
+    if [ -z ${device+x} ]
     then
-        create_sd
+        read -r -p "Enter absolute path of mount point: " MOUNT_POINT
+        read -r -n 1 -p "Formatting device ${device} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            create_sd
+        else
+            echo "Aborted."
+        fi
     else
-        echo "Aborted."
+        read -r -p "Enter device: " device
+        read -r -n 1 -p "Formatting device ${device} [Y/n]? "
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            create_sd
+        else
+            echo "Aborted."
+        fi
     fi
 fi
