@@ -13,7 +13,6 @@
     {% block styles %}
     <!-- Bootstrap CSS -->
     {{ bootstrap.load_css() }}
-    {% endblock %}
 
     <!-- FontAwsome CSS -->
     {{ fontawesome_html() }}
@@ -21,16 +20,9 @@
     <!-- Libs CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='glider/glider.min.css') }}">
 
-    <!-- Libs JS -->
-    <script src="{{ url_for('static', filename='jquery/jquery-3.4.1.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='glider/glider.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='dropzone/dropzone.js') }}"></script>
-
     <!-- App CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
-
-    <!-- App JS -->
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% endblock %}
   
     <title>Photobooth Manager</title>
     {% endblock %}
@@ -177,6 +169,14 @@
     {% block scripts %}
     <!-- Optional JavaScript -->
     {{ bootstrap.load_js() }}
+
+    <!-- Libs JS -->
+    <script src="{{ url_for('static', filename='jquery/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='glider/glider.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='dropzone/dropzone.js') }}"></script>
+
+    <!-- App JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     {% endblock %}
   </body>
 </html>
