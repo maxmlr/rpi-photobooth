@@ -17,19 +17,31 @@
 
     <!-- FontAwsome CSS -->
     {{ fontawesome_html() }}
-  
+
+    <!-- Libs CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='glider/glider.min.css') }}">
+
+    <!-- Libs JS -->
+    <script src="{{ url_for('static', filename='jquery/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='glider/glider.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='dropzone/dropzone.js') }}"></script>
+
     <!-- App CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+
+    <!-- App JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
   
-    <title>Your page title</title>
+    <title>Photobooth Manager</title>
     {% endblock %}
   </head>
   <body>
     <!-- Your page content -->
     {% block content %}
     <div class="container-fluid">
-      <div class="d-flex justify-content-center">
-        <div class="card my-3">
+      <div class=""> 
+        <!-- d-flex justify-content-center -->
+        <div class="card mt-3">
           <form class="form">
             <div class="card-body">
               <div class="row">
@@ -75,7 +87,6 @@
                         {{ ap_connections_cnt }} connected
                       </small>
                       <img src="{{ url_for('qr.create', data=wifi_active, box_size=10, border=0) }}" class="rounded mx-auto d-block my-2" alt="QRcode">
-                      
                     </div>
                   </div>
                   <div class="row justify-content-md-center">
@@ -96,6 +107,69 @@
             </div>
           </form>
         </div>
+
+        <div class="row">
+          <div class="card-group w-100">
+            <div class="col-md-6 mt-3">
+              <div id="background-card" class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-row bd-highlight mb-3">
+                    <div class="glider-contain shadow p-3 mb-5 bg-white rounded">
+                      <div class="glider background container-inline d-flex h-75"></div>
+                      <button class="glider-prev background-prev"><i class="fas fa-long-arrow-alt-left"></i></button>
+                      <button class="glider-next background-next"><i class="fas fa-long-arrow-alt-right"></i></button>
+                      <div id="dots_background"></div>
+                    </div>
+                  </div>
+                  <h5 class="card-title d-flex justify-content-center">Background</h5>
+                  <div class="card-text">
+                    <div class="d-flex justify-content-center">
+                      <button id="background-selectbutton" type="button" class="btn btn-success m-2">Select</button>
+                      <button id="background-deletebutton" type="button" class="btn btn-danger m-2">Delete</button>
+                      <button id="background-uploadbutton" type="button" class="btn btn-primary m-2">Upload</button>
+                    </div>
+                    <p class="d-flex justify-content-center mt-3">
+                      <small class="text-muted">Drop new background image anywhere to upload</small>
+                    </p>
+                    <div id="background-upload" class="alert alert-warning alert-dismissible show" role="alert" style="display: none">
+                      <strong class="d-flex justify-content-center alert-msg"></strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mt-3">
+              <div id="frame-card" class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-row bd-highlight mb-3">
+                    <div class="glider-contain shadow p-3 mb-5 bg-white rounded">
+                      <div class="glider frame container-inline d-flex h-75"></div>
+                      <button class="glider-prev frame-prev"><i class="fas fa-long-arrow-alt-left"></i></button>
+                      <button class="glider-next frame-next"><i class="fas fa-long-arrow-alt-right"></i></button>
+                      <div id="dots_frame"></div>
+                    </div>
+                  </div>
+                  <h5 class="card-title d-flex justify-content-center">Frame</h5>
+                  <div class="card-text">
+                    <div class="d-flex justify-content-center">
+                      <button id="frame-selectbutton" type="button" class="btn btn-success m-2">Select</button>
+                      <button id="frame-deletebutton" type="button" class="btn btn-danger m-2">Delete</button>
+                      <button id="frame-uploadbutton" type="button" class="btn btn-primary m-2">Upload</button>
+                    </div>
+                    <p class="d-flex justify-content-center mt-3">
+                      <small class="text-muted">Drop new frame anywhere to upload</small>
+                    </p>
+                    <div id="frame-upload" class="alert alert-warning alert-dismissible show" role="alert" style="display: none">
+                      <strong class="d-flex justify-content-center alert-msg"></strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dropzonejs-preview" style="display: none"></div>
+        <img id="glider-add">
       </div>
     </div>
     {% endblock %}

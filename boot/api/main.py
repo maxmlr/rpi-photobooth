@@ -24,16 +24,16 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 def ping_pong():
     return jsonify('pong!')
 
-# main root
-@app.route("/")
-def hello():
-    wifi_list = None
-    return render_template('index.html')
+@app.route("/dev")
+def set_bg():
+    return render_template('bgselect.html')
 
-@app.route("/manager/wifi/<string:action>", endpoint='wifi.scan')
-def get_wifis(action):
+@app.route("/", endpoint='setup.home')
+def home():
+    if (request.script_root).startswith('/api'):
+        return jsonify('photobooth_api:v1')
     template_args = {}
-    wifi_list = [ _ for _ in WPAcli().scan() if _['ssid'] not in ['', 'hidden'] ]
+    wifi_list = [] #[ _ for _ in WPAcli().scan() if _['ssid'] not in ['', 'hidden'] ]
     wifi_active = 'penthouse_2.4'
     ap_name = 'photobooth'
     ap_connections_cnt = 0
