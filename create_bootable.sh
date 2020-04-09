@@ -40,23 +40,28 @@ create_sd () {
     sudo dd \
         if="${dietpi}" \
         of="${device_sdcard}" bs=1m
-    sleep 5
+    echo "Waiting for remount..."
+    until [[ -d ${mountpoint} ]]
+    do
+        sleep 1
+    done
+    echo "Found: ${mountpoint},"
     cp -rf "${repo}"/boot/* ${mountpoint}
-    if [ ! -z ${wifi_config+x} ]
+    if [[ ! -z ${wifi_config} ]]
     then
         echo "Copying user defined wifi config: ${wifi_config}"
         cp -f ${wifi_config} ${mountpoint}
     else
         echo "Using default wifi config"
     fi
-    if [ ! -z ${photobooth_config+x} ]
+    if [[ ! -z ${photobooth_config} ]]
     then
         echo "Copying user defined photobooth config: ${photobooth_config}"
         cp -f ${photobooth_config} ${mountpoint}
     else
         echo "Using default photobooth config"
     fi
-    if [[ -d "${mountpoint}" ]]
+    if [[ -d ${mountpoint} ]]
     then
         echo "Unmounting..."
         diskutil umount ${mountpoint}
@@ -64,7 +69,7 @@ create_sd () {
     echo "Done."
 }
 
-if [ ! -z "${DEVICE_SDCARD+x}" ]
+if [[ ! -z ${DEVICE_SDCARD} ]]
 then
     read -r -n 1 -p "Formatting device ${DEVICE_SDCARD} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
     echo
@@ -74,7 +79,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     create_sd "${DEVICE_SDCARD}" "${MOUNT_POINT}"
 else
-    if [ -z "${DEVICE_SDCARD+x}" ]
+    if [[ ! -z ${DEVICE_SDCARD} ]]
     then
         read -r -p "Enter absolute path of mount point: " MOUNT_POINT
         read -r -n 1 -p "Formatting device ${DEVICE_SDCARD} [`mount | grep ${MOUNT_POINT}`] [Y/n]? "
