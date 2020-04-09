@@ -16,6 +16,10 @@ apt install -y \
     iptables \
     python3-dev \
     python3-venv \
+    uwsgi \
+    uwsgi-emperor \
+    uwsgi-plugin-python \
+    uwsgi-plugin-python3 \
     gphoto2 \
     cups \
     chromium-browser \
@@ -73,6 +77,13 @@ cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth <<
 /opt/photobooth/python
 EOF
 chown -R www-data:www-data /opt/photobooth/flask/api
+
+# register flask apps
+mv /opt/photobooth/flask/api/api.ini /etc/uwsgi/apps-available/
+ln -s /etc/uwsgi/apps-available/api.ini /etc/uwsgi/apps-enabled/
+
+# restart uwsgi
+systemctl restart uwsgi
 
 # install nodogsplash
 wget -O nodogsplash.tar.gz https://github.com/nodogsplash/nodogsplash/archive/v${NODOGSPLASH_RELEASE}.tar.gz && tar xzf nodogsplash.tar.gz && rm nodogsplash.tar.gz
