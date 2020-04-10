@@ -18,7 +18,6 @@ apt install -y \
     python3-venv \
     uwsgi \
     uwsgi-emperor \
-    uwsgi-plugin-python \
     uwsgi-plugin-python3 \
     gphoto2 \
     cups \
@@ -70,7 +69,7 @@ python3 -m venv /opt/photobooth/flask/apienv
 source /opt/photobooth/flask/apienv/bin/activate
 pip install --upgrade pip && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install flask flask-cors uwsgi bootstrap-flask Flask-FontAwesome qrcode[pil]
+ pip install flask flask-cors bootstrap-flask Flask-FontAwesome qrcode[pil]
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
@@ -205,6 +204,14 @@ www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] scan_results
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] scan
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] reconfigure
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] select_network
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] list_network
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] add_network
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] set_network [0-9] *
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] enable_network [0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] set update_config 1
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] save_config
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] select_network [0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] status
 EOF
 
 # Optimizations
