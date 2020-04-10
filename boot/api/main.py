@@ -5,6 +5,14 @@ from flask_fontawesome import FontAwesome
 from helpers import getQRCodeImage
 from wpa_cli import WPAcli
 
+"""
+request.form: key/value pairs of data sent through POST
+request.args: key/value pairs of data from the URL query string (through GET)
+request.values: generic key/value pair extraction (for both GET, POST)
+request.files: to obtain the sent files
+request.json: to obtain parsed JSON content
+request.method: HTTP method used by the request
+"""
 
 # configuration
 DEBUG = True
@@ -24,17 +32,15 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 def ping_pong():
     return jsonify('pong!')
 
-@app.route("/dev")
-def set_bg():
-    return render_template('bgselect.html')
-
 @app.route("/", endpoint='setup.home')
 def home():
     if (request.script_root).startswith('/api'):
         return jsonify('photobooth_api:v1')
     template_args = {}
-    wifi_list = [] #[ _ for _ in WPAcli().scan() if _['ssid'] not in ['', 'hidden'] ]
-    wifi_active = 'penthouse_2.4'
+    wpa = WPAcli()
+    wifi_list = [ _ for _ in wpa.scan() if _['ssid'] not in ['', 'hidden'] ]
+    wpa_status = wpa.status()
+    wifi_active = wpa_status.get('ssid', '')
     ap_name = 'photobooth'
     ap_connections_cnt = 0
     template_args['wifi_list'] = wifi_list
