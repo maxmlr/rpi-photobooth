@@ -100,6 +100,12 @@ cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
 sed -i -e "s/tty1/tty3/g" /boot/cmdline.txt
 sed -i 's/$/ splash logo.nologo vt.global_cursor_default=0 &/' /boot/cmdline.txt
 
+# install ngrok
+wget -O ngrok-stable-linux-arm.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip && \
+ unzip ngrok-stable-linux-arm.zip && \
+ rm ngrok-stable-linux-arm.zip
+ mv ngrok /usr/local/bin/
+
 # create webroot directory
 mkdir -p /var/www/html
 
@@ -183,6 +189,9 @@ mkdir -p /opt/photobooth/bin
 cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
 cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 cp /boot/scripts/health.sh /opt/photobooth/bin/health.sh
+
+# add bash profile
+cp /boot/scripts/profile_photobooth.sh /etc/profile.d/photobooth.sh
 
 # services
 # ...
