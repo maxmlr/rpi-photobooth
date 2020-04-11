@@ -6,3 +6,4 @@ adafruit-circuitpython-neopixel
 Pyro5
 pystemd
 qrcode[pil]
+fbpygif

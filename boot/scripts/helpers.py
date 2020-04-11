@@ -133,3 +133,11 @@ def getQRCodeImage(data, version=1, box_size=10, border=4, fit=True, fill_color=
         return file_object
     else:
         return img
+
+
+def source(file):
+    cmd = f"env -i bash -c 'set -o allexport; source {file}; set +o allexport && env'"
+    for line in run_command(cmd):
+        (key, _, value) = line.partition("=")
+        os.environ[key] = value
+    return dict(os.environ)

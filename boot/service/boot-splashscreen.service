@@ -1,0 +1,8 @@
+[Unit]
+Description=boot splash screen
+
+[Service]
+ExecStart=/opt/photobooth/python/framebuffer.py -img /opt/photobooth/img/boot.png
+
+[Install]
+WantedBy=basic.target

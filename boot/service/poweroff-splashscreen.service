@@ -1,0 +1,12 @@
+[Unit]
+Description=safe-to-power-off image
+DefaultDependencies=no
+After=umount.target
+Before=final.target
+
+[Service]
+ExecStart=/opt/photobooth/python/framebuffer.py -img /opt/photobooth/img/poweroff.png
+Type=oneshot
+
+[Install]
+WantedBy=shutdown.target

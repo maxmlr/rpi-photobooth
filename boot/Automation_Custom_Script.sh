@@ -95,10 +95,11 @@ make && make install
 cd -
 rm -rf nodogsplash-${NODOGSPLASH_RELEASE}
 cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
-# TODOs:
-# - test
-# - setup nodogsplash.service
-# - /etc/nodogsplash/htdocs/splash.html
+
+# setup boot splash screen
+sed -i -e "s/tty1/tty3/g" /boot/cmdline.txt
+console=tty3 root=PARTUUID=6c586e13-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet net.ifnames=0
+sed -i 's/$/ splash logo.nologo vt.global_cursor_default=0 &/' /boot/cmdline.txt
 
 # create webroot directory
 mkdir -p /var/www/html
@@ -182,6 +183,9 @@ cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 
 # services
 # ...
+
+# copy images
+cp -rf /boot/img/* /opt/photobooth/img/
 
 # copy binaries to /usr/bin
 for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`; chmod +x /usr/bin/`basename $binary .sh`; done
