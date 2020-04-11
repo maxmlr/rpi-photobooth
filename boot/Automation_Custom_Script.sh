@@ -146,7 +146,7 @@ chown -R www-data:www-data /var/www/html/config/my.config.inc.php
 # load v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
 #echo "bcm2835-v4l2" >> /etc/modules
 mv /etc/modprobe.d/dietpi-disable_rpi_camera.conf /etc/modprobe.d/dietpi-disable_rpi_camera.conf~
- 
+
 # access to USB device and printer and Pi Camera
 gpasswd -a www-data plugdev
 gpasswd -a www-data lp
@@ -182,6 +182,7 @@ cp /boot/scripts/dietpi-custom.sh /var/lib/dietpi/dietpi-autostart/custom.sh
 mkdir -p /opt/photobooth/bin
 cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
 cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
+cp /boot/scripts/health.sh /opt/photobooth/bin/health.sh
 
 # services
 # ...
