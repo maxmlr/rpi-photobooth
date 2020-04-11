@@ -219,6 +219,9 @@ cat > /etc/sudoers.d/gpio << EOF
 www-data ALL=(ALL) NOPASSWD:/usr/bin/gpio
 www-data ALL=(ALL) NOPASSWD:/usr/bin/relay
 EOF
+cat > /etc/sudoers.d/remote << EOF
+www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ngrok
+EOF
 cat > /etc/sudoers.d/api << EOF
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] scan_results
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] scan
