@@ -104,6 +104,9 @@ sed -i 's/$/ splash logo.nologo vt.global_cursor_default=0 &/' /boot/cmdline.txt
 # create webroot directory
 mkdir -p /var/www/html
 
+# copy captive protal
+cp -rf /boot/captive /var/www/html
+
 # move default files
 mkdir /var/www/dietpi && mv /var/www/*.php /var/www/*.html -t /var/www/dietpi
 
