@@ -98,7 +98,6 @@ cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
 
 # setup boot splash screen
 sed -i -e "s/tty1/tty3/g" /boot/cmdline.txt
-console=tty3 root=PARTUUID=6c586e13-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet net.ifnames=0
 sed -i 's/$/ splash logo.nologo vt.global_cursor_default=0 &/' /boot/cmdline.txt
 
 # create webroot directory
