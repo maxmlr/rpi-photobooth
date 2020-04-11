@@ -4,9 +4,9 @@ After=graphical.target
 Wants=graphical.target
 
 [Service]
+Type=simple
 Environment=DISPLAY=:0.0
 Environment=XAUTHORITY=/root/.Xauthority
-Type=simple
 ExecStart=/opt/photobooth/bin/start-kiosk.sh
 ExecReload=/bin/kill -HUP $MAINPID
 #Restart=on-failure

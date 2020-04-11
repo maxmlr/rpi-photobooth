@@ -42,9 +42,13 @@ apt install -y \
 cat /boot/config/dietpi-services_include_exclude >> /DietPi/dietpi/.dietpi-services_include_exclude
 
 # Edit /DietPi/config.txt:
-# - set HDMI monitor resolution
-[[ -z "$HDMI_OUT" ]] || echo "$HDMI_OUT" >> /DietPi/config.txt
-[[ -z "$DT_OVERLAY" ]] || echo "$DT_OVERLAY" >> /DietPi/config.txt
+# - add photobooth.conf
+echo ""  >> /DietPi/config.txt
+echo "#-------Photobooth---------"  >> /DietPi/config.txt
+for config in "${DIETPI_CONFIG[@]}"
+do
+	echo "$config"  >> /DietPi/config.txt
+done
 # - enable Pi Camera
 sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
 # - adjust memory split
@@ -136,7 +140,7 @@ cd -
 cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc.php
 
-# Loading the v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
+# load v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
 #echo "bcm2835-v4l2" >> /etc/modules
 mv /etc/modprobe.d/dietpi-disable_rpi_camera.conf /etc/modprobe.d/dietpi-disable_rpi_camera.conf~
  
@@ -168,33 +172,33 @@ cd -
 # add xorg settings
 cp /boot/config/xinitrc /root/.xinitrc
 
-# Add /var/lib/dietpi/dietpi-autostart/custom.sh
+# add /var/lib/dietpi/dietpi-autostart/custom.sh
 cp /boot/scripts/dietpi-custom.sh /var/lib/dietpi/dietpi-autostart/custom.sh
 
-# Add scripts
+# add scripts
 mkdir -p /opt/photobooth/bin
 cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
 cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 
-# Services
+# services
 # ...
 
-# Copy binaries to /usr/bin
+# copy binaries to /usr/bin
 for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`; chmod +x /usr/bin/`basename $binary .sh`; done
 
-# Copy python scripts to /opt/photobooth/python
+# copy python scripts to /opt/photobooth/python
 mkdir -p /opt/photobooth/python
 for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript`; chmod +x /opt/photobooth/python/`basename $pyscript`; done
 
-# Add symlinks to  /usr/local/bin/
+# add symlinks to  /usr/local/bin/
 ln -s /opt/photobooth/python/ctl_ledpanel.py /usr/local/bin/ledpanel
 
-# Copy services to /lib/systemd/system/, reload daemon and enable services
+# copy services to /lib/systemd/system/, reload daemon and enable services
 for service in /boot/service/*.service; do cp $service /lib/systemd/system/`basename $service`; chmod -x /lib/systemd/system/`basename $service`; done
 systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 
-# Add sudo permissions
+# add sudo permissions
 cat > /etc/sudoers.d/gpio << EOF
 www-data ALL=(ALL) NOPASSWD:/usr/bin/gpio
 www-data ALL=(ALL) NOPASSWD:/usr/bin/relay
@@ -214,10 +218,10 @@ www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] select_network [0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] status
 EOF
 
-# Optimizations
+# optimizations
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
 
-# Cleanup
+# cleanup
 apt-get clean && apt-get autoremove -y
 
 # ---- DEV ---- #
