@@ -105,6 +105,7 @@ wget -O ngrok-stable-linux-arm.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-st
  unzip ngrok-stable-linux-arm.zip && \
  rm ngrok-stable-linux-arm.zip
  mv ngrok /usr/local/bin/
+ngrok authtoken $NGROK_TOKEN
 
 # create webroot directory
 mkdir -p /var/www/html
