@@ -1,0 +1,16 @@
+[Unit]
+Description=Share local port(s) with ngrok
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+Environment="SCRIPT_ARGS=%I"
+ExecStart=/opt/ngrok/ngrok start --config /opt/ngrok/ngrok.yml $SCRIPT_ARGS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+IgnoreSIGPIPE=true
+Restart=always
+RestartSec=3
+
+[Install]
+#WantedBy=multi-user.target

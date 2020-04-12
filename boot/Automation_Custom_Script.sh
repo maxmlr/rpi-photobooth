@@ -101,11 +101,15 @@ sed -i -e "s/tty1/tty3/g" /boot/cmdline.txt
 sed -i 's/$/ splash logo.nologo vt.global_cursor_default=0 &/' /boot/cmdline.txt
 
 # install ngrok
+mkdir -p /opt/ngrok
 wget -O ngrok-stable-linux-arm.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip && \
  unzip ngrok-stable-linux-arm.zip && \
  rm ngrok-stable-linux-arm.zip
- mv ngrok /usr/local/bin/
-ngrok authtoken $NGROK_TOKEN
+mv ngrok /opt/ngrok/
+ln -s /opt/ngrok/ngrok /usr/local/bin/ngrok
+cp /boot/config/ngrok.yml /opt/ngrok/
+sed -i -e "s/authtoken:.*/authtoken: $NGROK_TOKEN/g" /opt/ngrok/ngrok.yml
+#sed -i -e "s/metadata:.*/metadata: '{\"device\": \"<photobooth-device-id>\"}'/g" /opt/ngrok/ngrok.yml
 
 # create webroot directory
 mkdir -p /var/www/html

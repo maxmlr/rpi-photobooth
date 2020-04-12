@@ -1,0 +1,19 @@
+authtoken: <add_your_token_here>
+console_ui: false
+log_format: logfmt
+log: /var/log/ngrok.log
+region: us # or eu
+web_addr: false
+metadata: '{"device": "<photobooth-device-id>"}'
+tunnels:
+  ssh:
+    proto: tcp
+    addr: 22
+    inspect: false
+  http:
+    proto: http
+    addr: 80
+    inspect: false
+    bind_tls: false
+    # hostname: example.com
+    # auth: "user:secretpassword"
