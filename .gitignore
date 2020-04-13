@@ -351,3 +351,8 @@ MigrationBackup/
 
 # Local dev
 dev/
+
+# Laravel
+laravel/www
+laravel.env
+auth.json
