@@ -1,0 +1,52 @@
+{
+    "name": "maxmlr/rpi-photobooth-manager",
+    "description": "Manager interface for rpi-photobooth",
+    "keywords": ["laravel", "rpi-photobooth"],
+    "type": "project",
+    "require": {
+        "laravel/framework": "^7.0",
+        "laravelcollective/html": "^6.0",
+        "yajra/laravel-datatables-oracle": "^9.9",
+        "laravel/ui": "^2.0",
+        "laravel/slack-notification-channel": "^2.0",
+        "laravel/socialite": "^4.2",
+        "cakephp/filesystem": "^4.0",
+        "arcanedev/log-viewer": "^7.0",
+        "barryvdh/laravel-debugbar": "^3.2",
+        "spatie/laravel-permission": "^3.2",
+        "spatie/laravel-rate-limited-job-middleware": "^1.2",
+        "genealabs/laravel-caffeine": "^7.0",
+        "dougsisk/laravel-country-state": "^3.0",
+        "maennchen/zipstream-php": "^1.2",
+        "stevebauman/location": "^5.0",
+        "sunra/php-simple-html-dom-parser": "^1.5",
+        "usmanhalalit/laracsv": "^2.0",
+        "components/jquery": "^3.4"
+    },
+    "require-dev": {
+        
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maximilian Miller",
+            "email": "miller.deutschland@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "RpiManager\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RpiManager\\RpiManagerServiceProvider"
+            ],
+            "aliases": {
+                "RpiManager": "RpiManager\\RpiManagerFacade"
+            }
+        }
+    }
+}

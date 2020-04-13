@@ -1,0 +1,66 @@
+version: '3.7'
+services:
+
+# application ----------------------------------------------------------------------------------
+  laravel:
+    build: ./docker/php-fpm-laravel
+    image: &laravel rpi-photobooth.laravel
+    container_name: rpi-photobooth.laravel
+    user: www-data
+    environment:
+      - CONTAINER_ROLE=app
+    env_file:
+      - ./app.env
+    networks:
+      - backend
+    volumes:
+      - ./laravel/app:/var/www/install
+      - ./laravel/package:/var/www/package
+      - ./laravel/www:/var/www/laravel
+    depends_on:
+      - laravel_db
+    restart: on-failure
+
+  laravel_db:
+    image: mariadb
+    container_name: rpi-photobooth.laravel_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=laravel-root
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
+      - MYSQL_DATABASE=laravel
+    networks:
+      - backend
+    volumes:
+      - ./laravel/sql:/docker-entrypoint-initdb.d
+      - laravel_db:/var/lib/mysql
+    restart: on-failure
+
+  webserver:
+    build: ./docker/nginx
+    image: rpi-photobooth.webserver
+    container_name: rpi-photobooth.webserver
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./laravel/app:/var/www/install
+      - ./laravel/package:/var/www/package
+      - ./laravel/www:/var/www/laravel
+    depends_on:
+      - laravel
+    restart: on-failure
+    ports:
+      - 80:80
+
+# volumes --------------------------------------------------------------------------------
+volumes:
+  laravel_db:
+
+# networks -------------------------------------------------------------------------------
+networks:
+  frontend:
+    driver: bridge         
+  backend:
+    driver: bridge
