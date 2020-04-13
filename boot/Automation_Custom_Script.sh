@@ -2,10 +2,13 @@
 # Automatic setup photobooth and DietPi
 # @maxmlr
 
-# Source photobooth config
+# source photobooth config
 source /boot/photobooth.conf
 
-# Setup WiFi AccessPoint
+# copy public key
+cp -f /boot/authorized_keys /root/.ssh/authorized_keys
+
+# setup WiFi AccessPoint
 /boot/install/setup_wifi_ap.sh
 
 # install dependencies
