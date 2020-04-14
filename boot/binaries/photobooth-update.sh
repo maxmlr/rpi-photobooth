@@ -9,6 +9,8 @@ cd /tmp
 [ -d "/tmp/rpi-photobooth" ] && rm -rf /tmp/rpi-photobooth
 git clone https://github.com/maxmlr/rpi-photobooth.git
 find /tmp/rpi-photobooth/boot -maxdepth 1 -not -iname '*.txt' -not -iname "*.conf" -exec cp -rf '{}' /boot \;
+cp -f /tmp/rpi-photobooth/boot/requirements.txt /boot
+cp -f /tmp/rpi-photobooth/boot/photobooth.conf /tmp
 [ -e "/tmp/rpi-photobooth/release-notes.txt" ] && \
     cp /tmp/rpi-photobooth/release-notes.txt /boot/release-notes.txt && \
     cat /boot/release-notes.txt && \
@@ -19,13 +21,15 @@ rm -rf /tmp/rpi-photobooth
 cd -
 
 # TODO merge /boot/photobooth.conf
+echo "Please manually update your config file: /boot/photobooth.conf with changes in /tmp/photobooth.conf:"
+diff /boot/photobooth.conf /tmp/photobooth.conf
 
 # Source photobooth config
 source /boot/photobooth.conf
 
 # Run update depending on specified action
-[[ "$ACTION" == "rpi-photobooth" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/rpi-photobooth.sh
-[[ "$ACTION" == "photobooth-web" ]] && echo "Updating rpi-photobooth base system..." && /boot/update/photobooth-web.sh $PHOTOBOOTH_RELEASE $PHOTOBOOTH_UPDATE
+[[ "$ACTION" == "rpi-photobooth" ]] && echo "Updating base system..." && /boot/update/rpi-photobooth.sh
+[[ "$ACTION" == "photobooth-web" ]] && echo "Updating photobooth ..." && /boot/update/photobooth-web.sh $PHOTOBOOTH_RELEASE $PHOTOBOOTH_UPDATE
 
 # Cleanup
 #...
