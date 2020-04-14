@@ -248,6 +248,11 @@ systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 for service in /boot/service/*.timer; do systemctl enable `basename $service`; done
 
+if [[ "$DEVICE_TYPE" = "client" ]]; then
+# disable services not required for client
+systemctl disable api nodogsplash
+fi
+
 # add sudo permissions
 cat > /etc/sudoers.d/gpio << EOF
 www-data ALL=(ALL) NOPASSWD:/usr/bin/gpio

@@ -214,6 +214,7 @@ cp /boot/scripts/profile_photobooth.sh /etc/profile.d/photobooth.sh
 # ...
 
 # copy images
+mkdir -p /opt/photobooth/img/
 cp -rf /boot/img/* /opt/photobooth/img/
 
 # copy binaries to /usr/bin
