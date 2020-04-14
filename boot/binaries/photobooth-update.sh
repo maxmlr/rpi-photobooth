@@ -37,4 +37,6 @@ diff /tmp/photobooth.conf /boot/photobooth.conf
 # Reboot
 echo
 read -p "-> Press enter to reboot <-"
+echo
 echo "Rebooting now..." && reboot
+echo
