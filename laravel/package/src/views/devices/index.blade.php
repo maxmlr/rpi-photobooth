@@ -48,7 +48,11 @@
                             @if($device->control_request == '0')
                                 <i class="far fa-check-circle ml-3" style="color: lightgrey"></i>
                             @elseif($device->control_request == '1')
-                                <i class="far fa-check-circle ml-3" style="color: Dodgerblue"></i>
+                                @if(empty($device->control_ssh))
+                                    <i class="fas fa-spinner fa-spin ml-3" style="color: Dodgerblue"></i>
+                                @else
+                                    <i class="far fa-check-circle ml-3" style="color: Dodgerblue"></i>
+                                @endif
                             @else
                                 <i class="far fa-times-circle ml-3" style="color: red"></i>
                             @endif
