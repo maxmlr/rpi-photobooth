@@ -20,10 +20,6 @@ echo
 rm -rf /tmp/rpi-photobooth
 cd -
 
-# TODO merge /boot/photobooth.conf
-echo "Please manually update your config file: /boot/photobooth.conf with changes in /tmp/photobooth.conf:"
-diff /boot/photobooth.conf /tmp/photobooth.conf
-
 # Source photobooth config
 source /boot/photobooth.conf
 
@@ -34,6 +30,11 @@ source /boot/photobooth.conf
 # Cleanup
 #...
 
+# TODO merge /boot/photobooth.conf
+echo "Please manually update your config file: /boot/photobooth.conf with changes in /tmp/photobooth.conf:"
+diff /tmp/photobooth.conf /boot/photobooth.conf
+
 # Reboot
+echo
 read -p "-> Press enter to reboot <-"
 echo "Rebooting now..." && reboot
