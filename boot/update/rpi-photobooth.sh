@@ -278,9 +278,11 @@ www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] select_network [0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] status
 EOF
 fi
+
 if [[ "$DEVICE_TYPE" = "server" ]]; then
 # optimizations
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
+fi
 
 # cleanup
 apt-get clean && apt-get autoremove -y
