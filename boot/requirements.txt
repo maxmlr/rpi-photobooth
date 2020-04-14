@@ -7,3 +7,5 @@ Pyro5
 pystemd
 qrcode[pil]
 fbpygif
+requests
+psutil

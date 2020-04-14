@@ -2,6 +2,11 @@
 # Automatic setup photobooth and DietPi
 # @maxmlr
 
+# get device id and model
+echo "DEVICE_ID=\"`cat /proc/cpuinfo | grep --ignore-case serial | cut -d ":" -f2 | sed -e 's/^[[:space:]]*//'`\"" >> /boot/photobooth.conf 
+echo "DEVICE_MODEL=\"`cat /proc/cpuinfo | grep Model | cut -d ":" -f2 | sed -e 's/^[[:space:]]*//'`\"" >> /boot/photobooth.conf
+echo "DEVICE_TYPE=\"server\"" >> /boot/photobooth.conf
+
 # source photobooth config
 source /boot/photobooth.conf
 
@@ -32,7 +37,8 @@ apt install -y \
     mosquitto-clients \
     xdotool \
     rsync \
-    qrencode
+    qrencode \
+    jq
 
 # optional: if photobooth should be build from source, uncomment the next command.
 # note: if the python uinput library should be used for remote trigger (send key_press)
@@ -76,7 +82,7 @@ python3 -m venv /opt/photobooth/flask/apienv
 source /opt/photobooth/flask/apienv/bin/activate
 pip install --upgrade pip && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install flask flask-cors bootstrap-flask Flask-FontAwesome qrcode[pil]
+ pip install flask flask-cors bootstrap-flask Flask-FontAwesome
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
@@ -219,8 +225,10 @@ ln -s /opt/photobooth/python/ctl_ledpanel.py /usr/local/bin/ledpanel
 
 # copy services to /lib/systemd/system/, reload daemon and enable services
 for service in /boot/service/*.service; do cp $service /lib/systemd/system/`basename $service`; chmod -x /lib/systemd/system/`basename $service`; done
+for service in /boot/service/*.timer; do cp $service /lib/systemd/system/`basename $service`; chmod -x /lib/systemd/system/`basename $service`; done
 systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
+for service in /boot/service/*.timer; do systemctl enable `basename $service`; done
 
 # add sudo permissions
 cat > /etc/sudoers.d/gpio << EOF
@@ -228,7 +236,8 @@ www-data ALL=(ALL) NOPASSWD:/usr/bin/gpio
 www-data ALL=(ALL) NOPASSWD:/usr/bin/relay
 EOF
 cat > /etc/sudoers.d/remote << EOF
-www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ngrok
+www-data ALL=(ALL) NOPASSWD:/bin/systemctl start ngrok*
+www-data ALL=(ALL) NOPASSWD:/bin/systemctl stop ngrok*
 EOF
 cat > /etc/sudoers.d/api << EOF
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] scan_results

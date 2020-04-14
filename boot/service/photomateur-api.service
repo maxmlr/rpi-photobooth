@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs Photomateur API
+Wants=photomateur-api.timer
+
+[Service]
+ExecStart=/opt/photobooth/python/photomateur_api.py
+WorkingDirectory=/opt/photobooth/python
+
+[Install]
+WantedBy=multi-user.target

@@ -1,9 +1,12 @@
 import os
 import io
+import re
 import shlex
 import subprocess
 import time
 import qrcode
+import fileinput
+import psutil
 from functools import wraps
 
 
@@ -141,3 +144,18 @@ def source(file):
         (key, _, value) = line.partition("=")
         os.environ[key] = value
     return dict(os.environ)
+
+
+def inlineReplace(file, regex, replace, inplace=True):   
+    pattern = re.compile(regex)
+    for line in fileinput.input(file, inplace=inplace):
+        if line.strip():
+            if pattern.search(line):
+                print(replace)
+            else:
+                print(line, end='')
+        else:
+            print(line.strip())
+
+def isRunning(program_name):
+    return program_name in (p.name() for p in psutil.process_iter())

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run photomateur-api every minute
+Requires=photomateur-api.service
+
+[Timer]
+Unit=photomateur-api.service
+OnUnitInactiveSec=1m
+#RandomizedDelaySec=1m
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

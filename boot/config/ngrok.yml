@@ -3,7 +3,6 @@ console_ui: false
 log_format: logfmt
 log: /var/log/ngrok.log
 region: us # or eu
-web_addr: false
 metadata: '{"device": "<photobooth-device-id>"}'
 tunnels:
   ssh:
