@@ -22,7 +22,7 @@ wget -O photobooth_update.tar.gz https://github.com/maxmlr/photobooth/archive/ma
 cp -r photobooth-master/* . && rm -rf photobooth-master/
 echo "v${PHOTOBOOTH_RELEASE} [${PHOTOBOOTH_UPDATE}]" > /var/www/html/version.html
 chown -R www-data:www-data /var/www/
-cd -
+cd - > /dev/null
 
 # photobooth config
 cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc_latest.php

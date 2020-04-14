@@ -101,7 +101,7 @@ systemctl restart uwsgi
 wget -O nodogsplash.tar.gz https://github.com/nodogsplash/nodogsplash/archive/v${NODOGSPLASH_RELEASE}.tar.gz && tar xzf nodogsplash.tar.gz && rm nodogsplash.tar.gz
 cd nodogsplash-${NODOGSPLASH_RELEASE}
 make && make install
-cd -
+cd - > /dev/null
 rm -rf nodogsplash-${NODOGSPLASH_RELEASE}
 cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
 
@@ -160,7 +160,7 @@ cp -r photobooth-master/* . && rm -rf photobooth-master/
 # yarn build
 echo "v${PHOTOBOOTH_RELEASE} [${PHOTOBOOTH_UPDATE}]" > /var/www/html/version.html
 chown -R www-data:www-data /var/www/
-cd -
+cd - > /dev/null
 
 # photobooth config
 cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
@@ -188,7 +188,7 @@ cp /boot/config/nginx-photobooth-manager.conf /etc/nginx/sites-dietpi/photobooth
 cd /opt && git clone https://github.com/maxmlr/mqtt-launcher.git
 cp /boot/config/photobooth.mqtt.conf /opt/mqtt-launcher/launcher.photobooth.conf
 chmod +x /opt/mqtt-launcher/mqtt-launcher.py
-cd -
+cd - > /dev/null
 
 # chromium settings
 # TODO check if required
@@ -266,4 +266,4 @@ apt-get clean && apt-get autoremove -y
 # ---- DEV ---- #
 #cd /tmp
 #wget https://project-downloads.drogon.net/wiringpi-latest.deb && dpkg -i wiringpi-latest.deb
-#cd -
+#cd - > /dev/null

@@ -18,7 +18,7 @@ cp -f /tmp/rpi-photobooth/boot/photobooth.conf /tmp
 echo "Release notes can be found at: /boot/release-notes.txt"
 echo
 rm -rf /tmp/rpi-photobooth
-cd -
+cd - > /dev/null 
 
 # Source photobooth config
 source /boot/photobooth.conf
