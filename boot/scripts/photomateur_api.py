@@ -75,11 +75,17 @@ class PhotomateurAPI:
                         self.post('device/control/callback', {'status': 'up', 'tunnels': json.dumps(tunnels)})
                     else:
                         self.post('device/control/callback', {'status': 'error', 'tunnels': json.dumps({})})
+                elif response_msg == 1 and status == 'active':
+                    tunnels_detailed = requests.get('http://127.0.0.1:4040/api/tunnels').json()['tunnels']
+                    tunnels = dict([(t['public_url'].split(":")[0], t['public_url']) for t in tunnels_detailed])
+                    self.post('device/control/callback', {'status': 'up', 'tunnels': json.dumps(tunnels)})
                 elif response_msg == 0 and status == 'active':
                     print ('Exiting remote control...')
                     cmd = 'systemctl stop ngrok@"ssh\\x20http".service'
                     run_command(cmd)
                     self.post('device/control/callback', {'status': 'down', 'tunnels': json.dumps({})})
+                elif response_msg == 0 and status != 'active':
+                    pass
         except Exception as err:
             print(f'PhotomateurAPI ERROR: {err}')
 
