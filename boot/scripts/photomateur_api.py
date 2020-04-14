@@ -39,7 +39,7 @@ class PhotomateurAPI:
         status = False
         try:
             status = check_connectivity_()
-        except RuntimeError as err:
+        except Exception as err:
             print(f'PhotomateurAPI ERROR: {err}')
         finally:
             # print(f'PhotomateurAPI connected: {status}')

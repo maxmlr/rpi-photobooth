@@ -8,6 +8,8 @@ Route::get('/', function () {
     return view('rpimanager::welcome');
 });
 
+Route::get('/home', 'RpiManager\Http\Controllers\DeviceController@index')->name('home')->middleware(['web','auth']);
+
 // Google Auth
 // Route::get('auth/google', 'App\Http\Controllers\Auth\AuthController@redirectToGoogle')->middleware('web');
 // Route::get('auth/google/callback', 'App\Http\Controllers\Auth\AuthController@handleGoogleCallback')->middleware('web');
