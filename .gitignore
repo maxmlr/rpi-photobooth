@@ -356,3 +356,6 @@ dev/
 laravel/www
 laravel.env
 auth.json
+laravel/app/production.env
+laravel/app/db_scheme_with_admin.sql
+laravel/app/db_scheme.sql

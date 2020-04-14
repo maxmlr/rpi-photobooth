@@ -16,5 +16,6 @@ return [
     'timezone' => env('TIMEZONE', 'UTC'),
     'gtag' => env('GTAG', 'UA-xxxxxxxx-x'),
     'caffeine_route'  => env('CAFFEINE_ROUTE', 'genealabs/laravel-caffeine/drip'),
+    'slack_webhook_url' => env('SLACK_WEBHOOK_URL', 'https://hooks.slack.com/services/'),
 
 ];

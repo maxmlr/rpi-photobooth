@@ -20,8 +20,8 @@ class RpiManagerServiceProvider extends ServiceProvider
     {
         $this->app->booted(function () {
             Config::set('services.google', Config::get('rpimanager.services.google'));
-            Config::set('genealabs-laravel-caffeine.route', Config::get('rpimanager.caffeine_route'));
-            Config::set('app.timezone', Config::get('rpimanager.timezone'));
+            Config::set('genealabs-laravel-caffeine.route', Config::get('main.caffeine_route'));
+            Config::set('app.timezone', Config::get('main.timezone'));
             date_default_timezone_set(Config::get('app.timezone'));
             $this->loadRoutesFrom(__DIR__.'/routes/web.php');
             $this->loadRoutesFrom(__DIR__.'/routes/api.php');
@@ -42,16 +42,13 @@ class RpiManagerServiceProvider extends ServiceProvider
         ], 'seeds');
 
         $this->publishes([
-            __DIR__ . '/config' => config_path('rpimanager')
+            __DIR__ . '/config/package' => config_path('rpimanager'),
+            __DIR__ . '/config/laravel' => config_path(),
+            __DIR__ . '/config/3rdparty' => config_path()
         ], 'config');
 
         $this->publishes([
-            __DIR__ . '/config/3rdparty' => config_path()
-        ], '3rdparty');
-
-        $this->publishes([
             __DIR__.'/models/User.php' => base_path('app/User.php'),
-            __DIR__.'/Http/Controllers/Auth' => base_path('app/Http/Controllers/Auth')
         ], 'auth');
 
         $this->publishes([
@@ -77,7 +74,7 @@ class RpiManagerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/config/main.php', 'rpimanager'
+            __DIR__ . '/config/package/main.php', 'main'
         );
 
         $this->commands([

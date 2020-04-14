@@ -21,7 +21,7 @@ npm run dev
 
 echo "Publishing RpiManager package..."
 # publish RpiManager
-php artisan vendor:publish --provider="RpiManager\RpiManagerServiceProvider" --force --tag migrations --tag seeds --tag kernels --tag assets
+php artisan vendor:publish --provider="RpiManager\RpiManagerServiceProvider" --force --tag config --tag auth --tag migrations --tag seeds --tag kernels --tag assets
 
 echo "Installing and publishing required packages..."
 # publish debugbar
@@ -62,7 +62,7 @@ cd /var/www/laravel
 
 # --------------- js libraries ---------------
 echo "Updating javascript and css libraries..."
-vendor/maxmlr/RpiManager/update_libs.sh
+/var/www/install/update_libs.sh
 
 echo "Initializing..."
 # php artisan optimize

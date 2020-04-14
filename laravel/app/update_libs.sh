@@ -30,6 +30,8 @@ cp_from() {
     cp $from $to
 }
 
+cd /var/www/laravel
+
 # # jQuery
 # cp_from vendor/components/jquery/jquery.min.js public/vendor/rpi-photobooth-manager/js/jquery.min.js
 # # kegg
@@ -70,3 +72,5 @@ cp_from() {
 # get_zip https://github.com/d3/d3/releases/download/v4.12.2/d3.zip d3.min.js:public/vendor/rpi-photobooth-manager/js
 # # moment
 # get_js http://momentjs.com/downloads/moment.js public/vendor/rpi-photobooth-manager/js/moment.js
+
+cd - > /dev/null
