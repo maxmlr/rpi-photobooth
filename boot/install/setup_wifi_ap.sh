@@ -65,7 +65,7 @@ sed -i -e "s/<MAC_ADDRESS>/$MAC_ADDRESS_UPDATED/g" /etc/network/interfaces
 # https://github.com/raspberrypi/linux/issues/2453#issuecomment-610206733
 # https://community.cypress.com/docs/DOC-19375
 # https://community.cypress.com/servlet/JiveServlet/download/19375-1-53475/cypress-fmac-v5.4.18-2020_0402.zip
-mv /lib/firmware/brcm/brcmfmac43455-sdio.bin~ /lib/firmware/brcm/brcmfmac43455-sdio.bin~
+mv /lib/firmware/brcm/brcmfmac43455-sdio.bin /lib/firmware/brcm/brcmfmac43455-sdio.bin~
 mv /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob~
 cp /boot/firmware/wifi/brcmfmac43455-sdio.bin /lib/firmware/brcm/
 cp /boot/firmware/wifi/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/
