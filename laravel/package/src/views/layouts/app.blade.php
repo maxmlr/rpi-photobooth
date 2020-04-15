@@ -13,6 +13,8 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('vendor/rpi-photobooth-manager/js/jquery-3.5.0.min.js') }}"></script>
     <script src="{{ asset('vendor/rpi-photobooth-manager/js/all.min.js') }}" defer></script>
+    <script src="{{ asset('vendor/rpi-photobooth-manager/js/bootstrap-editable.min.js') }}" defer></script>
+    <script src="{{ asset('vendor/rpi-photobooth-manager/js/moment.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -21,7 +23,9 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/rpi-photobooth-manager/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/rpi-photobooth-manager/css/bootstrap-editable.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/rpi-photobooth-manager/css/app.css') }}" rel="stylesheet">
+    @stack('stylesheets')
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('main.gtag') }}"></script>
@@ -31,7 +35,25 @@
         gtag('js', new Date());
         gtag('config', '{{ config('main.gtag') }}');
     </script>
+    @stack('scripts')
+	<script>
+		$(document).ready(function () {
+	            $.ajaxSetup({
+	                headers: {
+	                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+	                }
+	            });
 
+	            $('.xedit').editable({
+	                url: '{{url("contacts/update")}}',
+	                title: 'Update',
+	                success: function (response, newValue) {
+	                    console.log('Updated', response)
+	                }
+	            });
+
+	    })
+	</script>
     <!-- Ajax setup -->
     <script>
         $(function() {

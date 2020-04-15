@@ -27,7 +27,7 @@ Route::middleware('api')->prefix('api')->group(function () {
 });
 
 Route::middleware('auth:rpi')->prefix('api')->group(function () {
-    Route::post('v1/device/report', 'RpiManager\Http\Controllers\DeviceController@update');
+    Route::post('v1/device/report', 'RpiManager\Http\Controllers\DeviceController@report');
     Route::post('v1/device/control/status', 'RpiManager\Http\Controllers\DeviceController@control_status');
     Route::post('v1/device/control/callback', 'RpiManager\Http\Controllers\DeviceController@control_callback');
 });

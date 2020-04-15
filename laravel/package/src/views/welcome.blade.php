@@ -6,8 +6,12 @@
 
         <title>Laravel</title>
 
+        <!-- Scripts -->
+        <script src="{{ asset('vendor/rpi-photobooth-manager/js/all.min.js') }}" defer></script>
+
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <link href="{{ asset('vendor/rpi-photobooth-manager/css/all.min.css') }}" rel="stylesheet">
 
         <!-- Styles -->
         <style>
@@ -85,7 +89,7 @@
                 </div>
 
                 <div class="links">
-                    <a href="login">Login</a>
+                    <a href="login">login</a>
                 </div>
             </div>
         </div>

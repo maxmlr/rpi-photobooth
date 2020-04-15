@@ -65,6 +65,32 @@ class DeviceController extends Controller
      */
     public function update(Request $request, Device $device)
     {
+        if($request->ajax()) {
+	       	$update = Device::find($request->input('pk'))->update([$request->input('name') => $request->input('value')]);
+	        return response()->json(['success' => $update]);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Device  $device
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Device $device)
+    {
+        //
+    }
+
+    /**
+     * Update the reporting resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Device  $device
+     * @return \Illuminate\Http\Response
+     */
+    public function report(Request $request, Device $device)
+    {        
         $this->validate($request, [
             'device_id'=>'required|string|exists:devices',
             'status'=>'string|max:20|nullable',
@@ -79,17 +105,6 @@ class DeviceController extends Controller
         return response()->json([
             'message' => 'success'
         ]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Device  $device
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Device $device)
-    {
-        //
     }
 
     /**
@@ -150,4 +165,19 @@ class DeviceController extends Controller
         ]);
     }
 
+    /**
+     * Get all devices.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function fetch_updates(Request $request)
+    {
+        if($request->ajax()) {
+            $date = new \DateTime;
+            $date->modify('-50 days');
+            $formatted_date = $date->format('Y-m-d H:i:s');
+            return response()->json(Device::where('updated_at','>=',$formatted_date)->get());
+        }
+    }
 }

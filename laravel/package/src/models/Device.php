@@ -16,7 +16,7 @@ class Device extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'device_id', 'model', 'type'
+        'device_id', 'model', 'type', 'description', 'control_request'
     ];
 
     /**

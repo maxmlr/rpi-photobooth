@@ -18,6 +18,7 @@ class CreateDevicesTable extends Migration
             $table->string('device_id');
             $table->string('model');
             $table->string('type');
+            $table->string('description')->nullable();
             $table->string('status')->nullable();
             $table->boolean('control_request')->default(false);
             $table->string('control_ssh')->nullable();

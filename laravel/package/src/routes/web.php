@@ -20,6 +20,7 @@ Route::resource('roles', 'RpiManager\Http\Controllers\RoleController')->middlewa
 Route::resource('permissions', 'RpiManager\Http\Controllers\PermissionController')->middleware(['web','auth']);
 
 // Devices
+Route::get('devices/fetch', 'RpiManager\Http\Controllers\DeviceController@fetch_updates')->name('devices.fetch')->middleware(['web','auth']);
 Route::resource('devices', 'RpiManager\Http\Controllers\DeviceController')->middleware(['web','auth']);
 
 #Route::post('/upload', 'RpiManager\Http\Controllers\DependencyUploadController@uploadFile')->middleware('web');
