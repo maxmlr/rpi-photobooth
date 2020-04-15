@@ -46,7 +46,11 @@
                         </td>
                         <td align="center">
                             @if($device->control_request == '0')
-                                <i class="far fa-check-circle ml-3" style="color: lightgrey"></i>
+                                @if(empty($device->control_ssh))
+                                    <i class="far fa-check-circle ml-3" style="color: lightgrey"></i>
+                                @else
+                                    <i class="fas fa-spinner fa-spin ml-3" style="color: red"></i>
+                                @endif
                             @elseif($device->control_request == '1')
                                 @if(empty($device->control_ssh))
                                     <i class="fas fa-spinner fa-spin ml-3" style="color: Dodgerblue"></i>
