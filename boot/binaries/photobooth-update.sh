@@ -23,6 +23,17 @@ cd - > /dev/null
 # Source photobooth config
 source /boot/photobooth.conf
 
+if [[ "$DEVICE_TYPE" = "client" ]]; then
+cd /tmp
+[ -d "/tmp/rpi-photobooth-client" ] && rm -rf /tmp/rpi-photobooth-client
+git clone https://github.com/maxmlr/rpi-photobooth-client.git
+find /tmp/rpi-photobooth-client/boot -maxdepth 1 -not -iname '*.txt' -not -iname "*.conf" -exec cp -rf '{}' /boot \;
+cp -f /tmp/rpi-photobooth-client/boot/requirements.txt /boot
+cp -f /tmp/rpi-photobooth-client/boot/photobooth.conf /tmp
+rm -rf /tmp/rpi-photobooth-client
+cd - > /dev/null 
+fi
+
 # Run update depending on specified action
 [[ "$ACTION" == "rpi-photobooth" ]] && echo "Updating base system..." && /boot/update/rpi-photobooth.sh
 [[ "$ACTION" == "photobooth-web" ]] && echo "Updating photobooth ..." && /boot/update/photobooth-web.sh $PHOTOBOOTH_RELEASE $PHOTOBOOTH_UPDATE
