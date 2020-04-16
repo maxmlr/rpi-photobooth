@@ -28,7 +28,8 @@ apt install -y \
     xdotool \
     rsync \
     qrencode \
-    jq
+    jq \
+    mosh
 fi
 
 if [[ "$DEVICE_TYPE" = "client" ]]; then
@@ -43,7 +44,8 @@ apt install -y \
     xdotool \
     rsync \
     qrencode \
-    jq
+    jq \
+    mosh
 fi
 
 # Configure managed services
@@ -220,6 +222,8 @@ mkdir -p /opt/photobooth/bin
 cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
 cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 cp /boot/scripts/health.sh /opt/photobooth/bin/health.sh
+cp /boot/scripts/hostapd_override.sh /opt/photobooth/bin/hostapd_override.sh
+chmod +x /opt/photobooth/bin/*.sh
 
 # add bash profile
 cp /boot/scripts/profile_photobooth.sh /etc/profile.d/photobooth.sh
@@ -287,7 +291,7 @@ fi
 # cleanup
 apt-get clean && apt-get autoremove -y
 
-echo " Update finished. "
+echo
 echo
 echo " --- Important update notes --- "
 echo
@@ -295,3 +299,12 @@ for msg in "${update_msg[@]}"
 do
     echo "$msg"
 done
+
+if [ $? -eq 0 ]
+then
+  echo "Photobooth update finished successfully"
+  exit 0
+else
+  echo "Photobooth update finished with errors" >&2
+  exit 0
+fi

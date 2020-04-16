@@ -2,11 +2,6 @@
 # Automatic setup photobooth and DietPi
 # @maxmlr
 
-# get device id and model
-echo "DEVICE_ID=\"`cat /proc/cpuinfo | grep --ignore-case serial | cut -d ":" -f2 | sed -e 's/^[[:space:]]*//'`\"" >> /boot/photobooth.conf 
-echo "DEVICE_MODEL=\"`cat /proc/cpuinfo | grep Model | cut -d ":" -f2 | sed -e 's/^[[:space:]]*//'`\"" >> /boot/photobooth.conf
-echo "DEVICE_TYPE=\"server\"" >> /boot/photobooth.conf
-
 # source photobooth config
 source /boot/photobooth.conf
 
@@ -15,6 +10,14 @@ cp -f /boot/authorized_keys /root/.ssh/authorized_keys
 
 # setup WiFi AccessPoint
 /boot/install/setup_wifi_ap.sh
+
+# Replace brcmfmac driver
+# fixes WiFi freezes; references:
+# https://github.com/raspberrypi/linux/issues/2453#issuecomment-610206733
+# https://community.cypress.com/docs/DOC-19375
+# https://community.cypress.com/servlet/JiveServlet/download/19375-1-53475/cypress-fmac-v5.4.18-2020_0402.zip
+cp /boot/firmware/wifi/brcmfmac43455-sdio.bin /lib/firmware/brcm/
+cp /boot/firmware/wifi/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/
 
 # install dependencies
 apt -y update && \
@@ -38,7 +41,8 @@ apt install -y \
     xdotool \
     rsync \
     qrencode \
-    jq
+    jq \
+    mosh
 
 # optional: if photobooth should be build from source, uncomment the next command.
 # note: if the python uinput library should be used for remote trigger (send key_press)
@@ -51,12 +55,24 @@ apt install -y \
 cat /boot/config/dietpi-services_include_exclude >> /DietPi/dietpi/.dietpi-services_include_exclude
 
 # Edit /DietPi/config.txt:
-# - add photobooth.conf
-echo ""  >> /DietPi/config.txt
-echo "#-------Photobooth---------"  >> /DietPi/config.txt
+# - merge configs from photobooth.conf
 for config in "${DIETPI_CONFIG[@]}"
 do
-	echo "$config"  >> /DietPi/config.txt
+    key=`echo "$config" | cut -d"=" -f1 | sed -e s"|\#||g"`
+    if tac /DietPi/config.txt | grep -m1 -q "$key"; then
+        config_old=`tac /DietPi/config.txt | grep -m1 "$key"`
+        if [[ "$config" = "$config_old" ]]
+        then
+            echo "[config] no change: $key"
+        else
+            update_msg+=( "[config] update - old: `tac /DietPi/config.txt | grep -m1 "$key"` -> new: $config" )
+            tac /DietPi/config.txt | sed "/$key/ {s/.*/$config/; :loop; n; b loop}" | tac > /tmp/config.txt
+            mv /tmp/config.txt /DietPi/config.txt
+        fi
+    else
+        echo "[config] new: $config"
+        echo "$config"  >> /DietPi/config.txt
+    fi
 done
 # - enable Pi Camera
 sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
@@ -264,7 +280,11 @@ sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
 # cleanup
 apt-get clean && apt-get autoremove -y
 
-# ---- DEV ---- #
-#cd /tmp
-#wget https://project-downloads.drogon.net/wiringpi-latest.deb && dpkg -i wiringpi-latest.deb
-#cd - > /dev/null
+if [ $? -eq 0 ]
+then
+  echo "Photobooth setup finished successfully"
+  exit 0
+else
+  echo "Photobooth setup finished with errors" >&2
+  exit 0
+fi

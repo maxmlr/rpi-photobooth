@@ -15,7 +15,7 @@ xset s noblank
 chromium-browser \
         --no-sandbox \
         --start-fullscreen \
-        --window-size=1920,1080 \
+        --window-size=${DISPLAY_RESOLUTION_X},${DISPLAY_RESOLUTION_Y} \
         --kiosk \
         --incognito \
         --noerrdialogs \
