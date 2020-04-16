@@ -10,9 +10,6 @@ apt install -y \
 sed -i -e 's/After=network.target/#After=network.target/g' /lib/systemd/system/hostapd.service
 
 # Add interface uap0 to the hostapd.service
-mkdir -p /opt/photobooth/bin
-cp /boot/scripts/hostapd_override.sh /opt/photobooth/bin
-chmod +x /opt/photobooth/bin/hostapd_override.sh
 mkdir -p /etc/systemd/system/hostapd.service.d
 cat > /etc/systemd/system/hostapd.service.d/override.conf << EOF
 [Unit]

@@ -222,7 +222,6 @@ mkdir -p /opt/photobooth/bin
 cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
 cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 cp /boot/scripts/health.sh /opt/photobooth/bin/health.sh
-cp /boot/scripts/hostapd_override.sh /opt/photobooth/bin/hostapd_override.sh
 chmod +x /opt/photobooth/bin/*.sh
 
 # add bash profile
