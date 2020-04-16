@@ -89,8 +89,8 @@
                     <div class="col">
                       <h6>Hide Hotspot</h6>
                       <label class="switch">
-                        <input type="checkbox" class="form-check-input" id="hideAP">
-                        <span class="slider round"></span>
+                        <input type="checkbox" class="form-check-input" id="hideAP"{{ 'checked' if ap_show else '' }}>
+                        <span id="hideAPtoggle" class="slider round"></span>
                       </label>
                     </div>
                   </div>

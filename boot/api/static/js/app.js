@@ -320,5 +320,12 @@ window.addEventListener('load',function(){
             $('#frame-upload').fadeIn().delay("1000").fadeOut();
         });
     });
-    
+
+    $('#hideAPtoggle').click(function() {
+
+        $.get("/setup/wifi/ap/show/" + $('#hideAP').is(":checked") ? 0 : 1, function(myData , status){
+            console.log(status);
+        });
+    });
+
 });

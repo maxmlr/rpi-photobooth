@@ -34,21 +34,24 @@ def ping_pong():
 
 @app.route("/", endpoint='setup.home')
 def home():
-    if (request.script_root).startswith('/api'):
-        return jsonify('photobooth_api:v1')
-    template_args = {}
-    wpa = WPAcli()
-    wifi_list = [ _ for _ in wpa.scan() if _['ssid'] not in ['', 'hidden'] ]
-    wpa_status = wpa.status()
-    wifi_active = wpa_status.get('ssid', '')
-    ap_name = 'photobooth'
-    ap_connections_cnt = 0
-    template_args['wifi_list'] = wifi_list
-    template_args['wifi_cnt'] = len(wifi_list)
-    template_args['wifi_active'] = wifi_active
-    template_args['ap_name'] = ap_name
-    template_args['ap_connections_cnt'] = ap_connections_cnt
-    return render_template('index.html', **template_args)
+    if request.method == 'GET':
+        template_args = {}
+        wpa = WPAcli()
+        wifi_list = [ _ for _ in wpa.scan() if _['ssid'] not in ['', 'hidden'] ]
+        wpa_status = wpa.status()
+        wifi_active = wpa_status.get('ssid', '')
+        ap_name = 'photobooth'
+        ap_connections_cnt = 0
+        template_args['wifi_list'] = wifi_list
+        template_args['wifi_cnt'] = len(wifi_list)
+        template_args['wifi_active'] = wifi_active
+        template_args['ap_name'] = ap_name
+        template_args['ap_connections_cnt'] = ap_connections_cnt
+        return render_template('index.html', **template_args)
+
+@app.route('/wifi/ap/show/<int:status>', methods=['POST'], endpoint='wifi.ap.show')
+def ap_show():
+    return jsonify({'success': true})
 
 @app.route('/qr/get/<string:data>', methods=['GET'], endpoint='qr.create')
 def get_qr(data):
@@ -56,18 +59,6 @@ def get_qr(data):
     out = ap_qr_bytes
     print (out)
     return send_file(out, mimetype='image/png', as_attachment=False)
-
-# # handling form data
-# @app.route('/form-handler', methods=['POST', 'GET'])
-# def handle_data():
-#     # request.form: key/value pairs of data sent through POST
-#     # request.args: key/value pairs of data from the URL query string (through GET)
-#     # request.values: generic key/value pair extraction (for both GET, POST)
-#     # request.files: to obtain the sent files
-#     # request.json: to obtain parsed JSON content
-#     # request.method: HTTP method used by the request
-#     respose = request.args if request.args else request.form
-#     return jsonify(respose)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
