@@ -322,10 +322,13 @@ window.addEventListener('load',function(){
     });
 
     $('#hideAPtoggle').click(function() {
-
-        $.get("/setup/wifi/ap/show/" + $('#hideAP').is(":checked") ? 0 : 1, function(myData , status){
-            console.log(status);
-            window.location.href = "/setup/status?status=Restarting...&msg=Please reconnect to the photobooth network in about 30 seconds.";
+        $.LoadingOverlay("show", {
+            image       : "",
+            fontawesome : "fa fa-sync-alt fa-spin"
+        });
+        ap_status_url = "/setup/wifi/ap/show/" + ($('#hideAP').is(":checked") ? 0 : 1)
+        $.get(ap_status_url, function(myData , status){
+            window.location.href = "/setup/status?status=Restarting...&msg=Please reconnect to the photobooth wifi in about 30 seconds.";
         });
     });
 

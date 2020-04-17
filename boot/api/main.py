@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, send_file, jsonify
 from flask_cors import CORS
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
-from helpers import getQRCodeImage
+from helpers import getQRCodeImage, run_command
 from wpa_cli import WPAcli
 from hostapd_cli import Hostapd
 
@@ -28,6 +28,10 @@ fa = FontAwesome(app)
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
+# create backend interfaces
+hostapd = Hostapd()
+wpa = WPAcli()
+
 # sanity check route
 @app.route('/ping', methods=['GET'])
 def ping_pong():
@@ -37,18 +41,17 @@ def ping_pong():
 def home():
     if request.method == 'GET':
         template_args = {}
-        wpa = WPAcli()
         wifi_list = [ _ for _ in wpa.scan() if _['ssid'] not in ['', 'hidden'] ]
         wpa_status = wpa.status()
         wifi_active = wpa_status.get('ssid', '')
-        hostapd = Hostapd()
         ap_name = hostapd.get_config('ssid')
-        print(hostapd.get_config('ignore_broadcast_ssid'))
-        ap_connections_cnt = int(hostapd.get_config('ignore_broadcast_ssid'))
+        ap_show = int(hostapd.get_config('ignore_broadcast_ssid'))
+        ap_connections_cnt = 0
         template_args['wifi_list'] = wifi_list
         template_args['wifi_cnt'] = len(wifi_list)
         template_args['wifi_active'] = wifi_active
         template_args['ap_name'] = ap_name
+        template_args['ap_show'] = ap_show
         template_args['ap_connections_cnt'] = ap_connections_cnt
         return render_template('index.html', **template_args)
 
@@ -56,15 +59,16 @@ def home():
 def status():
     return render_template('status.html', **request.args)
 
-@app.route('/wifi/ap/show/<int:status>', methods=['POST'], endpoint='wifi.ap.show')
-def ap_show():
-    return jsonify({'success': true})
+@app.route('/wifi/ap/show/<int:status>', methods=['GET'], endpoint='wifi.ap.show')
+def ap_show(status):
+    hostapd.set_config('ignore_broadcast_ssid', status)
+    run_command('/opt/photobooth/bin/reboot.sh 3', wait=False)
+    return jsonify({'success': True})
 
 @app.route('/qr/get/<string:data>', methods=['GET'], endpoint='qr.create')
 def get_qr(data):
     ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes
-    print (out)
     return send_file(out, mimetype='image/png', as_attachment=False)
 
 if __name__ == "__main__":

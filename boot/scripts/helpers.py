@@ -98,26 +98,29 @@ def retry(exceptions, tries=4, delay=3, backoff=2, logger=None, verbose=False, c
     return deco_retry
 
 
-def run_command(command, shell=False, print_output=False, env_exports={}, logger=None):
+def run_command(command, shell=False, print_output=False, env_exports={}, wait=True, logger=None):
     print_ = logger.info if logger else print
     current_env = os.environ.copy()
     merged_env = {**current_env, **env_exports}
-    process = subprocess.Popen(shlex.split(command), shell=shell, env=merged_env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdout = []
-    stdout_data, stderr_data = process.communicate()
-    for line in stdout_data.splitlines():
-        line = line.rstrip().decode('utf8')
-        if print_output:
-            print_(f'shell> {line}')
-        stdout.append(line)
-    if process.returncode != 0:
-        stderr = []
-        stderr_data = "" if not stderr_data else stderr_data
-        for line in stderr_data.splitlines():
+    process = subprocess.Popen(shlex.split(command), shell=shell, env=merged_env, stdout=subprocess.PIPE if wait else None, stderr=subprocess.STDOUT if wait else None)
+    if wait:
+        stdout = []
+        stdout_data, stderr_data = process.communicate()
+        for line in stdout_data.splitlines():
             line = line.rstrip().decode('utf8')
-            stderr.append(line)
-        print_(f'Error while executing command: {" ".join(stderr)}')
-    return stdout
+            if print_output:
+                print_(f'shell> {line}')
+            stdout.append(line)
+        if process.returncode != 0:
+            stderr = []
+            stderr_data = "" if not stderr_data else stderr_data
+            for line in stderr_data.splitlines():
+                line = line.rstrip().decode('utf8')
+                stderr.append(line)
+            print_(f'Error while executing command: {" ".join(stderr)}')
+        return stdout
+    else:
+        return None
 
 
 def getQRCodeImage(data, version=1, box_size=10, border=4, fit=True, fill_color='black', back_color='white', returnAs='image'):

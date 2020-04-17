@@ -18,5 +18,9 @@ class Hostapd():
     def get_config(self, key):
         return self.config.get(key, None)
 
+    def set_config(self, key, val):
+        run_command(f'sudo /bin/sed -i "s|.*{key}=.*|{key}={val}|" {self.hostapd_conf}')
+        self.config = read_config(self.hostapd_conf)
+
 if __name__ == "__main__":
     print(Hostapd().read_config())
