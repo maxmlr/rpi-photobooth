@@ -325,6 +325,7 @@ window.addEventListener('load',function(){
 
         $.get("/setup/wifi/ap/show/" + $('#hideAP').is(":checked") ? 0 : 1, function(myData , status){
             console.log(status);
+            window.location.href = "/setup/status?status=Restarting...&msg=Please reconnect to the photobooth network in about 30 seconds.";
         });
     });
 

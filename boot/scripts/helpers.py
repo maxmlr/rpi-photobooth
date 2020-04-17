@@ -1,5 +1,4 @@
 import os
-import io
 import re
 import shlex
 import subprocess
@@ -7,6 +6,8 @@ import time
 import qrcode
 import fileinput
 import psutil
+from io import BytesIO, StringIO
+from configparser import ConfigParser
 from functools import wraps
 
 
@@ -130,7 +131,7 @@ def getQRCodeImage(data, version=1, box_size=10, border=4, fit=True, fill_color=
     qr.make(fit=fit)
     img = qr.make_image(fill_color=fill_color, back_color=back_color)
     if returnAs == 'bytes':
-        file_object = io.BytesIO()
+        file_object = BytesIO()
         img.save(file_object, 'PNG')
         file_object.seek(0)
         return file_object
@@ -159,3 +160,12 @@ def inlineReplace(file, regex, replace, inplace=True):
 
 def isRunning(program_name):
     return program_name in (p.name() for p in psutil.process_iter())
+
+def read_config(file):
+    config = StringIO()
+    config.write('[dummysection]\n')
+    config.write(open(file).read())
+    config.seek(0, os.SEEK_SET)
+    cp = ConfigParser()
+    cp.read_file(config)
+    return dict(cp._sections['dummysection'])

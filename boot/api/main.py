@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
 from helpers import getQRCodeImage
 from wpa_cli import WPAcli
+from hostapd_cli import Hostapd
 
 """
 request.form: key/value pairs of data sent through POST
@@ -40,14 +41,20 @@ def home():
         wifi_list = [ _ for _ in wpa.scan() if _['ssid'] not in ['', 'hidden'] ]
         wpa_status = wpa.status()
         wifi_active = wpa_status.get('ssid', '')
-        ap_name = 'photobooth'
-        ap_connections_cnt = 0
+        hostapd = Hostapd()
+        ap_name = hostapd.get_config('ssid')
+        print(hostapd.get_config('ignore_broadcast_ssid'))
+        ap_connections_cnt = int(hostapd.get_config('ignore_broadcast_ssid'))
         template_args['wifi_list'] = wifi_list
         template_args['wifi_cnt'] = len(wifi_list)
         template_args['wifi_active'] = wifi_active
         template_args['ap_name'] = ap_name
         template_args['ap_connections_cnt'] = ap_connections_cnt
         return render_template('index.html', **template_args)
+
+@app.route("/status", methods=['GET'], endpoint='setup.status')
+def status():
+    return render_template('status.html', **request.args)
 
 @app.route('/wifi/ap/show/<int:status>', methods=['POST'], endpoint='wifi.ap.show')
 def ap_show():
