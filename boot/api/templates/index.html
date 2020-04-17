@@ -34,70 +34,99 @@
       <div class=""> 
         <!-- d-flex justify-content-center -->
         <div class="card mt-3">
-          <form class="form">
-            <div class="card-body">
-              <div class="row">
-                <div class="col">
-                  <h1 class="d-inline card-title display-4">WiFi</h1>
-                  <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
-                    {{wifi_cnt}} WiFis with public SSIDs
-                  </small>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <span class="fas fa-wifi" style="color: {{ wifi_color }}"></span>
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <h1 class="d-inline card-title display-4">WiFi</h1>
+                <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+                  {{wifi_cnt}} WiFis with public SSIDs
+                </small>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                      <span class="fas fa-wifi" style="color: {{ wifi_color }}"></span>
+                    </div>
+                  </div>
+                  <select class="custom-select" id="wifi-ssid" aria-describedby="wifiHelpBlock">
+                    <option selected>Select WiFi...</option>
+                    {% for item in wifi_list %}
+                    <option value={{ loop.index }} {{ 'selected' if item['ssid'] == wifi_active else '' }}>{{ item['ssid'] }}</option>
+                    {% endfor %}
+                  </select>
+                  <div class="input-group-append">
+                      <button type="button" class="btn btn-outline-success">Scan</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="input-group mb-2">
+                  <input type="password" id="wifi-password" class="form-control" placeholder="Password">
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Connect</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="row">
+                  <div class="col">
+                    <h1 class="d-inline card-title display-4 mt-1">Hotspot</h1>
+                    <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+                      {{ ap_connections_cnt }} connected
+                    </small>
+                    <div class="text-left font-weight-bold">SSID:<span class="ml-2">{{ ap_name }}</span></div>
+                    <img src="{{ url_for('qr.create', data=(wifi_active if wifi_active else 'null'), box_size=10, border=0) }}" class="rounded mx-auto d-block mt-3" alt="QRcode">
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col">
+                    <div class="row mb-3">
+                      <div class="col">
+                        <h3 class="">Options</h3>
+                        <small id="apToggleHelpBlock" class="d-inline form-text text-muted">
+                          <strong>Note:</strong> changes automatically restart the photobooth.
+                        </small>
                       </div>
                     </div>
-                    <select class="custom-select" id="inlineFormCustomSelectPref" aria-describedby="wifiHelpBlock">
-                      <option selected>Select WiFi...</option>
-                      {% for item in wifi_list %}
-                      <option value={{ loop.index }} {{ 'selected' if item['ssid'] == wifi_active else '' }}>{{ item['ssid'] }}</option>
-                      {% endfor %}
-                    </select>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-success">Scan</button>
+                    <div class="row mt-2">
+                      <div class="col">
+                        <h6>Hide Hotspot</h6>
+                        <label class="switch">
+                          <input type="checkbox" class="form-check-input" id="hideAP"{{ 'checked' if ap_show else '' }}>
+                          <span id="hideAPtoggle" class="slider round"></span>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="input-group mb-2">
-                    <input type="password" id="inputPassword6" class="form-control" placeholder="Password">
-                    <div class="input-group-append">
-                      <button type="submit" class="btn btn-primary">Connect</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="row">
-                    <div class="col">
-                      <h1 class="d-inline card-title display-4 mt-1">Hotspot</h1>
-                      <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
-                        {{ ap_connections_cnt }} connected
-                      </small>
-                      <img src="{{ url_for('qr.create', data=(wifi_active if wifi_active else 'null'), box_size=10, border=0) }}" class="rounded mx-auto d-block my-2" alt="QRcode">
-                    </div>
-                  </div>
-                  <div class="row justify-content-md-center">
-                    <div class="col col-sm-3 text-center font-weight-bold">SSID</div>
-                    <div class="col col-sm-5 text-left font-weight-bold">{{ ap_name }}</div>
-                  </div>
-                  <div class="row justify-content-md-center mt-3">
-                    <div class="col">
-                      <h6>Hide Hotspot</h6>
-                      <label class="switch">
-                        <input type="checkbox" class="form-check-input" id="hideAP"{{ 'checked' if ap_show else '' }}>
-                        <span id="hideAPtoggle" class="slider round"></span>
-                      </label>
+                    <div class="row mt-2">
+                      <div class="col">
+                        <h6>Hotspot Name & Security</h6>
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text">
+                              <span class="fas fa-wifi"></span>
+                            </div>
+                          </div>
+                          <input type="text" id="ap-ssid" class="form-control" placeholder="{{ ap_name }}">
+                        </div>
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text">
+                              <span class="fas fa-key"></span>
+                            </div>
+                          </div>
+                          <input type="password" id="ap-password" class="form-control" placeholder="********">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </form>
+          </div>
         </div>
 
         <div class="row">
