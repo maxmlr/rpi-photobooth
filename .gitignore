@@ -358,3 +358,4 @@ laravel.env
 auth.json
 laravel/app/production.env
 laravel/app/db_scheme.sql
+.DS_Store
