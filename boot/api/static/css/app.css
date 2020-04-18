@@ -79,10 +79,10 @@ button:focus {
     width: 100%;
 }
 .glider-prev {
-    margin-left: -20px;
+    margin-top: 50px;
 }
 .glider-next {
-    margin-right: -20px;
+    margin-top: 50px;
 }
 
 .glider {
@@ -100,9 +100,3 @@ button:focus {
 .dropzone-drag-hover {
     border: 1px solid #000000;
 }
-
-.glider-next,.glider-prev{border:0;padding:0;user-select:none;outline:0}
-.glider-next,.glider-prev{position:absolute;background:0 0;z-index:2;font-size:40px;text-decoration:none;left:25%;bottom:-58%;cursor:pointer;color:#666;opacity:1;line-height:1;transition:opacity .5s cubic-bezier(.17,.67,.83,.67),color .5s cubic-bezier(.17,.67,.83,.67)}
-.glider-next:focus,.glider-next:hover,.glider-prev:focus,.glider-prev:hover{color:#ccc}
-.glider-next{right:25%;left:auto}
-.glider-next.disabled,.glider-prev.disabled{opacity:.25;color:#666;cursor:default}

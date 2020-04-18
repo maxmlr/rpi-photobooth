@@ -344,40 +344,76 @@ $(function() {
     });
 
     $( "#background-selectbutton" ).click(function() {
+        $("#background-card").LoadingOverlay("show", {
+            image       : "",
+            fontawesome : "fa fa-sync-alt fa-spin",
+            fontawesomeColor: "Dodgerblue",
+            fade : [400, 200]
+        });
         $.getJSON( "/manager/api/background/select", {
             fname: backgroundGlider.slides[backgroundGlider.slide].dataset.fname ? backgroundGlider.slides[backgroundGlider.slide].dataset.fname : $(backgroundGlider.slides[backgroundGlider.slide]).find('[data-fname]').attr("data-fname")
         }, function( data ) {
-            $('#background-upload .alert-msg').text("New background selected");
-            $('#background-upload').fadeIn().delay("1000").fadeOut();
+            $('.loadingoverlay_element').fadeOut( function() {
+                $('.loadingoverlay_element').first().html('<i class="fas fa-check"></i>').css('color', 'green').fadeIn(  function() {
+                    $("#background-card").LoadingOverlay("hide");
+                });
+            });
         });
     });
 
     $( "#background-deletebutton" ).click(function() {
+        $("#background-card").LoadingOverlay("show", {
+            image       : "",
+            fontawesome : "fa fa-sync-alt fa-spin",
+            fontawesomeColor: "Dodgerblue",
+            fade : [400, 200]
+        });
         $.getJSON( "/manager/api/background/delete", {
             fname: backgroundGlider.slides[backgroundGlider.slide].dataset.fname ? backgroundGlider.slides[backgroundGlider.slide].dataset.fname : $(backgroundGlider.slides[backgroundGlider.slide]).find('[data-fname]').attr("data-fname")
         }, function( data ) {
             backgroundGlider.removeItem(backgroundGlider.slide);
-            $('#background-upload .alert-msg').text("Background deleted");
-            $('#background-upload').fadeIn().delay("1000").fadeOut();
+            $('.loadingoverlay_element').fadeOut( function() {
+                $('.loadingoverlay_element').first().html('<i class="fas fa-check"></i>').css('color', 'green').fadeIn(  function() {
+                    $("#background-card").LoadingOverlay("hide");
+                });
+            });
         });
     });
 
     $( "#frame-selectbutton" ).click(function() {
+        $("#frame-card").LoadingOverlay("show", {
+            image       : "",
+            fontawesome : "fa fa-sync-alt fa-spin",
+            fontawesomeColor: "Dodgerblue",
+            fade : [400, 200]
+        });
         $.getJSON( "/manager/api/frame/select", {
             fname: frameGlider.slides[frameGlider.slide].dataset.fname ? frameGlider.slides[frameGlider.slide].dataset.fname : $(frameGlider.slides[frameGlider.slide]).find('[data-fname]').attr("data-fname")
         }, function( data ) {
-            $('#frame-upload .alert-msg').text("New frame selected");
-            $('#frame-upload').fadeIn().delay("1000").fadeOut();
+            $('.loadingoverlay_element').fadeOut( function() {
+                $('.loadingoverlay_element').first().html('<i class="fas fa-check"></i>').css('color', 'green').fadeIn(  function() {
+                    $("#frame-card").LoadingOverlay("hide");
+                });
+            });
         });
     });
 
     $( "#frame-deletebutton" ).click(function() {
+        $("#frame-card").LoadingOverlay("show", {
+            image       : "",
+            fontawesome : "fa fa-sync-alt fa-spin",
+            fontawesomeColor: "Dodgerblue",
+            fade : [400, 200]
+        });
         $.getJSON( "/manager/api/frame/delete", {
             fname: frameGlider.slides[frameGlider.slide].dataset.fname ? frameGlider.slides[frameGlider.slide].dataset.fname : $(frameGlider.slides[frameGlider.slide]).find('[data-fname]').attr("data-fname")
         }, function( data ) {
             frameGlider.removeItem(frameGlider.slide);
-            $('#frame-upload .alert-msg').text("Background deleted");
-            $('#frame-upload').fadeIn().delay("1000").fadeOut();
+            $('.loadingoverlay_element').fadeOut( function() {
+                $('.loadingoverlay_element').first().html('<i class="fas fa-check"></i>').css('color', 'green').fadeIn(  function() {
+                    $("#frame-card").LoadingOverlay("hide");
+                });
+            });
         });
     });
 
