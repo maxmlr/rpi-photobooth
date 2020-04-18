@@ -86,14 +86,16 @@ pip3 install --upgrade pip && \
 if [[ "$DEVICE_TYPE" = "server" ]]; then
 source /opt/photobooth/flask/apienv/bin/activate
 pip install --upgrade pip && \
-pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
-pip install flask flask-cors bootstrap-flask Flask-FontAwesome
+ pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
+ pip install flask flask-cors bootstrap-flask Flask-FontAwesome flask-login python-dotenv
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
 /opt/photobooth/python
 EOF
 chown -R www-data:www-data /opt/photobooth/flask/api
+echo "SECRET_KEY=$(python -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/.env
+echo "API_KEY=$(openssl rand -base64 64)" >> /opt/photobooth/flask/api/.env
 
 # register flask apps
 mv /opt/photobooth/flask/api/api.ini /etc/uwsgi/apps-available/

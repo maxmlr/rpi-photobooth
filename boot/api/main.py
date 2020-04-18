@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from os import environ
+from dotenv import load_dotenv
+from flask import Flask, render_template, request, send_file, jsonify, redirect, url_for
 from flask_cors import CORS
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from helpers import getQRCodeImage, run_command
 from wpa_cli import WPAcli
 from hostapd_cli import Hostapd
@@ -16,17 +19,79 @@ request.method: HTTP method used by the request
 """
 
 # configuration
+load_dotenv()
 DEBUG = True
 BOOTSTRAP_SERVE_LOCAL = True
+SECRET_KEY = environ.get('SECRET_KEY')
+API_KEY = environ.get('API_KEY')
+
+
+# login Manager
+login_manager = LoginManager()
 
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
+login_manager.init_app(app)
+
 bootstrap = Bootstrap(app)
 fa = FontAwesome(app)
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
+
+# users
+users = {'admin@photomateur.de': {'password': 'admin'}}
+class User(UserMixin):
+    pass
+
+@login_manager.user_loader
+def user_loader(email):
+    if email not in users:
+        return
+    user = User()
+    user.id = email
+    return user
+
+@login_manager.request_loader
+def request_loader(request):
+    email = request.form.get('email')
+    if email not in users:
+        return
+    user = User()
+    user.id = email
+    if request.form['password'] == users[email]['password']:
+        return user
+    else:
+        return None
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        if current_user.is_authenticated:
+            return redirect(url_for('setup.home'))
+        return render_template('login.html')
+    
+    print(request.form)
+    email = request.form['email']
+    if email not in users:
+        return render_template('login.html', **{ 'errors': "Email is not associated with a user." })
+    if request.form['password'] == users[email]['password']:
+        user = User()
+        user.id = email
+        login_user(user)
+        return redirect(url_for('setup.home'))
+
+    return render_template('login.html', **{ 'errors': "Wrong password." })
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return render_template('login.html')
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return redirect(url_for('login'))
 
 # sanity check route
 @app.route('/ping', methods=['GET'])
@@ -34,6 +99,7 @@ def ping_pong():
     return jsonify('pong!')
 
 @app.route("/", methods=['GET'], endpoint='setup.home')
+@login_required
 def home():
     ap_args = ap()
     return render_template('index.html', **ap_args)
@@ -43,6 +109,7 @@ def status():
     return render_template('status.html', **request.args)
 
 @app.route("/wifi/list", methods=['GET'], endpoint='wifi.list')
+@login_required
 def wifi():
     wpa = WPAcli()
     wifi_args = {}
@@ -69,6 +136,7 @@ def ap():
     return ap_args
 
 @app.route("/wifi/connect", methods=['POST'], endpoint='wifi.connect')
+@login_required
 def wifi_conect():
     wpa = WPAcli()
     ssid = request.form['ssid']
@@ -78,6 +146,7 @@ def wifi_conect():
     return jsonify({'success': True})
 
 @app.route('/wifi/ap/settings', methods=['POST'], endpoint='wifi.ap.settings')
+@login_required
 def ap_settings():
     hostapd = Hostapd()
     ssid = request.form['ssid']
@@ -110,6 +179,7 @@ def ap_settings():
     return jsonify({'success': True})
 
 @app.route('/wifi/ap/passthrough/<int:status>', methods=['GET'], endpoint='wifi.ap.passthrough')
+@login_required
 def ap_passthrough(status):
     hostapd = Hostapd()
     hostapd.set_inet_passthrough(status)
