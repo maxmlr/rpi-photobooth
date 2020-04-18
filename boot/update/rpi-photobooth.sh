@@ -29,7 +29,8 @@ apt install -y \
     rsync \
     qrencode \
     jq \
-    mosh
+    mosh \
+    imagemagick
 fi
 
 if [[ "$DEVICE_TYPE" = "client" ]]; then
@@ -116,6 +117,7 @@ systemctl start nodogsplash.service
 [[ `grep -c splash /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ splash &/' /boot/cmdline.txt
 [[ `grep -c logo.nologo /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ logo.nologo &/' /boot/cmdline.txt
 [[ `grep -c vt.global_cursor_default /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ vt.global_cursor_default=0 &/' /boot/cmdline.txt
+[[ `grep -c loglevel /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ loglevel=3 &/' /boot/cmdline.txt
 sed -i -e "s/vt.global_cursor_default=[0,1]/vt.global_cursor_default=0/g" /boot/cmdline.txt
 fi
 
@@ -251,6 +253,9 @@ for service in /boot/service/*.timer; do cp $service /lib/systemd/system/`basena
 systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 for service in /boot/service/*.timer; do systemctl enable `basename $service`; done
+
+# disable services
+systemctl disable getty@tty1.service
 
 if [[ "$DEVICE_TYPE" = "client" ]]; then
 # disable services not required for client

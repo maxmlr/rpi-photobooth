@@ -42,7 +42,8 @@ apt install -y \
     rsync \
     qrencode \
     jq \
-    mosh
+    mosh \
+    imagemagick
 
 # optional: if photobooth should be build from source, uncomment the next command.
 # note: if the python uinput library should be used for remote trigger (send key_press)
@@ -126,6 +127,7 @@ cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
 [[ `grep -c splash /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ splash &/' /boot/cmdline.txt
 [[ `grep -c logo.nologo /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ logo.nologo &/' /boot/cmdline.txt
 [[ `grep -c vt.global_cursor_default /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ vt.global_cursor_default=0 &/' /boot/cmdline.txt
+[[ `grep -c loglevel /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ loglevel=3 &/' /boot/cmdline.txt
 sed -i -e "s/vt.global_cursor_default=[0,1]/vt.global_cursor_default=0/g" /boot/cmdline.txt
 
 # install ngrok
@@ -251,6 +253,9 @@ for service in /boot/service/*.timer; do cp $service /lib/systemd/system/`basena
 systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 for service in /boot/service/*.timer; do systemctl enable `basename $service`; done
+
+# disable services
+systemctl disable getty@tty1.service
 
 # add sudo permissions
 cat > /etc/sudoers.d/gpio << EOF
