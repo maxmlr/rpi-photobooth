@@ -121,7 +121,10 @@ systemctl start nodogsplash.service
 sed -i -e "s/vt.global_cursor_default=[0,1]/vt.global_cursor_default=0/g" /boot/cmdline.txt
 fi
 
+if [[ "$(systemctl is-active --quiet ngrok@ssh\\x20http.service && echo running)" == "running" ]]
+then
 # install ngrok
+systemctl is-active --quiet ngrok@ssh\\x20http.service && echo Service is running
 systemctl stop ngrok@"ssh\x20http".service
 mkdir -p /opt/ngrok
 wget -O ngrok-stable-linux-arm.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip && \
@@ -133,6 +136,7 @@ cp /boot/config/ngrok.yml /opt/ngrok/
 sed -i -e "s/authtoken:.*/authtoken: $NGROK_TOKEN/g" /opt/ngrok/ngrok.yml
 #sed -i -e "s/metadata:.*/metadata: '{\"device\": \"<photobooth-device-id>\"}'/g" /opt/ngrok/ngrok.yml
 systemctl start ngrok@"ssh\x20http".service
+fi
 
 if [[ "$DEVICE_TYPE" = "server" ]]; then
 # create webroot directory
