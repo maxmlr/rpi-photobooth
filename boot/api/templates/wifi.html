@@ -1,0 +1,4 @@
+<option selected>Select WiFi...</option>
+{% for item in wifi_list %}
+<option value={{ loop.index }} {{ 'selected' if item['ssid'] == wifi_active else '' }}>{{ item['ssid'] }}</option>
+{% endfor %}

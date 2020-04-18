@@ -10,6 +10,8 @@ from helpers import run_command, retry
 class WPAcli():
 
     wpa_cli_bin = '/usr/bin/sudo /sbin/wpa_cli'
+    dev_up = '/usr/bin/sudo /sbin/ifup'
+    dev_down = '/usr/bin/sudo /sbin/ifdown'
 
     def __init__(self, interface='wlan0'):
         self.iface  = interface
@@ -34,7 +36,9 @@ class WPAcli():
         else:
             print(f'ERROR: {func_name}() not available.')
 
-    def exec_wpa_cli(self, cmd, statusOnly=True):
+    def exec_wpa_cli(self, cmd, statusOnly=True, quiet=True):
+        if not quiet:
+            print(cmd)
         wpa_cli_out = run_command(cmd)
         if statusOnly:
             return wpa_cli_out[0] if wpa_cli_out else None
@@ -80,13 +84,15 @@ class WPAcli():
         except RuntimeError:
             return []
 
-    def connect(self, ssid, psk, key_mgmt='WPA-PSK'):
+    def set_network(self, ssid, psk, key_mgmt='WPA-PSK', quiet=True):
         wpa_saved_id_max = None
-        wpa_list_out = self.exec_wpa_cli(self.wpa_list, statusOnly=False)
+        wpa_list_out = self.exec_wpa_cli(self.wpa_list, statusOnly=False, quiet=quiet)
         for wpa_saved in wpa_list_out:
+            if wpa_saved.startswith('network id'):
+                continue
             wpa_saved_id = wpa_saved.split()[0]
             try:
-                wpa_saved_id_max = int(wpa_saved)
+                wpa_saved_id_max = int(wpa_saved_id)
             except ValueError as err:
                 print(f'ERROR: {wpa_saved} is not a valid wpa_cli network id.')
                 break
@@ -95,7 +101,7 @@ class WPAcli():
         
         wpa_new_id = None
         if wpa_saved_id_max == 0:
-            wpa_add_status = self.exec_wpa_cli(self.wpa_add)
+            wpa_add_status = self.exec_wpa_cli(self.wpa_add, quiet=quiet)
             try:
                 wpa_new_id = int(wpa_add_status)
             except ValueError as err:
@@ -105,42 +111,48 @@ class WPAcli():
         else:
             wpa_new_id = wpa_saved_id_max
 
-        wpa_set_ssid_status = self.exec_wpa_cli(self.wpa_set_ssid)
+        wpa_set_ssid_status = self.exec_wpa_cli(f'{self.wpa_set_ssid} \'"{ssid}"\'', quiet=quiet)
         if wpa_set_ssid_status != 'OK':
             return (3, 'WPA_CLI set ssid error')
         
-        wpa_scan_ssid_status = self.exec_wpa_cli(self.wpa_scan_ssid)
+        wpa_scan_ssid_status = self.exec_wpa_cli(self.wpa_scan_ssid, quiet=quiet)
         if wpa_scan_ssid_status != 'OK':
             return (4, 'WPA_CLI set scan_ssid error')
 
         if not psk:
             psk = '        '
             key_mgmt = 'NONE'
-        wpa_key_mgmt_status = self.exec_wpa_cli(self.wpa_key_mgmt)
+        wpa_key_mgmt_status = self.exec_wpa_cli(f'{self.wpa_key_mgmt} {key_mgmt}', quiet=quiet)
         if wpa_key_mgmt_status != 'OK':
             return (5, 'WPA_CLI set key_mgmt error')
             
-        wpa_psk_status = self.exec_wpa_cli(self.wpa_psk)
+        wpa_psk_status = self.exec_wpa_cli(f'{self.wpa_psk} \'"{psk}"\'', quiet=quiet)
         if wpa_psk_status != 'OK':
             return (6, 'WPA_CLI set psk error')
 
-        wpa_enable_status = self.exec_wpa_cli(self.wpa_enable)
+        wpa_enable_status = self.exec_wpa_cli(self.wpa_enable, quiet=quiet)
         if wpa_enable_status != 'OK':
             return (7, 'WPA_CLI enable network error')
 
-        wpa_update_conf_status = self.exec_wpa_cli(self.wpa_update_conf)
+        wpa_update_conf_status = self.exec_wpa_cli(self.wpa_update_conf, quiet=quiet)
         if wpa_update_conf_status != 'OK':
             return (8, 'WPA_CLI update config error')
 
-        wpa_save_conf_status = self.exec_wpa_cli(self.wpa_save_conf)
+        wpa_save_conf_status = self.exec_wpa_cli(self.wpa_save_conf, quiet=quiet)
         if wpa_save_conf_status != 'OK':
             return (9, 'WPA_CLI save config error')
 
-        wpa_select_status = self.exec_wpa_cli(self.wpa_select)
+        wpa_select_status = self.exec_wpa_cli(self.wpa_select, quiet=quiet)
         if wpa_select_status != 'OK':
             return (10, 'WPA_CLI select network error')
 
         return (0, 'Successfully chaanged network')
+
+    def connect(self, ssid, psk, key_mgmt='WPA-PSK', quiet=True):
+        run_command(f'{self.dev_down} {self.iface}')
+        network_status = self.set_network(ssid, psk, key_mgmt, quiet)
+        run_command(f'{self.dev_up} {self.iface}')
+        return network_status
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='WPA cli Manager.')
@@ -152,4 +164,5 @@ if __name__ == "__main__":
     action = args_dict.pop('action')
     interface = args_dict.pop('interface')
 
-    print(json.dumps(WPAcli(interface).run(action, args_dict)))
+    i = iter([_.replace('-','') for _ in argv])
+    print(json.dumps(WPAcli(interface).run(action, {**args_dict, **dict(zip(i, i))})))

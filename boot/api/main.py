@@ -28,41 +28,91 @@ fa = FontAwesome(app)
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-# create backend interfaces
-hostapd = Hostapd()
-wpa = WPAcli()
-
 # sanity check route
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
 
-@app.route("/", endpoint='setup.home')
+@app.route("/", methods=['GET'], endpoint='setup.home')
 def home():
-    if request.method == 'GET':
-        template_args = {}
-        wifi_list = [ _ for _ in wpa.scan() if _['ssid'] not in ['', 'hidden'] ]
-        wpa_status = wpa.status()
-        wifi_active = wpa_status.get('ssid', '')
-        ap_name = hostapd.get_config('ssid')
-        ap_show = int(hostapd.get_config('ignore_broadcast_ssid'))
-        ap_connections_cnt = 0
-        template_args['wifi_list'] = wifi_list
-        template_args['wifi_cnt'] = len(wifi_list)
-        template_args['wifi_active'] = wifi_active
-        template_args['ap_name'] = ap_name
-        template_args['ap_show'] = ap_show
-        template_args['ap_connections_cnt'] = ap_connections_cnt
-        return render_template('index.html', **template_args)
+    ap_args = ap()
+    return render_template('index.html', **ap_args)
 
 @app.route("/status", methods=['GET'], endpoint='setup.status')
 def status():
     return render_template('status.html', **request.args)
 
-@app.route('/wifi/ap/show/<int:status>', methods=['GET'], endpoint='wifi.ap.show')
-def ap_show(status):
-    hostapd.set_config('ignore_broadcast_ssid', status)
-    run_command('/opt/photobooth/bin/reboot.sh 3', wait=False)
+@app.route("/wifi/list", methods=['GET'], endpoint='wifi.list')
+def wifi():
+    wpa = WPAcli()
+    wifi_args = {}
+    wifi_list = [ _ for _ in wpa.scan() if _['ssid'] not in ['', 'hidden'] ]
+    wpa_status = wpa.status()
+    wifi_active = wpa_status.get('ssid', '')
+    wifi_args['wifi_list'] = wifi_list
+    wifi_args['wifi_active'] = wifi_active
+    return render_template('wifi.html', **wifi_args)
+
+def ap():
+    hostapd = Hostapd()
+    ap_args = {}
+    ap_name = hostapd.get_config('ssid')
+    ap_password = hostapd.get_config('wpa_passphrase')
+    ap_show = int(hostapd.get_config('ignore_broadcast_ssid'))
+    inet_passthrough = int(hostapd.get_inet_passthrough())
+    ap_connections_cnt = 0
+    ap_args['ap_name'] = ap_name
+    ap_args['ap_password'] = '' if ap_password is None else ap_password
+    ap_args['ap_show'] = ap_show
+    ap_args['ap_connections_cnt'] = ap_connections_cnt
+    ap_args['inet_passthrough'] = inet_passthrough
+    return ap_args
+
+@app.route("/wifi/connect", methods=['POST'], endpoint='wifi.connect')
+def wifi_conect():
+    wpa = WPAcli()
+    ssid = request.form['ssid']
+    password = request.form['password']
+    # TODO check key_mgmt
+    wpa.connect(ssid=ssid, psk=password, key_mgmt='WPA-PSK')
+    return jsonify({'success': True})
+
+@app.route('/wifi/ap/settings', methods=['POST'], endpoint='wifi.ap.settings')
+def ap_settings():
+    hostapd = Hostapd()
+    ssid = request.form['ssid']
+    password = request.form['password']
+    hidden = request.form['hidden']
+
+    update = False
+    if ssid and ssid != hostapd.get_config('ssid'):
+        hostapd.set_config('ssid', ssid)
+        update = True
+    if password and password != hostapd.get_config('wpa_passphrase'):
+        hostapd.set_config('wpa_passphrase', password)
+        hostapd.set_config('rsn_pairwise', 'CCMP')
+        hostapd.set_config('wpa', '2')
+        hostapd.set_config('wpa_key_mgmt', 'WPA-PSK')
+        update = True
+    elif password == '' and hostapd.get_config('wpa_passphrase') != None:
+        hostapd.set_config('#wpa_passphrase', '')
+        hostapd.set_config('#rsn_pairwise', 'CCMP')
+        hostapd.set_config('wpa', 'none')
+        hostapd.set_config('#wpa_key_mgmt', 'WPA-PSK')
+        update = True
+        print(hidden,hostapd.get_config('ignore_broadcast_ssid'),hidden != hostapd.get_config('ignore_broadcast_ssid'))
+    if hidden != hostapd.get_config('ignore_broadcast_ssid'):
+        hostapd.set_config('ignore_broadcast_ssid', hidden)
+        update = True
+
+    if update:
+        run_command('/opt/photobooth/bin/reboot.sh 3', wait=False)
+    return jsonify({'success': True})
+
+@app.route('/wifi/ap/passthrough/<int:status>', methods=['GET'], endpoint='wifi.ap.passthrough')
+def ap_passthrough(status):
+    hostapd = Hostapd()
+    hostapd.set_inet_passthrough(status)
     return jsonify({'success': True})
 
 @app.route('/qr/get/<string:data>', methods=['GET'], endpoint='qr.create')

@@ -1,12 +1,74 @@
-$(function() {
-    //
-});
-
 Dropzone.autoDiscover = false;
 var backgroundGlider;
 var frameGlider;
 
-window.addEventListener('load',function(){
+function load_images(callback){
+    [].forEach.call(this.querySelectorAll('img'),function(img){
+        var _img = new Image,  _src = img.getAttribute('data-src');
+        _img.onload = function(){
+            img.src = _src;
+            img.classList.add('loaded');
+            callback && callback(img);
+        }
+        if(img.src !== _src)	_img.src = _src;
+    });
+}
+
+function load_wifis(){
+    $("#wifi-list").LoadingOverlay("show", {
+        image       : "",
+        fontawesome : "fa fa-sync-alt fa-spin",
+        fontawesomeColor: "Dodgerblue",
+        fade : [400, 200]
+    });
+    $("#wifi-list").load( "/setup/wifi/list", function() {
+        $("#wifi-list").LoadingOverlay("hide");
+        $("#wifi-count").text($('#wifi-list > option').length - 1);
+    });
+}
+
+function connect_wifi(){
+    $("#wifi-setup").LoadingOverlay("show", {
+        image       : "",
+        fontawesome : "fa fa-sync-alt fa-spin",
+        fontawesomeColor: "Dodgerblue",
+        fade : [400, 200]
+    });
+    data = {
+        'ssid': $('#wifi-list option:selected').text(),
+        'password': $('#wifi-password').val()
+    }
+    $.post("/setup/wifi/connect", data, function( data ) {
+        $('#wifi-password').val('')
+        $("#wifi-setup").LoadingOverlay("hide");
+    });
+}
+
+function update_ap(){
+    $.LoadingOverlay("show", {
+        image       : "",
+        fontawesome : "fa fa-sync-alt fa-spin",
+        fontawesomeColor: "Dodgerblue",
+        fade : [400, 200]
+    });
+    data = {
+        'ssid': $('#ap-ssid').val(),
+        'password': $('#ap-password').val(),
+        'hidden': ($('#hideAP').is(":checked") ? 1 : 0)
+    }
+    $.post("/setup/wifi/ap/settings", data, function( data ){
+        $('#ap-password').val('');
+        $.LoadingOverlay("show", {
+            image  : '',
+            custom : '<div><h1>Restarting...</h1><small>Please reconnect to the photobooth hotspot in about 30 seconds.</small></div>',
+            size : 30,
+            minSize : 0,
+            maxSize : 0 
+        });
+    });
+}
+
+function load_backgrounds(){
     $.getJSON( "/manager/api/background/get", function( data ) {
         $.each( data.data, function( i, item ) {
             $("<div/>")
@@ -16,16 +78,16 @@ window.addEventListener('load',function(){
 
         document.querySelector('.background').addEventListener('glider-slide-visible', function(event){
         var glider = Glider(this);
-        console.log('Slide Visible %s', event.detail.slide)
+            // console.log('Slide Visible %s', event.detail.slide)
         });
         document.querySelector('.background').addEventListener('glider-slide-hidden', function(event){
-            console.log('Slide Hidden %s', event.detail.slide)
+            // console.log('Slide Hidden %s', event.detail.slide)
         });
         document.querySelector('.background').addEventListener('glider-refresh', function(event){
-            console.log('Refresh')
+            // console.log('Refresh')
         });
         document.querySelector('.background').addEventListener('glider-loaded', function(event){
-            console.log('Loaded')
+            // console.log('Loaded')
         });
 
         backgroundGlider = new Glider(document.querySelector('.background'), {
@@ -79,6 +141,23 @@ window.addEventListener('load',function(){
         });
     });
 
+    document.querySelector('.background').addEventListener('glider-slide-visible', function(event){
+        var imgs_to_anticipate = 3;
+        var glider = Glider(this);
+        $( this ).find(".glider-slide").each(function() {
+            $( this ).addClass("justify-content-center align-self-center");
+        });
+        for (var i = 0; i <= imgs_to_anticipate; ++i){
+            var index = Math.min(event.detail.slide + i, glider.slides.length - 1),
+            glider = glider;
+                load_images.call(glider.slides[index],function(){
+            glider.refresh(true);
+            })
+        }
+    });
+}
+
+function load_frames(){
     $.getJSON( "/manager/api/frame/get", function( data ) {
         $.each( data.data, function( i, item ) {
             $("<div/>")
@@ -88,16 +167,16 @@ window.addEventListener('load',function(){
 
         document.querySelector('.frame').addEventListener('glider-slide-visible', function(event){
         var glider = Glider(this);
-        console.log('Slide Visible %s', event.detail.slide)
+            // console.log('Slide Visible %s', event.detail.slide)
         });
         document.querySelector('.frame').addEventListener('glider-slide-hidden', function(event){
-            console.log('Slide Hidden %s', event.detail.slide)
+            // console.log('Slide Hidden %s', event.detail.slide)
         });
         document.querySelector('.frame').addEventListener('glider-refresh', function(event){
-            console.log('Refresh')
+            // console.log('Refresh')
         });
         document.querySelector('.frame').addEventListener('glider-loaded', function(event){
-            console.log('Loaded')
+            // console.log('Loaded')
         });
 
         frameGlider = new Glider(document.querySelector('.frame'), {
@@ -151,21 +230,6 @@ window.addEventListener('load',function(){
         });
     });
 
-    document.querySelector('.background').addEventListener('glider-slide-visible', function(event){
-        var imgs_to_anticipate = 3;
-        var glider = Glider(this);
-        $( this ).find(".glider-slide").each(function() {
-            $( this ).addClass("justify-content-center align-self-center");
-        });
-        for (var i = 0; i <= imgs_to_anticipate; ++i){
-            var index = Math.min(event.detail.slide + i, glider.slides.length - 1),
-            glider = glider;
-                loadImages.call(glider.slides[index],function(){
-            glider.refresh(true);
-            })
-        }
-    });
-
     document.querySelector('.frame').addEventListener('glider-slide-visible', function(event){
         var imgs_to_anticipate = 3;
         var glider = Glider(this);
@@ -175,23 +239,18 @@ window.addEventListener('load',function(){
         for (var i = 0; i <= imgs_to_anticipate; ++i){
             var index = Math.min(event.detail.slide + i, glider.slides.length - 1),
             glider = glider;
-            loadImages.call(glider.slides[index],function(){
+            load_images.call(glider.slides[index],function(){
                 glider.refresh(true);
             })
         }
     });
+}
 
-    function loadImages(callback){
-        [].forEach.call(this.querySelectorAll('img'),function(img){
-            var _img = new Image,  _src = img.getAttribute('data-src');
-            _img.onload = function(){
-                img.src = _src;
-                img.classList.add('loaded');
-                callback && callback(img);
-            }
-            if(img.src !== _src)	_img.src = _src;
-        });
-    }
+$(function() {
+
+    load_wifis();
+    load_backgrounds();
+    load_frames();
 
     var backgroundDrop = $("div#background-card").dropzone({
         url: "/manager/api/background/store",
@@ -238,6 +297,7 @@ window.addEventListener('load',function(){
             }
         }
     });
+
     $("div#frame-card").dropzone({
         url: "/manager/api/frame/store",
         createImageThumbnails: false,
@@ -321,15 +381,40 @@ window.addEventListener('load',function(){
         });
     });
 
-    $('#hideAPtoggle').click(function() {
-        $.LoadingOverlay("show", {
-            image       : "",
-            fontawesome : "fa fa-sync-alt fa-spin"
-        });
-        ap_status_url = "/setup/wifi/ap/show/" + ($('#hideAP').is(":checked") ? 0 : 1)
-        $.get(ap_status_url, function(myData , status){
-            window.location.href = "/setup/status?status=Restarting...&msg=Please reconnect to the photobooth wifi in about 30 seconds.";
+    $('#hideInet-toggle').click(function() {
+        ap_passthrough_url = "/setup/wifi/ap/passthrough/" + ($('#hideInet').is(":checked") ? 0 : 1)
+        $.get(ap_passthrough_url, function(myData , status){
+            //
         });
     });
+
+    $('#wifi-scan').click(function() {
+        load_wifis();
+    });
+
+    $('#wifi-connect').click(function() {
+        password = $('#wifi-password').val()
+        $('#wifi-password-error').hide();
+        if (/\s/g.test(password) || password.length < 8) {
+            $('#wifi-password-error').fadeIn();
+            return
+        }
+        connect_wifi();
+    });
+
+    $('#settingsAP-update').click(function() {
+        password = $('#ap-password').val()
+        $('#ap-password-error').hide();
+        if (/\s/g.test(password) || password.length < 8) {
+            $('#ap-password-error').fadeIn();
+            return
+        }
+        update_ap();
+    });
+
+    $('#ap-password-clear').click(function() {
+        $('#ap-password').val('');
+    });
+    
 
 });

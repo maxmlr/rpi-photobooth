@@ -277,6 +277,10 @@ www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] status
 www-data ALL=(ALL) NOPASSWD:/bin/sed -i * /etc/hostapd/hostapd.conf
 www-data ALL=(ALL) NOPASSWD:/sbin/reboot --no-wall
 www-data ALL=(ALL) NOPASSWD:/opt/photobooth/bin/reboot.sh [0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/ifup wlan[0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/ifdown wlan[0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
+www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
 EOF
 
 # optimizations
