@@ -121,7 +121,7 @@ systemctl start nodogsplash.service
 sed -i -e "s/vt.global_cursor_default=[0,1]/vt.global_cursor_default=0/g" /boot/cmdline.txt
 fi
 
-if [[ "$(systemctl is-active --quiet ngrok@ssh\\x20http.service && echo running)" == "running" ]]
+if [[ "$(systemctl is-active --quiet ngrok@ssh\\x20http.service && echo running)" != "running" ]]
 then
 # install ngrok
 systemctl is-active --quiet ngrok@ssh\\x20http.service && echo Service is running
