@@ -209,6 +209,10 @@ chmod +x /opt/mqtt-launcher/mqtt-launcher.py
 cd - > /dev/null
 
 # chromium settings
+mkdir -p /root/.config/chromium/Default
+cp /boot/config/chromium.pref /root/.config/chromium/Default/Preferences
+sed -i "s|\"bottom\":.*|\"bottom\":${DISPLAY_RESOLUTION_Y}|" /root/.config/chromium/Default/Preferences
+sed -i "s|\"right\":.*|\"right\":${DISPLAY_RESOLUTION_X}|" /root/.config/chromium/Default/Preferences
 # TODO check if required
 #sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /root/.config/chromium/Default/Preferences
 #sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /root/.config/chromium/Default/Preferences

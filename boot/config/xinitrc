@@ -15,6 +15,7 @@ xset s noblank
 chromium-browser \
         --no-sandbox \
         --start-fullscreen \
+        --window-position=0,0 \
         --window-size=${DISPLAY_RESOLUTION_X},${DISPLAY_RESOLUTION_Y} \
         --kiosk \
         --incognito \
