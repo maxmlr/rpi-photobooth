@@ -222,6 +222,7 @@ mkdir -p /opt/photobooth/bin
 cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
 cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 cp /boot/scripts/health.sh /opt/photobooth/bin/health.sh
+cp /boot/scripts/reboot.sh /opt/photobooth/bin/reboot.sh
 chmod +x /opt/photobooth/bin/*.sh
 
 # add bash profile
@@ -279,6 +280,13 @@ www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] set update_config 1
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] save_config
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] select_network [0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/wpa_cli -i wlan[0-9] status
+www-data ALL=(ALL) NOPASSWD:/bin/sed -i * /etc/hostapd/hostapd.conf
+www-data ALL=(ALL) NOPASSWD:/sbin/reboot --no-wall
+www-data ALL=(ALL) NOPASSWD:/opt/photobooth/bin/reboot.sh [0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/ifup wlan[0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/ifdown wlan[0-9]
+www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
+www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
 EOF
 fi
 
