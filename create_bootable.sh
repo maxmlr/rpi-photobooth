@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # ARG_POSITIONAL_SINGLE([image],[path to dietpi image file],[])
-# ARG_OPTIONAL_SINGLE([git],[g],["server", "server" or path to local git repository],[server])
+# ARG_OPTIONAL_SINGLE([git],[g],["server", "client" or path to local git repository],[server])
 # ARG_OPTIONAL_SINGLE([config],[c],[path to dietpi config file],[])
 # ARG_OPTIONAL_SINGLE([dietpi],[d],[path to dietp.txt file],[])
 # ARG_OPTIONAL_SINGLE([wifi],[w],[path to dietpi-wifi.txt file],[])
