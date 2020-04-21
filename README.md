@@ -36,3 +36,5 @@ copy -rf boot/* /Volumes/<YourMicroSD>
 ```
 
 6. Insert MicroSD card in Raspberry and boot up. The automated installation might take up to 60 minues.
+
+7. Attach Hardware Camera Button and LED Panel as described in https://github.com/maxmlr/rpi-photobooth/tree/master/docs/img
