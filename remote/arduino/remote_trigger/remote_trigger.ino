@@ -158,6 +158,7 @@ void loop() {
       led_blink(BUILTIN_LED,1,50,true);
       led_blink(LED_PIN,(countdown/1000)-1,1000,false);
       led_blink(LED_PIN,5,50,false);
+      digitalWrite(BUILTIN_LED, HIGH);
     }
     ButtonPressedFlag = false;
   }
