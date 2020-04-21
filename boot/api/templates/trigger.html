@@ -1,0 +1,154 @@
+<div class="card">
+    <div class="card-body">
+      <h1 class="d-inline card-title display-4">Trigger</h1>
+      <small id="triggerHelpBlock" class="d-inline form-text text-muted ml-1">
+        Configure actions
+      </small>
+      <div class="card-text mt-4">
+        <div id="accordion" class="trigger-config">
+          {% for item in actions %}
+          <div class="card">
+            <div class="card-header" id="headingOne">
+              <button class="btn btn-block text-uppercase" data-toggle="collapse" data-target="#collapse-{{ loop.index }}" aria-expanded="true" aria-controls="collapse-{{ loop.index }}">
+                {{ item['trigger'] }}
+              </button>            
+            </div>
+            <div id="collapse-{{ loop.index }}" class="collapse" aria-labelledby="heading-{{ loop.index }}" data-parent="#accordion">
+              <div class="card-body">
+                <div class="d-flex justify-content-center mt-2">
+                  <ul class="nav nav-pills mb-3" id="actions-tab" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="actions-ledpanel-{{ loop.index }}-tab" data-toggle="pill" href="#actions-ledpanel-{{ loop.index }}" role="tab" aria-controls="actions-ledpanel-{{ loop.index }}" aria-selected="true">LEDpanel</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="actions-gpio-{{ loop.index }}-tab" data-toggle="pill" href="#actions-gpio-{{ loop.index }}" role="tab" aria-controls="actions-gpio-{{ loop.index }}" aria-selected="false">Relais</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="tab-content" id="actions-tabContent">
+                  <div class="tab-pane fade show active" id="actions-ledpanel-{{ loop.index }}" role="tabpanel" aria-labelledby="actions-ledpanel-{{ loop.index }}-tab">
+                    <div class="row">
+                      {% for item in item['ledpanel'] %}
+                      <div class="col-sm-4 mb-4">
+                        <div class="card border-primary">
+                          <div class="card-header text-uppercase font-weight-bold">{{ item['name'] }}</div>
+                          <div class="card-body">
+                            <div class="card-text">
+                              {% for item in item['slots'] %}
+                                <div class="input-group input-group-sm mb-2">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="action-prepend"><i class="fas fa-lightbulb"></i></span>
+                                  </div>                        
+                                  <select class="custom-select" id="action-list" aria-describedby="action-prepend">
+                                    {% for action in ledpanel_actions_list %}
+                                    <option value={{ loop.index }} {{ 'selected' if action == item['action'] else '' }}>{{ action }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="color-prepend"><i class="fas fa-palette"></i></span>
+                                  </div>                        
+                                  <select class="custom-select" id="color-list" aria-describedby="color-prepend">
+                                    {% for color in ledpanel_colors_list %}
+                                    <option value={{ loop.index }} {{ 'selected' if color == item['color'] else '' }}>{{ color }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="brightness-prepend"><i class="fas fa-adjust"></i></span>
+                                  </div>
+                                  <input type="text" class="form-control" placeholder="1.0" value="{{ item['brightness'] }}" aria-label="arguments" aria-describedby="brightness-prepend">
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="args-prepend"><i class="fas fa-filter"></i></span>
+                                  </div>
+                                  <input type="text" class="form-control" placeholder="arguments" value="{{ item['args'] }}" aria-label="arguments" aria-describedby="args-prepend">
+                                </div>
+                                <div class="d-flex justify-content-center mb-2">
+                                  <button type="button" class="btn btn-sm btn-block btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                                <div class="d-flex justify-content-center mb-2">
+                                  <i class="fas fa-arrow-alt-circle-down"></i>
+                                </div>
+                              {% endfor %}
+                              <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-sm btn-block btn-outline-success"><i class="fas fa-plus"></i></button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+  
+                  <div class="tab-pane fade" id="actions-gpio-{{ loop.index }}" role="tabpanel" aria-labelledby="actions-gpio-{{ loop.index }}-tab">
+                    <div class="row">
+                      {% for item in item['gpio'] %}
+                      <div class="col-sm-4 mb-4">
+                        <div class="card border-primary">
+                          <div class="card-header text-uppercase font-weight-bold">{{ item['name'] }}</div>
+                          <div class="card-body">
+                            <div class="card-text">
+                              {% for item in item['slots'] %}
+                                <div class="input-group input-group-sm mb-2">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="gpio-prepend"><i class="fas fa-toggle-on"></i></span>
+                                  </div>                        
+                                  <select class="custom-select" id="gpio-list" aria-describedby="gpio-prepend">
+                                    {% for gpio, relay in relay_mapping.items() %}
+                                    <option value={{ gpio }} {{ 'selected' if gpio == item['gpio'] else '' }}>{{ relay }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="state-prepend"><i class="fas fa-plug"></i></span>
+                                  </div>                        
+                                  <select class="custom-select" id="state-list" aria-describedby="state-prepend">
+                                    {% for state, desc in gpio_state_mapping.items() %}
+                                    <option value={{ state }} {{ 'selected' if state == item['state'] else '' }}>{{ desc }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="func-prepend"><i class="fas fa-asterisk"></i></span>
+                                  </div>                        
+                                  <select class="custom-select" id="func-list" aria-describedby="func-prepend">
+                                    {% for func in gpio_func_list %}
+                                    <option value={{ func }} {{ 'selected' if func == item['func'] else '' }}>{{ func }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="d-flex justify-content-center mb-2">
+                                  <button type="button" class="btn btn-sm btn-block btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                  <i class="fas fa-arrow-alt-circle-down mb-2"></i>
+                                </div>
+                              {% endfor %}
+                              <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-sm btn-block btn-outline-success"><i class="fas fa-plus"></i></button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+  
+                </div>
+              </div>
+            </div>
+          </div>        
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  

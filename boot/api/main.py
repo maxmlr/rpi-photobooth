@@ -1,6 +1,7 @@
 from os import environ
+from pathlib import Path
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, send_file, jsonify, redirect, url_for
+from flask import Flask, render_template, request, send_file, json, jsonify, redirect, url_for
 from flask_cors import CORS
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
@@ -8,6 +9,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from helpers import getQRCodeImage, run_command
 from wpa_cli import WPAcli
 from hostapd_cli import Hostapd
+from gpio_led import LEDPanel
 
 """
 request.form: key/value pairs of data sent through POST
@@ -102,7 +104,31 @@ def ping_pong():
 @login_required
 def home():
     ap_args = ap()
-    return render_template('index.html', **ap_args)
+    trigger_args = trigger()
+    gpio_args = {
+        'relay_mapping': {
+            24: 1,
+            25: 2,
+            16: 3,
+            17: 4,
+            27: 5,
+            22: 6,
+            5: 7,
+            6: 8
+        },
+        'gpio_state_mapping': {
+            0: 'on',
+            1: 'off'
+        },
+        'gpio_func_list': [
+            'static'
+        ]
+    }
+    ledpanel_args = {
+        'ledpanel_actions_list': LEDPanel.get_actions() + [''],
+        'ledpanel_colors_list': LEDPanel.get_colors() + ['']
+    }
+    return render_template('index.html', **{**ap_args , **trigger_args, **ledpanel_args, **gpio_args})
 
 @app.route("/status", methods=['GET'], endpoint='setup.status')
 def status():
@@ -135,9 +161,16 @@ def ap():
     ap_args['inet_passthrough'] = inet_passthrough
     return ap_args
 
+def trigger():
+    trigger_json_file = Path(app.static_folder) / 'data' / 'trigger.json'
+    trigger_json = {}
+    with trigger_json_file.open() as fin:
+        trigger_json = json.load(fin)
+    return trigger_json
+
 @app.route("/wifi/connect", methods=['POST'], endpoint='wifi.connect')
 @login_required
-def wifi_conect():
+def wifi_connect():
     wpa = WPAcli()
     ssid = request.form['ssid']
     password = request.form['password']
@@ -169,7 +202,6 @@ def ap_settings():
         hostapd.set_config('wpa', 'none')
         hostapd.set_config('#wpa_key_mgmt', 'WPA-PSK')
         update = True
-        print(hidden,hostapd.get_config('ignore_broadcast_ssid'),hidden != hostapd.get_config('ignore_broadcast_ssid'))
     if hidden != hostapd.get_config('ignore_broadcast_ssid'):
         hostapd.set_config('ignore_broadcast_ssid', hidden)
         update = True

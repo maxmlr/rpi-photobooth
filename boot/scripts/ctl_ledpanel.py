@@ -2,9 +2,8 @@
 
 
 import argparse
-import inspect
 from Pyro5.compatibility import Pyro4
-from gpio_led import Effects
+from gpio_led import LEDPanel
 from helpers import retry
 
 
@@ -14,11 +13,11 @@ ENDPOINT = 'ledpanel.control'
 
 
 if __name__ == "__main__":
-    actions = [name for name, func in inspect.getmembers(Effects, predicate=inspect.isfunction) if str(inspect.signature(func)).find('**kwargs') != -1]
+    actions = LEDPanel.get_actions()
     parser = argparse.ArgumentParser(description='LED Panel Controller.')
     parser.add_argument(
         "action",
-        help=f"Define action from: {', '.join(actions)}",
+        help=f"Available actions: {', '.join(actions)}",
         metavar=''
     )
     parser.add_argument("-c", "--color", type=str, default='black')

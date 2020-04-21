@@ -1,0 +1,370 @@
+{
+    "actions": [
+        {
+            "trigger": "thrill",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 24,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "countdown",
+            "ledpanel": [
+                {
+                    "name": "5",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "4",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "3",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "2",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "1",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "5",
+                    "slots": [
+                        {
+                            "gpio": 25,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                },
+                {
+                    "name": "4",
+                    "slots": [
+                        {
+                            "gpio": 16,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                },
+                {
+                    "name": "3",
+                    "slots": [
+                        {
+                            "gpio": 17,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                },
+                {
+                    "name": "2",
+                    "slots": [
+                        {
+                            "gpio": 27,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                },
+                {
+                    "name": "1",
+                    "slots": [
+                        {
+                            "gpio": 22,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "cheese",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 24,
+                            "state": 0,
+                            "func": "static"
+                        },
+                        {
+                            "gpio": 25,
+                            "state": 1,
+                            "func": "static"
+                        },
+                        {
+                            "gpio": 16,
+                            "state": 1,
+                            "func": "static"
+                        },
+                        {
+                            "gpio": 17,
+                            "state": 1,
+                            "func": "static"
+                        },
+                        {
+                            "gpio": 27,
+                            "state": 1,
+                            "func": "static"
+                        },
+                        {
+                            "gpio": 22,
+                            "state": 1,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "takePic",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 5,
+                            "state": 0,
+                            "func": "static"
+                        },
+                        {
+                            "gpio": 24,
+                            "state": 1,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "gotPic",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 6,
+                            "state": 1,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "collage-start",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 24,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "collage-end",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 24,
+                            "state": 1,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "processing-start",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 24,
+                            "state": 0,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "trigger": "processing-end",
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "",
+                            "color": "",
+                            "brightness": "",
+                            "args": ""
+                        }
+                    ]
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "gpio": 24,
+                            "state": 1,
+                            "func": "static"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

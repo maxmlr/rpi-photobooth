@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+import inspect
 from signal import signal, SIGINT
 import time
 import datetime
@@ -116,6 +117,12 @@ class LEDPanel:
 
     def get_effects(self):
         return Effects(panel=self)
+
+    def get_actions():
+        return [name for name, func in inspect.getmembers(Effects, predicate=inspect.isfunction) if str(inspect.signature(func)).find('**kwargs') != -1]
+
+    def get_colors():
+        return list(Color.colors.keys())
 
     @pre_execution
     @post_execution

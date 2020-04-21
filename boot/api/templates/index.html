@@ -31,144 +31,141 @@
     <!-- Your page content -->
     {% block content %}
     <div class="container-fluid">
-      <div class=""> 
-        <!-- d-flex justify-content-center -->
-        <div class="card mt-3">
-          <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="#">
-              <i class="fas fa-camera-retro"></i>
-              Photobooth Manager
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav">
-                <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
-                  {{ current_user.id }}
-                </small>
-                <li class="nav-item active">
-                  <a class="nav-link" href="/setup"><i class="fas fa-home mr-2"></i>Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {{ '' if current_user.is_authenticated else 'disabled' }}" href="logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-          <div class="card-body">
-            <h1 class="d-inline card-title display-4">WiFi</h1>
-            <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
-              <span id="wifi-count">...</span> WiFis with public SSIDs
-            </small>
-            <div id="wifi-setup">
-              <div class="row">
-                <div class="col">
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <span class="fas fa-wifi" style="color: {{ wifi_color }}"></span>
-                      </div>
-                    </div>
-                    <select class="custom-select" id="wifi-list" aria-describedby="wifiHelpBlock"></select>
-                    <div class="input-group-append">
-                        <button id="wifi-scan" type="button" class="btn btn-outline-success">Scan</button>
+      <div class="card mt-3">
+        <nav class="navbar navbar-light bg-light">
+          <a class="navbar-brand" href="#">
+            <i class="fas fa-camera-retro"></i>
+            Photobooth Manager
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+                {{ current_user.id }}
+              </small>
+              <li class="nav-item active">
+                <a class="nav-link" href="/setup"><i class="fas fa-home mr-2"></i>Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ '' if current_user.is_authenticated else 'disabled' }}" href="logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="card-body">
+          <h1 class="d-inline card-title display-4">WiFi</h1>
+          <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+            <span id="wifi-count">...</span> WiFis with public SSIDs
+          </small>
+          <div id="wifi-setup">
+            <div class="row">
+              <div class="col">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                      <span class="fas fa-wifi" style="color: {{ wifi_color }}"></span>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="input-group mb-2">
-                    <input type="password" id="wifi-password" class="form-control" placeholder="Password">
-                    <div class="input-group-append">
-                      <button id="wifi-connect" class="btn btn-primary">Connect</button>
-                    </div>
-                  </div>
-                  <div id="wifi-password-error" class="alert alert-danger" role="alert" style="display:none">
-                    <small>
-                      The password must have at least 8 characters and can not contain spaces.
-                    </small>
+                  <select class="custom-select" id="wifi-list" aria-describedby="wifiHelpBlock"></select>
+                  <div class="input-group-append">
+                      <button id="wifi-scan" type="button" class="btn btn-outline-success">Scan</button>
                   </div>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <div class="row">
-                  <div class="col">
-                    <h1 class="d-inline card-title display-4 mt-1">Hotspot</h1>
-                    <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
-                      <!-- {{ ap_connections_cnt }} connected -->
-                    </small>
-                    <div class="text-left font-weight-bold">SSID:<span class="ml-2">{{ ap_name }}</span></div>
-                    <img src="{{ url_for('qr.create', data=(wifi_active if wifi_active else 'null'), box_size=10, border=0) }}" class="rounded mx-auto d-block mt-3" alt="QRcode">
+                <div class="input-group mb-2">
+                  <input type="password" id="wifi-password" class="form-control" placeholder="Password">
+                  <div class="input-group-append">
+                    <button id="wifi-connect" class="btn btn-primary">Connect</button>
                   </div>
                 </div>
-                <div class="row mt-3">
-                  <div class="col">
-                    <div class="row mb-3">
-                      <div class="col">
-                        <h3 class="">Options</h3>
-                      </div>
+                <div id="wifi-password-error" class="alert alert-danger" role="alert" style="display:none">
+                  <small>
+                    The password must have at least 8 characters and can not contain spaces.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="row">
+                <div class="col">
+                  <h1 class="d-inline card-title display-4 mt-1">Hotspot</h1>
+                  <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+                    <!-- {{ ap_connections_cnt }} connected -->
+                  </small>
+                  <div class="text-left font-weight-bold">SSID:<span class="ml-2">{{ ap_name }}</span></div>
+                  <img src="{{ url_for('qr.create', data=(wifi_active if wifi_active else 'null'), box_size=10, border=0) }}" class="rounded mx-auto d-block mt-3" alt="QRcode">
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="row mb-3">
+                    <div class="col">
+                      <h3 class="">Options</h3>
                     </div>
-                    <div class="row mt-2">
-                      <div class="col col-auto">
-                        <label class="switch">
-                          <input type="checkbox" class="form-check-input" id="hideInet" {{ 'checked' if inet_passthrough else '' }}>
-                          <span id="hideInet-toggle" class="slider round"></span>
-                        </label>
-                      </div>
-                      <div class="col">
-                        Internet pass-through
-                      </div>
+                  </div>
+                  <div class="row mt-2">
+                    <div class="col col-auto">
+                      <label class="switch">
+                        <input type="checkbox" class="form-check-input" id="hideInet" {{ 'checked' if inet_passthrough else '' }}>
+                        <span id="hideInet-toggle" class="slider round"></span>
+                      </label>
                     </div>
-                    <div class="row mt-2">
-                      <div class="col">
-                        <h5>Hotspot Name & Security</h5>
-                        <div class="alert alert-warning" role="alert">
-                          <span>
-                            Updating Hotspot name or security settings will <strong><u>restart</u></strong> the photobooth.
-                          </span>
-                        </div>
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">
-                              <span class="fas fa-wifi"></span>
-                            </div>
-                          </div>
-                          <input type="text" id="ap-ssid" class="form-control" placeholder="{{ ap_name }}">
-                        </div>
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">
-                              <span class="fas fa-key"></span>
-                            </div>
-                          </div>
-                          <input type="text" id="ap-password" class="form-control" placeholder="Password (optional)" value="{{ ap_password }}">
-                          <div class="input-group-append">
-                            <button id="ap-password-clear" class="btn btn-danger"><i class="fas fa-times"></i></button>
+                    <div class="col">
+                      Internet pass-through
+                    </div>
+                  </div>
+                  <div class="row mt-2">
+                    <div class="col">
+                      <h5>Hotspot Name & Security</h5>
+                      <div class="alert alert-warning" role="alert">
+                        <span>
+                          Updating Hotspot name or security settings will <strong><u>restart</u></strong> the photobooth.
+                        </span>
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <span class="fas fa-wifi"></span>
                           </div>
                         </div>
-                        <div id="ap-password-error" class="alert alert-danger" role="alert" style="display:none">
-                          <small>
-                            The password must have at least 8 characters and can not contain spaces.
-                          </small>
-                        </div>
-                        <div class="row mt-2">
-                          <div class="col col-auto">
-                            <label class="switch">
-                              <input type="checkbox" class="form-check-input" id="hideAP" {{ 'checked' if ap_show else '' }}>
-                              <span id="hideAP-toggle" class="slider round"></span>
-                            </label>
-                          </div>
-                          <div class="col">
-                            Hidden
+                        <input type="text" id="ap-ssid" class="form-control" placeholder="{{ ap_name }}">
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <span class="fas fa-key"></span>
                           </div>
                         </div>
-                        <div>
-                          <button id="settingsAP-update" class="btn btn-primary float-right">Update</button>
+                        <input type="text" id="ap-password" class="form-control" placeholder="Password (optional)" value="{{ ap_password }}">
+                        <div class="input-group-append">
+                          <button id="ap-password-clear" class="btn btn-danger"><i class="fas fa-times"></i></button>
                         </div>
+                      </div>
+                      <div id="ap-password-error" class="alert alert-danger" role="alert" style="display:none">
+                        <small>
+                          The password must have at least 8 characters and can not contain spaces.
+                        </small>
+                      </div>
+                      <div class="row mt-2">
+                        <div class="col col-auto">
+                          <label class="switch">
+                            <input type="checkbox" class="form-check-input" id="hideAP" {{ 'checked' if ap_show else '' }}>
+                            <span id="hideAP-toggle" class="slider round"></span>
+                          </label>
+                        </div>
+                        <div class="col">
+                          Hidden
+                        </div>
+                      </div>
+                      <div>
+                        <button id="settingsAP-update" class="btn btn-primary float-right">Update</button>
                       </div>
                     </div>
                   </div>
@@ -177,61 +174,61 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="card-group w-100">
-            <div class="col-md-6 mt-3">
-              <div id="background-card" class="card">
-                <div class="card-body">
-                  <div class="d-flex flex-row bd-highlight mb-3">
-                    <div class="glider-contain shadow p-3 mb-5 bg-white rounded">
-                      <div class="glider background container-inline d-flex h-75"></div>
-                      <button class="glider-prev background-prev"><i class="fas fa-caret-left"></i></i></button>
-                      <button class="glider-next background-next"><i class="fas fa-caret-right"></i></button>
-                      <div id="dots_background"></div>
-                    </div>
+      <div class="row">
+        <div class="card-group w-100">
+          <div class="col-md-6 mt-3">
+            <div id="background-card" class="card">
+              <div class="card-body">
+                <h1 class="d-inline card-title display-4">Background</h1>
+                <div class="d-flex flex-row bd-highlight mt-2 mb-3">
+                  <div class="glider-contain shadow p-3 mb-3 bg-white rounded">
+                    <div class="glider background container-inline d-flex h-75"></div>
+                    <button class="glider-prev background-prev"><i class="fas fa-caret-left"></i></i></button>
+                    <button class="glider-next background-next"><i class="fas fa-caret-right"></i></button>
+                    <div id="dots_background"></div>
                   </div>
-                  <h5 class="card-title d-flex justify-content-center">Background</h5>
-                  <div class="card-text">
-                    <div class="d-flex justify-content-center">
-                      <button id="background-selectbutton" type="button" class="btn btn-success m-2">Select</button>
-                      <button id="background-deletebutton" type="button" class="btn btn-danger m-2">Delete</button>
-                      <button id="background-uploadbutton" type="button" class="btn btn-primary m-2">Upload</button>
-                    </div>
-                    <p class="d-flex justify-content-center mt-3">
-                      <small class="text-muted">Drop new background image anywhere to upload</small>
-                    </p>
-                    <div id="background-upload" class="alert alert-warning alert-dismissible show" role="alert" style="display: none">
-                      <strong class="d-flex justify-content-center alert-msg"></strong>
-                    </div>
+                </div>
+                <div class="card-text">
+                  <div class="d-flex justify-content-center">
+                    <button id="background-selectbutton" type="button" class="btn btn-success m-2">Select</button>
+                    <button id="background-deletebutton" type="button" class="btn btn-danger m-2">Delete</button>
+                    <button id="background-uploadbutton" type="button" class="btn btn-primary m-2">Upload</button>
+                  </div>
+                  <p class="d-flex justify-content-center mt-3">
+                    <small class="text-muted">Drop new background image to upload</small>
+                  </p>
+                  <div id="background-upload" class="alert alert-warning alert-dismissible show" role="alert" style="display: none">
+                    <strong class="d-flex justify-content-center alert-msg"></strong>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-6 mt-3">
-              <div id="frame-card" class="card">
-                <div class="card-body">
-                  <div class="d-flex flex-row bd-highlight mb-3">
-                    <div class="glider-contain shadow p-3 mb-5 bg-white rounded">
-                      <div class="glider frame container-inline d-flex h-75"></div>
-                      <button class="glider-prev frame-prev"><i class="fas fa-caret-left"></i></i></button>
-                      <button class="glider-next frame-next"><i class="fas fa-caret-right"></i></button>
-                      <div id="dots_frame"></div>
-                    </div>
+          </div>
+          <div class="col-md-6 mt-3">
+            <div id="frame-card" class="card">
+              <div class="card-body">
+                <h1 class="d-inline card-title display-4">Frame</h1>
+                <div class="d-flex flex-row bd-highlight mt-2 mb-3">
+                  <div class="glider-contain shadow p-3 mb-3 bg-white rounded">
+                    <div class="glider frame container-inline d-flex h-75"></div>
+                    <button class="glider-prev frame-prev"><i class="fas fa-caret-left"></i></i></button>
+                    <button class="glider-next frame-next"><i class="fas fa-caret-right"></i></button>
+                    <div id="dots_frame"></div>
                   </div>
-                  <h5 class="card-title d-flex justify-content-center">Frame</h5>
-                  <div class="card-text">
-                    <div class="d-flex justify-content-center">
-                      <button id="frame-selectbutton" type="button" class="btn btn-success m-2">Select</button>
-                      <button id="frame-deletebutton" type="button" class="btn btn-danger m-2">Delete</button>
-                      <button id="frame-uploadbutton" type="button" class="btn btn-primary m-2">Upload</button>
-                    </div>
-                    <p class="d-flex justify-content-center mt-3">
-                      <small class="text-muted">Drop new frame anywhere to upload</small>
-                    </p>
-                    <div id="frame-upload" class="alert alert-warning alert-dismissible show" role="alert" style="display: none">
-                      <strong class="d-flex justify-content-center alert-msg"></strong>
-                    </div>
+                </div>
+                <div class="card-text">
+                  <div class="d-flex justify-content-center">
+                    <button id="frame-selectbutton" type="button" class="btn btn-success m-2">Select</button>
+                    <button id="frame-deletebutton" type="button" class="btn btn-danger m-2">Delete</button>
+                    <button id="frame-uploadbutton" type="button" class="btn btn-primary m-2">Upload</button>
+                  </div>
+                  <p class="d-flex justify-content-center mt-3">
+                    <small class="text-muted">Drop new frame to upload</small>
+                  </p>
+                  <div id="frame-upload" class="alert alert-warning alert-dismissible show" role="alert" style="display: none">
+                    <strong class="d-flex justify-content-center alert-msg"></strong>
                   </div>
                 </div>
               </div>
@@ -241,6 +238,7 @@
         <div class="dropzonejs-preview" style="display: none"></div>
         <img id="glider-add">
       </div>
+      {% include 'trigger.html' %}
     </div>
     {% endblock %}
 
