@@ -29,9 +29,8 @@ cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc_l
 chown -R www-data:www-data /var/www/html/config/my.config.inc_latest.php
 mv /tmp/my.config.inc.php /var/www/html/config/my.config.inc.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc.php
-update_msg+=( "Please manually check updates in the photobooth webinterface configs:" )
-update_msg+=( " - old: /var/www/html/config/my.config.inc.php" )
-update_msg+=( " - new: /var/www/html/config/my.config.inc_latest.php" )
-fi
+echo "Please manually check updates in the photobooth webinterface configs:"
+echo " - old: /var/www/html/config/my.config.inc.php"
+echo " - new: /var/www/html/config/my.config.inc_latest.php"
 
 echo "Update successful."
