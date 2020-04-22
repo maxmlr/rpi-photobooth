@@ -106,7 +106,7 @@ cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth <<
 /opt/photobooth/python
 EOF
 chown -R www-data:www-data /opt/photobooth/flask/api
-echo "SECRET_KEY=$(python -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/.env
+echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/.env
 echo "API_KEY=$(openssl rand -base64 64)" >> /opt/photobooth/flask/api/.env
 mkdir -p /opt/photobooth/conf/custom
 cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
