@@ -82,6 +82,10 @@ or appended to the query string of the authtarget link:
 	.btn:active, .btn:focus, .btn:hover {
 		background: #d35400;
 	}
+	a, a:active, a:focus, a:hover, a:visited {
+		color: #ffffff;
+		text-decoration: none;
+	}
 	hr {
 		border-top: 0.1em solid #ffffff;
 	}
@@ -103,7 +107,7 @@ or appended to the query string of the authtarget link:
 				</div>
 				<form method="get" action="$authaction">
 					<input type="hidden" name="tok" value="$tok">
-					<input type="hidden" name="redir" value="$redir">
+					<input type="hidden" name="redir" value="http://192.168.50.1/captive/redir.html">
 					<button class="btn takePic" type="submit">
 						<i class="fa fa-sign-in"></i> <span>Login</span>
 					</button>							
