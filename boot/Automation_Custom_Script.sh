@@ -151,6 +151,15 @@ mkdir -p /var/www/html
 
 # copy captive protal
 cp -rf /boot/captive /var/www/html
+mkdir -p /var/www/html/captive/css
+cp -f /var/www/html/resources/css/style.css /var/www/html/captive/css
+cp -f /var/www/html/resources/css/rounded.css /var/www/html/captive/css
+cp -f /var/www/html/node_modules/font-awesome/css/font-awesome.css /var/www/html/captive/css
+cp -f /var/www/html/node_modules/normalize.css/normalize.css /var/www/html/captive/css
+cp -rf /var/www/html/resources/fonts /var/www/html/captive
+cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
+ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
+ln -sf /var/www/html/resources/img/bg.jpg /var/www/html/captive/images/bg
 
 # move default files
 mkdir /var/www/dietpi && mv /var/www/*.php /var/www/*.html -t /var/www/dietpi
