@@ -314,6 +314,9 @@ if [[ "$DEVICE_TYPE" = "server" ]]; then
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
 fi
 
+# common checks
+[[ "$(hostname)" == "photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}" ]] || hostnamectl set-hostname "photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}"
+
 # cleanup
 apt-get clean && apt-get autoremove -y
 

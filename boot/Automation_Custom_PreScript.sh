@@ -10,8 +10,8 @@ echo "DEVICE_TYPE=\"server\"" >> /boot/photobooth.conf
 source /boot/photobooth.conf
 
 # Set uniue hostname in dietpi.txt
-[[ -f /boot/dietpi.txt ]] && sed -i -e s"|AUTO_SETUP_NET_HOSTNAME=.*|AUTO_SETUP_NET_HOSTNAME=${DEVICE_TYPE}-${DEVICE_ID}|g" /boot/dietpi.txt
-[[ -f /DietPi/dietpi.txt ]] && sed -i -e s"|AUTO_SETUP_NET_HOSTNAME=.*|AUTO_SETUP_NET_HOSTNAME=${DEVICE_TYPE}-${DEVICE_ID}|g" /DietPi/dietpi.txt
+[[ -f /boot/dietpi.txt ]] && sed -i -e s"|AUTO_SETUP_NET_HOSTNAME=.*|AUTO_SETUP_NET_HOSTNAME=photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}|g" /boot/dietpi.txt
+[[ -f /DietPi/dietpi.txt ]] && sed -i -e s"|AUTO_SETUP_NET_HOSTNAME=.*|AUTO_SETUP_NET_HOSTNAME=photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}|g" /DietPi/dietpi.txt
 
 # Replace brcmfmac driver
 # fixes WiFi freezes; references:
