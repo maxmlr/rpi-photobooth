@@ -117,7 +117,9 @@ cd nodogsplash-${NODOGSPLASH_RELEASE}
 make && make install
 cd - > /dev/null
 rm -rf nodogsplash-${NODOGSPLASH_RELEASE}
-cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
+cp -f /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
+cp -f /boot/config/nginx-nodogsplash.conf /etc/nginx/sites-available/nodogsplash
+ln -sf /etc/nginx/sites-available/nodogsplash /etc/nginx/sites-enabled
 systemctl start nodogsplash.service
 
 # setup boot splash screen
@@ -161,7 +163,7 @@ cp -f /var/www/html/node_modules/normalize.css/normalize.css /var/www/html/capti
 cp -rf /var/www/html/resources/fonts /var/www/html/captive
 cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
 ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
-ln -sf /var/www/html/resources/img/bg.jpg /var/www/html/captive/images/bg
+[[ -f /var/www/html/captive/images/bg ]] || convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/www/html/captive/images/bg
 
 # create self signed ssl certificates
 # cd /etc/lighttpd
@@ -316,9 +318,11 @@ www-data ALL=(ALL) NOPASSWD:/sbin/reboot --no-wall
 www-data ALL=(ALL) NOPASSWD:/opt/photobooth/bin/reboot.sh [0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifup wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifdown wlan[0-9]
+www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl json
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
 www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ledpanel *
+www-data ALL=(ALL) NOPASSWD:/usr/bin/convert *
 EOF
 fi
 
