@@ -246,6 +246,80 @@ function load_frames(){
     });
 }
 
+function parse_trigger_actions(){
+    trigger_parsed = {
+        'actions': []
+    }
+    
+    $('#accordion > div.card').each(function(trigger_idx, trigger_card) {			
+          trigger = $(trigger_card).data('trigger');
+        index = trigger_idx + 1;
+    
+        ledpanel_parsed = [];
+        $actions_ledpanel = $('#actions-ledpanel-' + index)
+        $actions_ledpanel.find('.card').each(function(action_idx, action_card) {
+            action = $(action_card).data('action');
+            action_parsed = {
+                'name': action.toString(),
+                'slots': []
+            }
+            $(action_card).find('.slot').each(function(slot_idx, slot) {
+                configs = {}
+                $(slot).find('input, select').each(function(form_idx, form_component) {
+                    $component = $(form_component);
+                    node = $component.prop('nodeName');
+                    field = $component.data('field');
+                    if (node == 'INPUT') {
+                        if (field == 'brightness' && ($component.val().toString().trim() === "" || $component.val().toString() == null)) {
+                            $component.val('1.0');
+                        } else {
+                            configs[field] = $component.val().toString();
+                        }
+                    } else if (node == 'SELECT') {
+                        configs[field] = $('option:selected', $component).val().toString();
+                    }
+                });
+                action_parsed.slots.push(configs);
+            });
+    
+            ledpanel_parsed.push(action_parsed);
+        });
+        
+        gpio_parsed = [];
+        $actions_gpio = $('#actions-gpio-' + index)
+        $actions_gpio.find('.card').each(function(action_idx, action_card) {
+            action = $(action_card).data('action');
+            action_parsed = {
+                'name': action.toString(),
+                'slots': []
+            }
+            $(action_card).find('.slot').each(function(slot_idx, slot) {
+                configs = {}
+                $(slot).find('input, select').each(function(form_idx, form_component) {
+                    $component = $(form_component);
+                    node = $component.prop('nodeName');
+                    field = $component.data('field');
+                    if (node == 'INPUT') {
+                        configs[field] = $component.val().toString();;
+                    } else if (node == 'SELECT') {
+                        configs[field] = $('option:selected', $component).val().toString();;
+                    }
+                });
+                action_parsed.slots.push(configs);
+            });
+    
+            gpio_parsed.push(action_parsed);
+        });
+    
+        trigger_parsed.actions.push({
+            'trigger': trigger,
+            'ledpanel': ledpanel_parsed,
+            'gpio': gpio_parsed
+        })
+    });
+    return trigger_parsed
+}
+
 $(function() {
 
     load_wifis();
@@ -451,6 +525,61 @@ $(function() {
     $('#ap-password-clear').click(function() {
         $('#ap-password').val('');
     });
+
+    $('.slot-delete').click(function() {
+        $($(this).data('target')).remove();
+    });
+
+    $('.slot-add').click(function() {
+        target = $(this).data('target');
+        prefix = $(this).data('prefix');
+        index = $(this).data('index');
+        added = $(this).data('added');
+        $target = $(target + "-" + prefix + "-" + index);
+        index_next = parseInt( index, 10 ) + 1 + added;
+        
+        $clone = $target.clone();
+        $clone.toggleClass('slot slot-template');
+        clone_id_new = $clone.prop('id').replace(prefix + '-' + index, prefix + '-' + index_next)
+        $clone.prop('id', clone_id_new);
+        $('*[id$="' + prefix + '-' + index + '"]' , $clone).each(function() {
+            id_new = $(this).prop('id').replace(prefix + '-' + index, prefix + '-' + index_next);
+            $(this).prop('id', id_new);
+        });
+        $('.slot-delete', $clone).data('target', '#' + clone_id_new).click(function() {
+            $($(this).data('target')).remove();
+        });
+        $clone.insertBefore($target).fadeIn();
+        $(this).data('added', added + 1);
+    });
     
+    $('.trigger-action-submit').click(function() {
+        $('.collapse.show').LoadingOverlay("show", {
+            image       : "",
+            fontawesome : "fa fa-sync-alt fa-spin",
+            fontawesomeColor: "Dodgerblue",
+            fade : [400, 200]
+        });
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            url: '/setup/trigger/actions/update',
+            dataType : 'json',
+            data : JSON.stringify(parse_trigger_actions()),
+            success : function(result) {
+                $('.loadingoverlay_element').fadeOut( function() {
+                    $('.loadingoverlay_element').first().html('<i class="fas fa-check"></i>').css('color', 'green').fadeIn(  function() {
+                        $('.collapse.show').LoadingOverlay("hide");
+                    });
+                });
+            },error : function(result){
+                $('.loadingoverlay_element').fadeOut( function() {
+                    $('.loadingoverlay_element').first().html('<i class="fas fa-times"></i>').css('color', 'red').fadeIn(  function() {
+                        $('.collapse.show').LoadingOverlay("hide");
+                    });
+                });
+            }
+        });
+    });
 
 });

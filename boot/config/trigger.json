@@ -1,0 +1,370 @@
+{
+    "actions": [
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "24",
+                            "state": "0"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "1.0",
+                            "color": "red1"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "thrill"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "5",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "25",
+                            "state": "0"
+                        }
+                    ]
+                },
+                {
+                    "name": "4",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "16",
+                            "state": "0"
+                        }
+                    ]
+                },
+                {
+                    "name": "3",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "17",
+                            "state": "0"
+                        }
+                    ]
+                },
+                {
+                    "name": "2",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "27",
+                            "state": "0"
+                        }
+                    ]
+                },
+                {
+                    "name": "1",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "22",
+                            "state": "0"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "5",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0.8",
+                            "color": "red1"
+                        }
+                    ]
+                },
+                {
+                    "name": "4",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0.6",
+                            "color": "red1"
+                        }
+                    ]
+                },
+                {
+                    "name": "3",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0.4",
+                            "color": "red1"
+                        }
+                    ]
+                },
+                {
+                    "name": "2",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0.2",
+                            "color": "red1"
+                        }
+                    ]
+                },
+                {
+                    "name": "1",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0",
+                            "color": "red1"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "countdown"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "24",
+                            "state": "0"
+                        },
+                        {
+                            "func": "static",
+                            "gpio": "25",
+                            "state": "1"
+                        },
+                        {
+                            "func": "static",
+                            "gpio": "16",
+                            "state": "1"
+                        },
+                        {
+                            "func": "static",
+                            "gpio": "17",
+                            "state": "1"
+                        },
+                        {
+                            "func": "static",
+                            "gpio": "27",
+                            "state": "1"
+                        },
+                        {
+                            "func": "static",
+                            "gpio": "22",
+                            "state": "1"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "1.0",
+                            "color": "white"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "cheese"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "5",
+                            "state": "0"
+                        },
+                        {
+                            "func": "static",
+                            "gpio": "24",
+                            "state": "1"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "1.0",
+                            "color": "yellow1"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "takePic"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "5",
+                            "state": "1"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0.5",
+                            "color": "green"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "gotPic"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "24",
+                            "state": "0"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "1.0",
+                            "color": "orange"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "collage-start"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "24",
+                            "state": "1"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "1.0",
+                            "color": "green"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "collage-end"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "24",
+                            "state": "0"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0.5",
+                            "color": "blue"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "processing-start"
+        },
+        {
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "func": "static",
+                            "gpio": "24",
+                            "state": "1"
+                        }
+                    ]
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "1.0",
+                            "color": "magenta"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "processing-end"
+        }
+    ]
+}

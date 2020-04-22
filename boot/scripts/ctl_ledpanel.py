@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "action",
         help=f"Available actions: {', '.join(actions)}",
-        metavar=''
+        metavar='action'
     )
     parser.add_argument("-c", "--color", type=str, default='black')
     parser.add_argument("-b", "--brightness", type=float, default=1)

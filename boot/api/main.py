@@ -95,7 +95,10 @@ def logout():
 def unauthorized_handler():
     return redirect(url_for('login'))
 
-# sanity check route
+@app.context_processor
+def inject_enumerate():
+    return dict(enumerate=enumerate)
+
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
@@ -104,29 +107,29 @@ def ping_pong():
 @login_required
 def home():
     ap_args = ap()
-    trigger_args = trigger()
+    trigger_args = trigger_read()
     gpio_args = {
         'relay_mapping': {
-            24: 1,
-            25: 2,
-            16: 3,
-            17: 4,
-            27: 5,
-            22: 6,
-            5: 7,
-            6: 8
+            '24': '1',
+            '25': '2',
+            '16': '3',
+            '17': '4',
+            '27': '5',
+            '22': '6',
+            '5': '7',
+            '6': '8'
         },
         'gpio_state_mapping': {
-            0: 'on',
-            1: 'off'
+            '0': 'on',
+            '1': 'off'
         },
         'gpio_func_list': [
             'static'
         ]
     }
     ledpanel_args = {
-        'ledpanel_actions_list': LEDPanel.get_actions() + [''],
-        'ledpanel_colors_list': LEDPanel.get_colors() + ['']
+        'ledpanel_actions_list': LEDPanel.get_actions(),
+        'ledpanel_colors_list': LEDPanel.get_colors()
     }
     return render_template('index.html', **{**ap_args , **trigger_args, **ledpanel_args, **gpio_args})
 
@@ -161,12 +164,17 @@ def ap():
     ap_args['inet_passthrough'] = inet_passthrough
     return ap_args
 
-def trigger():
-    trigger_json_file = Path(app.static_folder) / 'data' / 'trigger.json'
+def trigger_read():
+    trigger_json_file = Path('/opt/photobooth/conf/custom/trigger.json')
     trigger_json = {}
     with trigger_json_file.open() as fin:
         trigger_json = json.load(fin)
     return trigger_json
+
+def trigger_write(json_data):
+    trigger_json_file = Path('/opt/photobooth/conf/custom/trigger.json')
+    with trigger_json_file.open('w') as fout:
+         json.dump(json_data, fout)
 
 @app.route("/wifi/connect", methods=['POST'], endpoint='wifi.connect')
 @login_required
@@ -222,6 +230,12 @@ def get_qr(data):
     ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes
     return send_file(out, mimetype='image/png', as_attachment=False)
+
+@app.route('/trigger/actions/update', methods=['POST'], endpoint='trigger.actions.update')
+def trigger_actions_update():
+    json_data = request.get_json()
+    trigger_write(json_data)
+    return jsonify({'success': True})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

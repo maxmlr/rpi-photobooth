@@ -96,6 +96,9 @@ EOF
 chown -R www-data:www-data /opt/photobooth/flask/api
 echo "SECRET_KEY=$(python -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/.env
 echo "API_KEY=$(openssl rand -base64 64)" >> /opt/photobooth/flask/api/.env
+mkdir -p /opt/photobooth/conf/custom
+[[ -f /opt/photobooth/conf/custom/trigger.json ]] || cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
+chown www-data:www-data /opt/photobooth/conf/custom/trigger.json
 
 # register flask apps
 mv /opt/photobooth/flask/api/api.ini /etc/uwsgi/apps-available/
@@ -302,6 +305,7 @@ www-data ALL=(ALL) NOPASSWD:/sbin/ifup wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifdown wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
+www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ledpanel *
 EOF
 fi
 
