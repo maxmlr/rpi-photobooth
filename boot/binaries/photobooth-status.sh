@@ -33,19 +33,20 @@ Obtain_Cpu_Temp
 Obtain_Cpu_Gov
 
 # Photobooth System Info
-echo -e "\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m\n \e[1mPhotobooth Health Info\n\e[90m Reporting about system details / health\e[0m\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m"
+echo -e "\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m\n \e[1mPhotobooth v${PHOTOBOOTH_RELEASE} [custom: v${PHOTOBOOTH_UPDATE}]\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m"
 echo -e " Device Type  \e[90m|\e[0m     $DEVICE_TYPE"
-echo -e " Model        \e[90m|\e[0m     $DEVICE_MODEL"
 echo -e " Device ID    \e[90m|\e[0m     $DEVICE_ID"
-echo -e " Booth-main   \e[90m|\e[0m     $PHOTOBOOTH_RELEASE"
-echo -e " Booth-update \e[90m|\e[0m     $PHOTOBOOTH_UPDATE"
-echo
-
+echo -e " Hostname     \e[90m|\e[0m     $(hostname)"
+echo -e " Model        \e[90m|\e[0m     $DEVICE_MODEL"
 echo -e " Display      \e[90m|\e[0m     ${DISPLAY_RESOLUTION_X}x${DISPLAY_RESOLUTION_Y}"
 echo -e " Headless     \e[90m|\e[0m     $([[ $HEADLESS -eq 0 ]] && echo "no" || echo "yes" )"
 echo -e " Kiosk mode   \e[90m|\e[0m     $([[ $BOOT_TO_KIOSK -eq 0 ]] && echo "no" || echo "yes" )"
-echo
-
+echo -e " ngrok        \e[90m|\e[0m     $([[ -z "$NGROK_TOKEN" ]] && echo "-" || echo "token ok" )"
+echo -e " photomateur  \e[90m|\e[0m     $([[ -z "$PHOTOMATEUR_API_TOKEN" ]] && echo "-" || echo "token ok" )"
+echo -e " Service up   \e[90m|\e[0m     `systemctl list-units --state=running --all | tail -n2 | head -n1`"
+echo -e " Service fail \e[90m|\e[0m     `systemctl list-units --state=failed --all | head -n1`"
+if [[ "$1" != "banner" ]]
+then
 echo -e " Architecture \e[90m|\e[0m     $(uname -m)"
 echo -e " Temperature  \e[90m|\e[0m     $CPU_TEMP_PRINT"
 echo -e " Governor     \e[90m|\e[0m     $CPU_GOV_CURRENT"
@@ -53,11 +54,4 @@ if [[ $CPU_GOV_CURRENT == 'ondemand' || $CPU_GOV_CURRENT == 'conservative' ]]; t
     echo -e " Throttle up  \e[90m|\e[0m     $(grep -m1 '^[[:blank:]]*CONFIG_CPU_USAGE_THROTTLE_UP=' /DietPi/dietpi.txt | sed 's/^[^=]*=//')% CPU usage"
 fi
 echo
-
-echo -e " ngrok        \e[90m|\e[0m     $([[ -z "$NGROK_TOKEN" ]] && echo "-" || echo "token ok" )"
-echo -e " photomateur  \e[90m|\e[0m     $([[ -z "$PHOTOMATEUR_API_TOKEN" ]] && echo "-" || echo "token ok" )"
-echo
-
-echo -e " Service up   \e[90m|\e[0m     `systemctl list-units --state=running --all | tail -n2 | head -n1`"
-echo -e " Service fail \e[90m|\e[0m     `systemctl list-units --state=failed --all | head -n1`"
-echo
+fi
