@@ -318,7 +318,11 @@ sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
 fi
 
 # common checks
-[[ "$(hostname)" == "photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}" ]] || hostnamectl set-hostname "photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}"
+if [[ ! "$(hostname)" == "photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}" ]]
+then
+    hostnamectl set-hostname "photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}"
+    sed -i -e "s|127\.0\.1\.1.*|127\.0\.1\.1 photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}|" /etc/hosts
+fi
 
 # cleanup
 apt-get clean && apt-get autoremove -y
