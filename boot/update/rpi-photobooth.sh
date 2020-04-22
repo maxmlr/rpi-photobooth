@@ -94,8 +94,11 @@ cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth <<
 /opt/photobooth/python
 EOF
 chown -R www-data:www-data /opt/photobooth/flask/api
-[[ -f /opt/photobooth/flask/api/.env ]] || echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/.env
-[[ -f /opt/photobooth/flask/api/.env ]] || echo "API_KEY=$(openssl rand -base64 64)" >> /opt/photobooth/flask/api/.env
+if [[ ! -f /opt/photobooth/flask/api/.env ]]
+then
+    echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/.env
+    echo "API_KEY=$(openssl rand -base64 42)" >> /opt/photobooth/flask/api/.env
+fi
 mkdir -p /opt/photobooth/conf/custom
 [[ -f /opt/photobooth/conf/custom/trigger.json ]] || cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
 chown www-data:www-data /opt/photobooth/conf/custom/trigger.json
