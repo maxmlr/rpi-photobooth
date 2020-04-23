@@ -26,72 +26,72 @@
     <!-- Your page content -->
     {% block content %}
     <div class="container-fluid">
-      <div class=""> 
-        <!-- d-flex justify-content-center -->
-        <div class="card mt-3">
-          <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="#">
-              <i class="fas fa-camera-retro"></i>
-              Photobooth Manager
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav">
-                <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
-                  {{ current_user.id }}
-                </small>
-                <li class="nav-item active">
-                  <a class="nav-link" href="/setup"><i class="fas fa-home mr-2"></i>Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {{ '' if current_user.is_authenticated else 'disabled' }}" href="logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-          <div class="card-body">
-            <h1 class="d-inline card-title display-4">Login</h1>
-            <small id="loginHelpBlock" class="form-text text-muted mb-3">
-              Edit settings for WiFi, Hotspot, Backgrounds, ...
-            </small>
-            <div id="setup-login">
-              <form action='login' method='POST'>
-                <div class="row">
-                  <div class="col">
-                    <div class="input-group mb-3">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">
-                          <span class="fas fa-user" style="color: Dodgerblue"></span>
-                        </div>
+      <div class="card mt-3">
+        <nav class="navbar navbar-light bg-light">
+          <a class="navbar-brand" href="#">
+            <i class="fas fa-camera-retro"></i>
+            Photobooth Manager
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <small id="wifiHelpBlock" class="d-inline form-text text-muted ml-1">
+                {{ current_user.id }}
+              </small>
+              <li class="nav-item active">
+                <a class="nav-link" href="/setup"><i class="fas fa-home mr-2"></i>Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ '' if current_user.is_authenticated else 'disabled' }}" href="logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="mt-2">
+          <img src="{{ url_for('qr.ap', box_size=5, border=0) }}" class="rounded mx-auto d-block mt-3" alt="QRcode">
+          <small id="qrHelpBlock" class="d-flex justify-content-center form-text text-muted">
+            Hotspot
+          </small>
+        </div>
+        <div class="card-body mt-0">
+          <h1 class="d-inline card-title display-4">Login</h1>
+          <div id="setup-login">
+            <form action='login' method='POST'>
+              <div class="row">
+                <div class="col">
+                  <div class="input-group mt-2 mb-3">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <span class="fas fa-user" style="color: Dodgerblue"></span>
                       </div>
-                      <input type="email" id="email" name="email" class="form-control" placeholder="Email">
                     </div>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Email">
                   </div>
                 </div>
-                <div class="row mb-2">
-                  <div class="col">
-                    <div class="input-group mb-2">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">
-                          <span class="fas fa-key" style="color: Dodgerblue"></span>
-                        </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col">
+                  <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <span class="fas fa-key" style="color: Dodgerblue"></span>
                       </div>
-                      <input type="password" id="password" name="password" class="form-control" placeholder="Password">
                     </div>
-                    <div id="login-error" class="alert alert-danger" role="alert" style="{{ '' if errors else 'display:none' }}">
-                      <small>{{ errors }}</small>
-                    </div>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password">
+                  </div>
+                  <div id="login-error" class="alert alert-danger" role="alert" style="{{ '' if errors else 'display:none' }}">
+                    <small>{{ errors }}</small>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col">
-                    <button id="wifi-connect" type="submit" class="btn btn-primary float-right">Login</button>
-                  </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <button id="wifi-connect" type="submit" class="btn btn-primary float-right">Login</button>
                 </div>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>

@@ -73,8 +73,6 @@ def login():
         if current_user.is_authenticated:
             return redirect(url_for('setup.home'))
         return render_template('login.html')
-    
-    print(request.form)
     email = request.form['email']
     if email not in users:
         return render_template('login.html', **{ 'errors': "Email is not associated with a user." })
@@ -149,19 +147,24 @@ def wifi():
     wifi_args['wifi_active'] = wifi_active
     return render_template('wifi.html', **wifi_args)
 
-def ap():
+def ap(detailed=True):
     hostapd = Hostapd()
     ap_args = {}
     ap_name = hostapd.get_config('ssid')
     ap_password = hostapd.get_config('wpa_passphrase')
     ap_show = int(hostapd.get_config('ignore_broadcast_ssid'))
-    inet_passthrough = int(hostapd.get_inet_passthrough())
-    ap_connections_cnt = 0
+    ap_auth = hostapd.get_config('wpa')
     ap_args['ap_name'] = ap_name
     ap_args['ap_password'] = '' if ap_password is None else ap_password
     ap_args['ap_show'] = ap_show
-    ap_args['ap_connections_cnt'] = ap_connections_cnt
-    ap_args['inet_passthrough'] = inet_passthrough
+    ap_args['ap_auth'] = 'none' if ap_auth is None else ap_auth
+    if detailed:
+        inet_passthrough = int(hostapd.get_inet_passthrough())
+        ap_args['inet_passthrough'] = inet_passthrough
+        ap_status_out = hostapd.get_status()
+        ap_status_json = json.loads(ap_status_out) if ap_status_out != None else {}
+        ap_connections_cnt = ap_status_json.get('client_list_length', 0)
+        ap_args['ap_connections_cnt'] = ap_connections_cnt
     return ap_args
 
 def trigger_read():
@@ -227,6 +230,18 @@ def ap_passthrough(status):
 
 @app.route('/qr/get/<string:data>', methods=['GET'], endpoint='qr.create')
 def get_qr(data):
+    ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
+    out = ap_qr_bytes
+    return send_file(out, mimetype='image/png', as_attachment=False)
+
+@app.route('/qr/get/ap', methods=['GET'], endpoint='qr.ap')
+def get_qr_ap():
+    ap_args = ap(detailed=False)
+    ap_auth = 'WPA' if ap_args['ap_auth'] != 'none' else 'nopass'
+    ap_name = ap_args['ap_name']
+    ap_password = ap_args['ap_password']
+    ap_show = ap_args['ap_show']
+    data = f'WIFI:T:{ap_auth};S:{ap_name};P:{ap_password};{"H:true;" if ap_show else ""};'
     ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes
     return send_file(out, mimetype='image/png', as_attachment=False)

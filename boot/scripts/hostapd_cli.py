@@ -13,6 +13,7 @@ class Hostapd():
     hostapd_conf = '/etc/hostapd/hostapd.conf'
     read_inet_passthrough_cmd = '/usr/bin/sudo /sbin/sysctl -n net.ipv4.ip_forward'
     write_inet_passthrough_cmd = '/usr/bin/sudo /sbin/sysctl -w net.ipv4.ip_forward'
+    captive_portal_status_cmd = '/usr/bin/sudo /usr/bin/ndsctl json'
 
     def __init__(self):
         self.config = read_config(self.hostapd_conf)
@@ -36,6 +37,13 @@ class Hostapd():
 
     def set_inet_passthrough(self, state):
         run_command(f'{self.write_inet_passthrough_cmd}={state}')
+
+    def get_status(self):
+        output = run_command(self.captive_portal_status_cmd)
+        if output:
+            return ' '.join(output)
+        else:
+            return None
 
 
 if __name__ == "__main__":

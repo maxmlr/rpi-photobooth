@@ -97,6 +97,10 @@ button:focus {
     opacity: 1;
 }
 
+.glider.background, .glider.frame {
+    background-color: #F6F6F6;
+}
+
 .dropzone-drag-hover {
     border: 1px solid #000000;
 }
