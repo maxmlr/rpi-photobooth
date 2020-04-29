@@ -41,6 +41,7 @@ volatile bool ButtonPressedFlag = false;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+String hostname = "photobooth-r" + String(ESP.getChipId());
 long lastMsg = 0;
 int countdown = 5000;
 
@@ -49,6 +50,7 @@ void setup_wifi() {
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(SSID);
+  WiFi.hostname(hostname);
   WiFi.begin(SSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -61,22 +63,36 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  Serial.println(hostname);
   led_blink(BUILTIN_LED,2,500,true);
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
+  Serial.print("recieved [");
   Serial.print(topic);
-  Serial.print("] ");
+  Serial.print("] : ");
+  String value = "";
   for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+    value += (char)payload[i];
   }
-  Serial.println();
+  Serial.println(value);
 
-  if ((char)payload[0] == '1') {
-    led_blink(BUILTIN_LED,1,100,true);
-  } else {
-    led_blink(BUILTIN_LED,2,100,true);
+  if (!strcmp(topic, "photobooth/remote/callback")) {
+    if (value.startsWith("a")) {
+        String action = value.substring(1);
+        if (action == "1") {
+          digitalWrite(LED_PIN, LOW);
+        } else if (action == "0") {
+          digitalWrite(LED_PIN, HIGH); 
+        }
+    } else if (value.startsWith("s")) {
+      String action = value.substring(1);
+      led_blink(BUILTIN_LED,action.toInt(),100,true);
+    }
+  } else if (!strcmp(topic, "photobooth/link")) {
+    if (value == "discover") {
+      client.publish("photobooth/link/available", hostname.c_str());
+    } 
   }
 }
 
@@ -98,12 +114,11 @@ void setup_gpios() {
 void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
-    if (client.connect(clientId.c_str())) {
+    if (client.connect(hostname.c_str())) {
       Serial.println("connected");
-      client.publish("photobooth/remote", "connected");
-      client.subscribe("photobooth/remote_callback");
+      client.publish("photobooth/link/register", hostname.c_str());
+      client.subscribe("photobooth/link");
+      client.subscribe("photobooth/remote/callback");
       led_blink(BUILTIN_LED,3,100,true);
     } else {
       Serial.print("failed, rc=");

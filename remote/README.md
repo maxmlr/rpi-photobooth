@@ -3,8 +3,9 @@
 - Uses MQTT notifications and gpio based push buttons
 
 - It connects to an existing WiFi network and to a specified MQTT server, then:
-    - publishes "connected" to the topic "photobooth/remote"
-    - subscribes to the topic "photobooth/remote_callback"
+    - subscribes / publishes to "photobooth/link/[register,available]"
+    - publishes to "photobooth/remote
+    - subscribes to "photobooth/remote/callback"
     (it assumes the received payloads are strings, not binary)
 
 - It will reconnect to the server if the connection is lost using a blocking
