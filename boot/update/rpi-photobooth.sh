@@ -343,6 +343,10 @@ then
     sed -i -e "s|127\.0\.1\.1.*|127\.0\.1\.1 photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}|" /etc/hosts
 fi
 
+# customize banner
+cp /boot/config/dietpi-banner /DietPi/dietpi/.dietpi-banner
+echo "photobooth-status banner" > /DietPi/dietpi/.dietpi-banner_custom
+
 # cleanup
 apt-get clean && apt-get autoremove -y
 

@@ -323,13 +323,7 @@ ln -fs /usr/lib/chromium-browser/swiftshader/libGLESv2.so /usr/lib/arm-linux-gnu
 ldconfig -l
 
 # customize banner
-sed -i -e 's|aENABLED\[1\]=[0,1]|aENABLED\[1\]=1|' /DietPi/dietpi/.dietpi-banner
-sed -i -e 's|aENABLED\[3\]=[0,1]|aENABLED\[3\]=1|' /DietPi/dietpi/.dietpi-banner
-sed -i -e 's|aENABLED\[7\]=[0,1]|aENABLED\[7\]=1|' /DietPi/dietpi/.dietpi-banner
-sed -i -e 's|aENABLED\[10\]=[0,1]|aENABLED\[10\]=1|' /DietPi/dietpi/.dietpi-banner
-sed -i -e 's|aDESCRIPTION\[10\]=.*|aDESCRIPTION\[10\]="Photobooth"|' /DietPi/dietpi/.dietpi-banner
-sed -i -e 's|aENABLED\[11\]=[0,1]|aENABLED\[11\]=0|' /DietPi/dietpi/.dietpi-banner
-sed -i -e 's|aENABLED\[12\]=[0,1]|aENABLED\[12\]=0|' /DietPi/dietpi/.dietpi-banner
+cp /boot/config/dietpi-banner /DietPi/dietpi/.dietpi-banner
 echo "photobooth-status banner" > /DietPi/dietpi/.dietpi-banner_custom
 
 # cleanup
