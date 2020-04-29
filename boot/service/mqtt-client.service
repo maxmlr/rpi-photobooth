@@ -4,8 +4,8 @@ After=mosquitto.service
 Requires=mosquitto.service
 
 [Service]
-Environment=HOME=/root
 Type=simple
+Environment=HOME=/root
 ExecStart=/usr/bin/mosquitto_sub -v -t 'photobox/#'
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
