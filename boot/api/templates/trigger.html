@@ -42,37 +42,29 @@
                             <div id="ledpanel-slot-{{ aidx }}-{{ cidx }}-{{ sidx }}" class="{{ 'slot' if sidx <= citem['slots']|length else 'slot-template' }}" style="{{ 'display:none' if sidx > citem['slots']|length }}">
                               <div class="input-group input-group-sm mb-2">
                                 <div class="input-group-prepend">
-                                  <span class="input-group-text" id="action-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-lightbulb"></i></span>
+                                  <span class="input-group-text" id="action-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="optargs-toggle fas fa-cog"></i></span>
                                 </div>
                                 <select class="custom-select" data-field="action" id="action-list-{{ aidx }}-{{ cidx }}-{{ sidx }}" aria-describedby="action-prepend">
                                   {% for action in ledpanel_actions_list %}
                                   <option value="{{ action }}" {{ 'selected' if action == sitem['action'] else '' }}>{{ action }}</option>
                                   {% endfor %}
                                 </select>
-                              </div>
-                              <div class="input-group input-group-sm mb-2">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="color-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-palette"></i></span>
+                                <div class="input-group-append">
+                                  <button type="button" class="color-picker-btn btn btn-outline-secondary px-3" data-target="#ledpanel-slot-{{ aidx }}-{{ cidx }}-{{ sidx }}">
+                                    <i class="fas fa-lightbulb fa-lg" style="color: {{ sitem['color'] }}"></i>
+                                    <small class="d-inline form-text text-muted ml-1">{{ "%.2f"|format(sitem['brightness']|float if sitem.brightness else 1)  }}</small>
+                                  </button>
+                                  <input type="hidden" class="form-control" data-field="color" value="{{ sitem['color'] }}">
+                                  <input type="hidden" class="form-control" data-field="brightness" value="{{ sitem['brightness'] }}" aria-label="arguments" aria-describedby="brightness-prepend">
                                 </div>
-                                <select class="custom-select" data-field="color" id="color-list-{{ aidx }}-{{ cidx }}-{{ sidx }}" aria-describedby="color-prepend">
-                                  {% for color in ledpanel_colors_list %}
-                                  <option value="{{ color }}" {{ 'selected' if color == sitem['color'] else '' }}>{{ color }}</option>
-                                  {% endfor %}
-                                </select>
                               </div>
-                              <div class="input-group input-group-sm mb-2">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="brightness-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-adjust"></i></span>
-                                </div>
-                                <input type="text" class="form-control" data-field="brightness" placeholder="default: 1.0 (range: [0.0 - 1.0])" value="{{ sitem['brightness'] }}" aria-label="arguments" aria-describedby="brightness-prepend">
-                              </div>
-                              <div class="input-group input-group-sm mb-2">
+                              <div class="input-group input-group-sm optargs" style="display: none;">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text" id="args-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-filter"></i></span>
                                 </div>
                                 <input type="text" class="form-control" data-field="args" placeholder="optional arguments" value="{{ sitem['args'] }}" aria-label="arguments" aria-describedby="args-prepend">
                               </div>
-                              <div class="d-flex justify-content-center mb-2">
+                              <div class="d-flex justify-content-center my-2">
                                 <button type="button" class="slot-delete btn btn-sm btn-block btn-outline-danger" data-target="#ledpanel-slot-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-trash-alt"></i></button>
                               </div>
                               <div class="d-flex justify-content-center mb-2">

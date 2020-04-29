@@ -320,6 +320,65 @@ function parse_trigger_actions(){
     return trigger_parsed
 }
 
+function add_color_picker($target){
+    $target.click(function() {
+        var $wrapper = $($(this).data('target'));
+        var customElement = $('<div>', {
+            "id" : "color-picker",
+            "class" : "color-picker-area",
+            "css"   : {
+                "text-align"    : "center",
+                "padding"       : "10px"
+            }
+        });
+        var colorpicker_close = $('<i>', {
+            "class" : "color-picker-close fas fa-times-circle fa-2x",
+            "css"   : {
+                "position" : "absolute",
+                "top"      : "7%",
+                "right"    : "7%"
+            }
+        });
+        customElement.append(colorpicker_close);
+        $.LoadingOverlay("show", {
+            image       : "",
+            custom      : customElement,
+            fade : [400, 200]
+        });
+        var color_picker = show_color_picker("#color-picker", $target);
+        colorpicker_close.click(function() {
+            var color = color_picker.color;
+            $target.children().first().css("color", color.rgbString);
+            $target.children().first().next().text((color.alpha).toFixed(2));
+            $target.next().val(color.rgbString);
+            $target.next().next().val(color.alpha);
+            $.LoadingOverlay("hide");
+        });
+    });
+}
+
+function show_color_picker(target, btn){    
+    var colorPicker = new iro.ColorPicker(target, {
+        width: 200,
+        color: btn.next().val(),
+        layout: [
+            { 
+                component: iro.ui.Wheel,
+                options: {
+                }
+            },
+            { 
+                component: iro.ui.Slider,
+                options: {
+                    sliderType: 'alpha'
+                }
+            },
+        ]
+    });
+    colorPicker.color.setChannel('rgba', 'a', btn.next().next().val());
+    return colorPicker
+}
+
 $(function() {
 
     load_wifis();
@@ -549,6 +608,8 @@ $(function() {
         $('.slot-delete', $clone).data('target', '#' + clone_id_new).click(function() {
             $($(this).data('target')).remove();
         });
+        $('.color-picker-btn', $clone).data('target', '#' + clone_id_new);
+        add_color_picker($('.color-picker-btn', $clone));
         $clone.insertBefore($target).fadeIn();
         $(this).data('added', added + 1);
     });
@@ -580,6 +641,14 @@ $(function() {
                 });
             }
         });
+    });
+
+    $('.color-picker-btn').each(function() {
+        add_color_picker($(this));
+    });
+
+    $('.optargs-toggle').click(function() {
+        $(this).closest('div[id|="ledpanel-slot"]').find('.optargs').slideToggle();
     });
 
 });

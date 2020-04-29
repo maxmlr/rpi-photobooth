@@ -53,7 +53,12 @@ class LEDPanel:
         sys.exit(0)
 
     def get_color(self, color, brightness=None):
-        color_ = Color.colors.get(color, Color.colors.get(f'{color.lower()}1', Color.RGB(255, 255, 255))).rgb_format()
+        if color.startswith('rgb'):
+            r_str, g_str, b_str = color[4:-1].split(',')
+            r, g, b = int(r_str), int(g_str), int(b_str)
+            color_ = (r, g, b)
+        else:
+            color_ = Color.colors.get(color, Color.colors.get(f'{color.lower()}1', Color.RGB(255, 255, 255))).rgb_format()
         return self.adjust_color_brightness(color_, brightness)
 
     def adjust_color_brightness(self, color, brightness=None):
