@@ -253,6 +253,7 @@ cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
 cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 cp /boot/scripts/health.sh /opt/photobooth/bin/health.sh
 cp /boot/scripts/reboot.sh /opt/photobooth/bin/reboot.sh
+cp /boot/scripts/register.sh /opt/photobooth/bin/register.sh
 chmod +x /opt/photobooth/bin/*.sh
 
 # add bash profile
