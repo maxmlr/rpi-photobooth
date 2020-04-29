@@ -334,22 +334,21 @@ function add_color_picker($target){
         var colorpicker_close = $('<i>', {
             "class" : "color-picker-close fas fa-times-circle fa-2x",
             "css"   : {
-                "position" : "absolute",
-                "top"      : "7%",
-                "right"    : "7%"
+                "position" : "relative",
+                "left"    : "100px"
             }
         });
-        customElement.append(colorpicker_close);
         $.LoadingOverlay("show", {
             image       : "",
             custom      : customElement,
             fade : [400, 200]
         });
+        customElement.prepend(colorpicker_close);
         var color_picker = show_color_picker("#color-picker", $target);
         colorpicker_close.click(function() {
             var color = color_picker.color;
             $target.children().first().css("color", color.rgbString);
-            $target.children().first().next().text((color.alpha).toFixed(2));
+            $target.children().first().next().text((Math.round(color.alpha * 100) / 100).toFixed(2));
             $target.next().val(color.rgbString);
             $target.next().next().val(color.alpha);
             $.LoadingOverlay("hide");

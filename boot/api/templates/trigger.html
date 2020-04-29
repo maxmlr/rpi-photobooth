@@ -50,7 +50,7 @@
                                   {% endfor %}
                                 </select>
                                 <div class="input-group-append">
-                                  <button type="button" class="color-picker-btn btn btn-outline-secondary px-3" data-target="#ledpanel-slot-{{ aidx }}-{{ cidx }}-{{ sidx }}">
+                                  <button type="button" class="color-picker-btn btn btn-outline-secondary px-2" data-target="#ledpanel-slot-{{ aidx }}-{{ cidx }}-{{ sidx }}">
                                     <i class="fas fa-lightbulb fa-lg" style="color: {{ sitem['color'] }}"></i>
                                     <small class="d-inline form-text text-muted ml-1">{{ "%.2f"|format(sitem['brightness']|float if sitem.brightness else 1)  }}</small>
                                   </button>
