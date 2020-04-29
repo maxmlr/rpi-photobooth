@@ -326,10 +326,15 @@ www-data ALL=(ALL) NOPASSWD:/usr/bin/convert *
 EOF
 fi
 
-if [[ "$DEVICE_TYPE" = "server" ]]; then
-# optimizations
+#- disable NTP during boot
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
-fi
+#- fix chromium not able to access GPU
+#- https://github.com/tipam/pi3d/issues/177
+ln -fs /usr/lib/chromium-browser/swiftshader/libEGL.so /usr/lib/arm-linux-gnueabihf/libEGL.so
+ln -fs /usr/lib/chromium-browser/swiftshader/libEGL.so /usr/lib/arm-linux-gnueabihf/libEGL.so.1
+ln -fs /usr/lib/chromium-browser/swiftshader/libGLESv2.so /usr/lib/arm-linux-gnueabihf/libGLESv2.so
+ln -fs /usr/lib/chromium-browser/swiftshader/libGLESv2.so /usr/lib/arm-linux-gnueabihf/libGLESv2.so.2
+ldconfig -l
 
 # common checks
 if [[ ! "$(hostname)" == "photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}" ]]

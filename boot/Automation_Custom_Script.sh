@@ -312,7 +312,15 @@ www-data ALL=(ALL) NOPASSWD:/usr/bin/convert *
 EOF
 
 # optimizations
+#- disable NTP during boot
 sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
+#- fix chromium not able to access GPU
+#- https://github.com/tipam/pi3d/issues/177
+ln -fs /usr/lib/chromium-browser/swiftshader/libEGL.so /usr/lib/arm-linux-gnueabihf/libEGL.so
+ln -fs /usr/lib/chromium-browser/swiftshader/libEGL.so /usr/lib/arm-linux-gnueabihf/libEGL.so.1
+ln -fs /usr/lib/chromium-browser/swiftshader/libGLESv2.so /usr/lib/arm-linux-gnueabihf/libGLESv2.so
+ln -fs /usr/lib/chromium-browser/swiftshader/libGLESv2.so /usr/lib/arm-linux-gnueabihf/libGLESv2.so.2
+ldconfig -l
 
 # customize banner
 sed -i -e 's|aENABLED\[1\]=[0,1]|aENABLED\[1\]=1|' /DietPi/dietpi/.dietpi-banner
