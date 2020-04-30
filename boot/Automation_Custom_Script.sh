@@ -335,6 +335,9 @@ apt-get clean && apt-get autoremove -y
 if [ $? -eq 0 ]
 then
   echo "Photobooth setup finished successfully"
+  echo
+  echo "    --- PLEASE REBOOT TO FINISH---    "
+  echo
   exit 0
 else
   echo "Photobooth setup finished with errors" >&2
