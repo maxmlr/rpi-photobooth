@@ -1,7 +1,7 @@
 [Unit]
 Description=MQTT Launcher
-Requires=mqtt-client.service
-After=mqtt-client.service
+Requires=mosquitto.service
+After=mosquitto.service
 
 [Service]
 Type=simple
@@ -12,7 +12,6 @@ Restart=on-failure
 RestartSec=30
 StartLimitInterval=10
 StartLimitBurst=3
-TimeoutSec=900
 
 [Install]
-WantedBy=mqtt-client.service
+WantedBy=multi-user.target
