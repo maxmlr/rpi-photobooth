@@ -221,6 +221,7 @@ cp /boot/config/nginx-photobooth-manager.conf /etc/nginx/sites-dietpi/photobooth
 # install mqtt-launcher
 cd /opt && git clone https://github.com/maxmlr/mqtt-launcher.git
 cp /boot/config/photobooth.mqtt.conf /opt/mqtt-launcher/launcher.photobooth.conf
+sed -i -e "s|mqtt_clientid   =.*|mqtt_clientid   = 'photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}'|" /opt/mqtt-launcher/launcher.photobooth.conf
 chmod +x /opt/mqtt-launcher/mqtt-launcher.py
 cd - > /dev/null
 

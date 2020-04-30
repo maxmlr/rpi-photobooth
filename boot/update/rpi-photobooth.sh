@@ -229,6 +229,7 @@ fi
 # install mqtt-launcher
 cd /opt/mqtt-launcher && git pull
 cp /boot/config/photobooth.mqtt.conf /opt/mqtt-launcher/launcher.photobooth.conf
+sed -i -e "s|mqtt_clientid   =.*|mqtt_clientid   = 'photobooth-${DEVICE_TYPE::1}${DEVICE_ID:(-8)}'|" /opt/mqtt-launcher/launcher.photobooth.conf
 chmod +x /opt/mqtt-launcher/mqtt-launcher.py
 cd - > /dev/null
 
