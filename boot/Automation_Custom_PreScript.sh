@@ -22,3 +22,7 @@ mv /lib/firmware/brcm/brcmfmac43455-sdio.bin /lib/firmware/brcm/brcmfmac43455-sd
 mv /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob~
 cp /boot/firmware/wifi/brcmfmac43455-sdio.bin /lib/firmware/brcm/
 cp /boot/firmware/wifi/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/
+
+# Enable eth0
+sed -i -e 's|#allow-hotplug eth0|allow-hotplug eth0|' /etc/network/interfaces
+ifup eth0 &>/dev/null

@@ -332,6 +332,10 @@ echo "photobooth-status banner" > /DietPi/dietpi/.dietpi-banner_custom
 # cleanup
 apt-get clean && apt-get autoremove -y
 
+# Disable eth0
+sed -i -e 's|allow-hotplug eth0|#allow-hotplug eth0|' /etc/network/interfaces
+ifdown eth0 &>/dev/null
+
 if [ $? -eq 0 ]
 then
   echo "Photobooth setup finished successfully"
