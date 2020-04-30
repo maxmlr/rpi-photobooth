@@ -276,9 +276,10 @@ for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`base
 # add symlinks to  /usr/local/bin/
 ln -sf /opt/photobooth/python/ctl_ledpanel.py /usr/local/bin/ledpanel
 
-# copy services to /lib/systemd/system/, reload daemon and enable services
-for service in /boot/service/*.service; do cp $service /lib/systemd/system/`basename $service`; chmod -x /lib/systemd/system/`basename $service`; done
-for service in /boot/service/*.timer; do cp $service /lib/systemd/system/`basename $service`; chmod -x /lib/systemd/system/`basename $service`; done
+# copy services to /usr/local/lib/systemd/system, reload daemon and enable services
+mkdir -p /usr/local/lib/systemd/system/
+for service in /boot/service/*.service; do cp $service /usr/local/lib/systemd/system/`basename $service`; chmod -x /usr/local/lib/systemd/system/`basename $service`; done
+for service in /boot/service/*.timer; do cp $service /usr/local/lib/systemd/system/`basename $service`; chmod -x /usr/local/lib/systemd/system/`basename $service`; done
 systemctl daemon-reload
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 for service in /boot/service/*.timer; do systemctl enable `basename $service`; done
