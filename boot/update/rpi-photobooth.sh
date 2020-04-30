@@ -324,6 +324,7 @@ www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
 www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ledpanel *
 www-data ALL=(ALL) NOPASSWD:/usr/bin/convert *
+www-data ALL=(ALL) NOPASSWD:/usr/bin/mosquitto_pub -h photobooth *
 EOF
 fi
 

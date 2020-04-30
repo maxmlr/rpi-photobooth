@@ -9,6 +9,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from helpers import getQRCodeImage, run_command
 from wpa_cli import WPAcli
 from hostapd_cli import Hostapd
+from modules_cli import Modules
 from gpio_led import LEDPanel
 
 """
@@ -146,6 +147,18 @@ def wifi():
     wifi_args['wifi_list'] = wifi_list
     wifi_args['wifi_active'] = wifi_active
     return render_template('wifi.html', **wifi_args)
+
+@app.route("/modules/list", methods=['GET'], endpoint='modules.list')
+@login_required
+def modules():
+    m = Modules()
+    m.discover()
+    modules_args = {}
+    clients = m.get_clients()
+    remotes = m.get_remotes()
+    modules_args['clients'] = clients
+    modules_args['remotes'] = remotes
+    return render_template('modules.html', **modules_args)
 
 def ap(detailed=True):
     hostapd = Hostapd()

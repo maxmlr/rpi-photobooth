@@ -1,8 +1,8 @@
 <div class="card mt-4">
   <div class="card-body">
-    <h1 class="d-inline card-title display-4">Trigger</h1>
-    <small id="triggerHelpBlock" class="d-inline form-text text-muted ml-1">
-      Configure actions
+    <h1 class="d-inline card-title display-4">Theme</h1>
+    <small id="themeHelpBlock" class="d-inline form-text text-muted ml-1">
+      Configure effects
     </small>
     <div class="card-text mt-4">
       <div id="accordion" class="trigger-config">
@@ -13,7 +13,7 @@
               {{ aitem['trigger'] }}
             </button>
           </div>
-          <div id="collapse-{{ aidx }}" class="collapse" aria-labelledby="heading-{{ aidx }}" data-parent="#accordion">
+          <div id="collapse-{{ aidx }}" class="collapse {{ 'show' if aitem['trigger'] == 'default' }}" aria-labelledby="heading-{{ aidx }}" data-parent="#accordion">
             <div class="card-body">
               <div class="d-flex justify-content-center mt-2">
                 <ul class="nav nav-pills mb-3" id="actions-tab-{{ aidx }}" role="tablist">
@@ -25,6 +25,11 @@
                   <li class="nav-item">
                     <a class="nav-link" id="actions-gpio-{{ aidx }}-tab" data-toggle="pill" href="#actions-gpio-{{ aidx }}" role="tab" aria-controls="actions-gpio-{{ aidx }}" aria-selected="false">
                       <i class="fas fa-plug"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="actions-remote-{{ aidx }}-tab" data-toggle="pill" href="#actions-remote-{{ aidx }}" role="tab" aria-controls="actions-remote-{{ aidx }}" aria-selected="false">
+                      <i class="fas fa-microchip"></i>
                     </a>
                   </li>
                 </ul>
@@ -140,6 +145,62 @@
                     {% endfor %}
                   </div>
                 </div>
+                <div class="tab-pane fade" id="actions-remote-{{ aidx }}" role="tabpanel" aria-labelledby="actions-remote-{{ aidx }}-tab">
+                  <div class="row justify-content-center">
+                    {% for cidx, citem in enumerate(aitem['remote'], 1) %}
+                    <div class="col-sm-4 mb-4">
+                      <div class="card" data-action="{{ citem['name'] }}">
+                        <div class="card-header text-uppercase font-weight-bold">{{ citem['name'] }}</div>
+                        <div class="card-body">
+                          <div class="card-text">
+                            {% for sidx, sitem in enumerate(citem['slots'] + [{}], 1) %}
+                            <div id="remote-slot-{{ aidx }}-{{ cidx }}-{{ sidx }}" class="{{ 'slot' if sidx <= citem['slots']|length else 'slot-template' }}" style="{{ 'display:none' if sidx > citem['slots']|length }}">
+                              <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="remote-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-toggle-on"></i></span>
+                                </div>
+                                <select class="remote-id-select custom-select" data-field="remoteuid" id="remote-list-{{ aidx }}-{{ cidx }}-{{ sidx }}" aria-describedby="remote-prepend">
+                                  <option value="{{ sitem['remoteuid'] }}" selected>{{ sitem['remoteuid'] }}</option>
+                                </select>
+                              </div>
+                              <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="state-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-plug"></i></span>
+                                </div>
+                                <select class="custom-select" data-field="state" id="state-list-{{ aidx }}-{{ cidx }}-{{ sidx }}" aria-describedby="state-prepend">
+                                  {% for state, val in [('on', '1'), ('off', '0')] %}
+                                  <option value="{{ val }}" {{ 'selected' if state == sitem['state'] else '' }}>{{ state }}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
+                              <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="func-prepend-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-asterisk"></i></span>
+                                </div>
+                                <select class="custom-select" data-field="func" id="func-list-{{ aidx }}-{{ cidx }}-{{ sidx }}" aria-describedby="func-prepend">
+                                  {% for func, val in [('status', 's'), ('led', 'a')] %}
+                                  <option value="{{ val }}" {{ 'selected' if func == sitem['func'] else '' }}>{{ func }}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
+                              <div class="d-flex justify-content-center mb-2">
+                                <button type="button" class="slot-delete btn btn-sm btn-block btn-outline-danger" data-target="#remote-slot-{{ aidx }}-{{ cidx }}-{{ sidx }}"><i class="fas fa-trash-alt"></i></button>
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                <i class="fas fa-arrow-alt-circle-down mb-2"></i>
+                              </div>
+                            </div>
+                            {% endfor %}
+                            <div class="d-flex justify-content-center">
+                              <button type="button" class="slot-add btn btn-sm btn-block btn-outline-primary" data-target="#remote-slot" data-prefix="{{ aidx }}-{{ cidx }}" data-index="{{ citem['slots']|length + 1 }}" data-added="0"><i class="fas fa-plus"></i></button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
               </div>
             </div>
             <div class="card-footer">
@@ -149,7 +210,14 @@
             </div>
           </div>
         </div>
-        {% if aidx < actions|length %}
+        {% if aitem['trigger'] == "default" %}
+        <div class="my-4">
+          <h1 class="d-inline card-title display-4 ">Triggers</h1>
+          <small id="triggerHelpBlock" class="d-inline form-text text-muted ml-1">
+            Configure trigger
+          </small>
+        </div>
+        {% elif aidx < actions|length %}
         <div class="d-flex justify-content-center">
           <i class="fas fa-angle-double-down my-2"></i>
         </div>

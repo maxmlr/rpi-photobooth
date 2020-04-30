@@ -77,7 +77,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println(value);
 
-  if (!strcmp(topic, "photobooth/remote/callback")) {
+  if (!strcmp(topic, "photobooth/remote/callback") || !strcmp(topic, ("photobooth/remote/" + hostname).c_str())) {
     if (value.startsWith("a")) {
         String action = value.substring(1);
         if (action == "1") {
@@ -91,7 +91,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
   } else if (!strcmp(topic, "photobooth/link")) {
     if (value == "discover") {
-      client.publish("photobooth/link/available", hostname.c_str());
+      client.publish("photobooth/link/available", (hostname + "@" + WiFi.localIP().toString()).c_str());
     } 
   }
 }
@@ -116,9 +116,10 @@ void reconnect() {
     Serial.print("Attempting MQTT connection...");
     if (client.connect(hostname.c_str())) {
       Serial.println("connected");
-      client.publish("photobooth/link/register", hostname.c_str());
+      client.publish("photobooth/link/register", (hostname +"/" +  WiFi.macAddress()).c_str());
       client.subscribe("photobooth/link");
       client.subscribe("photobooth/remote/callback");
+      client.subscribe(("photobooth/remote/" + hostname).c_str());
       led_blink(BUILTIN_LED,3,100,true);
     } else {
       Serial.print("failed, rc=");

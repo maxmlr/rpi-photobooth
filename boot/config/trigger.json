@@ -1,6 +1,40 @@
 {
     "actions": [
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
+            "gpio": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
+            "ledpanel": [
+                {
+                    "name": "default",
+                    "slots": [
+                        {
+                            "action": "setPanelColor",
+                            "args": "",
+                            "brightness": "0.3",
+                            "color": "rgb(0,0,255)"
+                        }
+                    ]
+                }
+            ],
+            "trigger": "default"
+        },
+        {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",
@@ -29,6 +63,12 @@
             "trigger": "thrill"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "5",
@@ -141,6 +181,12 @@
             "trigger": "countdown"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",
@@ -194,6 +240,12 @@
             "trigger": "cheese"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",
@@ -227,6 +279,12 @@
             "trigger": "takePic"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",
@@ -255,6 +313,12 @@
             "trigger": "gotPic"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",
@@ -283,6 +347,12 @@
             "trigger": "collage-start"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",
@@ -311,6 +381,12 @@
             "trigger": "collage-end"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",
@@ -339,6 +415,12 @@
             "trigger": "processing-start"
         },
         {
+            "remote": [
+                {
+                    "name": "default",
+                    "slots": []
+                }
+            ],
             "gpio": [
                 {
                     "name": "default",

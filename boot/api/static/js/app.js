@@ -252,7 +252,7 @@ function parse_trigger_actions(){
     }
     
     $('#accordion > div.card').each(function(trigger_idx, trigger_card) {			
-          trigger = $(trigger_card).data('trigger');
+        trigger = $(trigger_card).data('trigger');
         index = trigger_idx + 1;
     
         ledpanel_parsed = [];
@@ -310,11 +310,38 @@ function parse_trigger_actions(){
     
             gpio_parsed.push(action_parsed);
         });
+
+        remote_parsed = [];
+        $actions_remote = $('#actions-remote-' + index)
+        $actions_remote.find('.card').each(function(action_idx, action_card) {
+            action = $(action_card).data('action');
+            action_parsed = {
+                'name': action.toString(),
+                'slots': []
+            }
+            $(action_card).find('.slot').each(function(slot_idx, slot) {
+                configs = {}
+                $(slot).find('input, select').each(function(form_idx, form_component) {
+                    $component = $(form_component);
+                    node = $component.prop('nodeName');
+                    field = $component.data('field');
+                    if (node == 'INPUT') {
+                        configs[field] = $component.val().toString();;
+                    } else if (node == 'SELECT') {
+                        configs[field] = $('option:selected', $component).val().toString();;
+                    }
+                });
+                action_parsed.slots.push(configs);
+            });
+    
+            remote_parsed.push(action_parsed);
+        });
     
         trigger_parsed.actions.push({
             'trigger': trigger,
             'ledpanel': ledpanel_parsed,
-            'gpio': gpio_parsed
+            'gpio': gpio_parsed,
+            'remote': remote_parsed
         })
     });
     return trigger_parsed
@@ -344,6 +371,7 @@ function add_color_picker($target){
             fade : [400, 200]
         });
         customElement.prepend(colorpicker_close);
+
         var color_picker = show_color_picker("#color-picker", $target);
         colorpicker_close.click(function() {
             var color = color_picker.color;
@@ -378,11 +406,57 @@ function show_color_picker(target, btn){
     return colorPicker
 }
 
+function load_modules(){
+    $("#modules-list").LoadingOverlay("show", {
+        image       : "",
+        fontawesome : "fa fa-sync-alt fa-spin",
+        fontawesomeColor: "Dodgerblue",
+        fade : [400, 200]
+    });
+    $("#modules-list").load( "/setup/modules/list", function() {
+        $("#modules-list").LoadingOverlay("hide");
+    });
+}
+
+function update_remotes_selector(target){
+    target.click(function() {
+        var $that = $(this);
+        var selected = $('option:selected', $that).text();
+        var uids = $('#modules-list').find('.remote-instance').map(function() {
+                return $( this ).data('uid');
+            }).get();
+        $that.empty();
+        var attr = '';
+        uids.forEach(function(uid) { 
+            if (uid == selected) {
+                attr = 'selected'
+            }
+            $that.append(
+                $("<option " + attr + "></option>")
+                .attr("value", uid)
+                .text(uid)
+            ); 
+        });
+    });
+}
+
+function gpioUpdate(action, params) {
+    $.ajax({
+        url: '/api/gpio.php',
+        method: 'POST',
+        data: {
+            action: action,
+            params: params
+        }
+    });
+}
+
 $(function() {
 
     load_wifis();
     load_backgrounds();
     load_frames();
+    load_modules();
 
     var backgroundDrop = $("div#background-card").dropzone({
         url: "/manager/api/background/store",
@@ -607,8 +681,13 @@ $(function() {
         $('.slot-delete', $clone).data('target', '#' + clone_id_new).click(function() {
             $($(this).data('target')).remove();
         });
-        $('.color-picker-btn', $clone).data('target', '#' + clone_id_new);
-        add_color_picker($('.color-picker-btn', $clone));
+        $color_picker_btn = $('.color-picker-btn', $clone);
+        $color_picker_btn.data('target', '#' + clone_id_new);
+        add_color_picker($color_picker_btn);
+        $color_picker_btn.next().val("rgb(255,255,255)")
+        $color_picker_btn.children().first().css("color", "rgb(255,255,255)");
+        $color_picker_btn.next().next().val($color_picker_btn.children().first().next().text());
+        update_remotes_selector($('.remote-id-select', $clone));
         $clone.insertBefore($target).fadeIn();
         $(this).data('added', added + 1);
     });
@@ -632,6 +711,7 @@ $(function() {
                         $('.collapse.show').LoadingOverlay("hide");
                     });
                 });
+                gpioUpdate('default', null);
             },error : function(result){
                 $('.loadingoverlay_element').fadeOut( function() {
                     $('.loadingoverlay_element').first().html('<i class="fas fa-times"></i>').css('color', 'red').fadeIn(  function() {
@@ -649,5 +729,7 @@ $(function() {
     $('.optargs-toggle').click(function() {
         $(this).closest('div[id|="ledpanel-slot"]').find('.optargs').slideToggle();
     });
+
+    update_remotes_selector($('.remote-id-select'));
 
 });
