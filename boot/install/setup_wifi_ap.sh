@@ -17,7 +17,10 @@ Wants=wpa_supplicant@wlan0.service
 
 [Service]
 ExecStartPre=/sbin/iw dev wlan0 interface add uap0 type __ap
+ExecStartPre=/bin/ip link set uap0 address 02:a6:32:62:f0:b1
 ExecStopPost=-/sbin/iw dev uap0 del
+StartLimitInterval=30
+StartLimitBurst=10
 EOF
 
 # Extend wpa_supplicant
@@ -58,4 +61,5 @@ systemctl enable hostapd.service
 cp /boot/config/interfaces.conf /etc/network/interfaces
 MAC_ADDRESS="$(cat /sys/class/net/wlan0/address)"
 MAC_ADDRESS_UPDATED=${MAC_ADDRESS%?}0
+MAC_ADDRESS_UPDATED=02${MAC_ADDRESS_UPDATED:2}
 sed -i -e "s/<MAC_ADDRESS>/$MAC_ADDRESS_UPDATED/g" /etc/network/interfaces
