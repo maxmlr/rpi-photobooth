@@ -18,11 +18,11 @@ source /boot/photobooth.conf
 # https://github.com/raspberrypi/linux/issues/2453#issuecomment-610206733
 # https://community.cypress.com/docs/DOC-19375
 # https://community.cypress.com/servlet/JiveServlet/download/19375-1-53475/cypress-fmac-v5.4.18-2020_0402.zip
-mv /lib/firmware/brcm/brcmfmac43455-sdio.bin /lib/firmware/brcm/brcmfmac43455-sdio.bin~
-mv /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob~
-cp /boot/firmware/wifi/brcmfmac43455-sdio.bin /lib/firmware/brcm/
-cp /boot/firmware/wifi/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/
+# mv /lib/firmware/brcm/brcmfmac43455-sdio.bin /lib/firmware/brcm/brcmfmac43455-sdio.bin~
+# mv /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/brcmfmac43455-sdio.clm_blob~
+# cp /boot/firmware/wifi/brcmfmac43455-sdio.bin /lib/firmware/brcm/
+# cp /boot/firmware/wifi/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/
 
 # Enable eth0
-sed -i -e 's|#allow-hotplug eth0|allow-hotplug eth0|' /etc/network/interfaces
+sed -i -e 's|#*allow-hotplug eth0|allow-hotplug eth0|' /etc/network/interfaces
 ifup eth0 &>/dev/null

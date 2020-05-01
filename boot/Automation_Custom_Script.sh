@@ -11,14 +11,6 @@ cp -f /boot/authorized_keys /root/.ssh/authorized_keys
 # setup WiFi AccessPoint
 /boot/install/setup_wifi_ap.sh
 
-# Replace brcmfmac driver
-# fixes WiFi freezes; references:
-# https://github.com/raspberrypi/linux/issues/2453#issuecomment-610206733
-# https://community.cypress.com/docs/DOC-19375
-# https://community.cypress.com/servlet/JiveServlet/download/19375-1-53475/cypress-fmac-v5.4.18-2020_0402.zip
-cp /boot/firmware/wifi/brcmfmac43455-sdio.bin /lib/firmware/brcm/
-cp /boot/firmware/wifi/brcmfmac43455-sdio.clm_blob /lib/firmware/brcm/
-
 # install dependencies
 apt -y update && \
 apt install -y \
@@ -129,6 +121,18 @@ cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
 cp /boot/config/nginx-nodogsplash.conf /etc/nginx/sites-available/nodogsplash
 ln -s /etc/nginx/sites-available/nodogsplash /etc/nginx/sites-enabled
 
+# copy captive protal content
+cp -rf /boot/captive /var/www/html
+mkdir -p /var/www/html/captive/css
+cp -f /var/www/html/resources/css/style.css /var/www/html/captive/css
+cp -f /var/www/html/resources/css/rounded.css /var/www/html/captive/css
+cp -f /var/www/html/node_modules/font-awesome/css/font-awesome.css /var/www/html/captive/css
+cp -f /var/www/html/node_modules/normalize.css/normalize.css /var/www/html/captive/css
+cp -rf /var/www/html/resources/fonts /var/www/html/captive
+cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
+ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
+convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/www/html/captive/images/bg
+
 # setup boot splash screen
 [[ `grep -c tty3 /boot/cmdline.txt` -eq 0 ]] && sed -i -e "s/tty1/tty3/g" /boot/cmdline.txt
 [[ `grep -c splash /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ splash &/' /boot/cmdline.txt
@@ -150,18 +154,6 @@ sed -i -e "s/authtoken:.*/authtoken: $NGROK_TOKEN/g" /opt/ngrok/ngrok.yml
 
 # create webroot directory
 mkdir -p /var/www/html
-
-# copy captive protal
-cp -rf /boot/captive /var/www/html
-mkdir -p /var/www/html/captive/css
-cp -f /var/www/html/resources/css/style.css /var/www/html/captive/css
-cp -f /var/www/html/resources/css/rounded.css /var/www/html/captive/css
-cp -f /var/www/html/node_modules/font-awesome/css/font-awesome.css /var/www/html/captive/css
-cp -f /var/www/html/node_modules/normalize.css/normalize.css /var/www/html/captive/css
-cp -rf /var/www/html/resources/fonts /var/www/html/captive
-cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
-ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
-convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/www/html/captive/images/bg
 
 # move default files
 mkdir /var/www/dietpi && mv /var/www/*.php /var/www/*.html -t /var/www/dietpi
@@ -252,9 +244,6 @@ chmod +x /opt/photobooth/bin/*.sh
 # add bash profile
 cp /boot/scripts/profile_photobooth.sh /etc/profile.d/photobooth.sh
 
-# services
-# ...
-
 # copy images
 mkdir -p /opt/photobooth/img/
 cp -rf /boot/img/* /opt/photobooth/img/
@@ -334,7 +323,7 @@ echo "photobooth-status banner" > /DietPi/dietpi/.dietpi-banner_custom
 apt-get clean && apt-get autoremove -y
 
 # Disable eth0
-sed -i -e 's|allow-hotplug eth0|#allow-hotplug eth0|' /etc/network/interfaces
+sed -i -e 's|.*allow-hotplug eth0|#allow-hotplug eth0|' /etc/network/interfaces
 ifdown eth0 &>/dev/null
 
 if [ $? -eq 0 ]
