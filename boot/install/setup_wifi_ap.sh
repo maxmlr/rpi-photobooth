@@ -2,12 +2,13 @@
 
 # install dependencies
 apt install -y \
+    multiarch-support \
+    hostapd \
     dnsmasq \
     vnstat
 
 # install libssl1.0.0
 wget https://dietpi.com/downloads/binaries/all/libssl1.0.0_1.0.1t-1+deb8u7_armhf.deb -O 126.deb
-G_AGI multiarch-support
 dpkg --force-hold,confdef,confold -i 126.deb
 rm 126.deb
 
@@ -15,7 +16,6 @@ rm 126.deb
 ARM_VERSION=$(uname -m)
 ARM_VERSION=${ARM_VERSION:0:5}
 WIFI_DRIVER="nl80211" # rtl8188c
-G_AGI hostapd
 wget https://dietpi.com/downloads/binaries/all/hostapd_2.5_all.zip -O 60.zip
 unzip -o 60.zip
 chmod +x hostapd-* hostapd_*
