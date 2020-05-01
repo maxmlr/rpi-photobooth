@@ -121,18 +121,6 @@ cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
 cp /boot/config/nginx-nodogsplash.conf /etc/nginx/sites-available/nodogsplash
 ln -s /etc/nginx/sites-available/nodogsplash /etc/nginx/sites-enabled
 
-# copy captive protal content
-cp -rf /boot/captive /var/www/html
-mkdir -p /var/www/html/captive/css
-cp -f /var/www/html/resources/css/style.css /var/www/html/captive/css
-cp -f /var/www/html/resources/css/rounded.css /var/www/html/captive/css
-cp -f /var/www/html/node_modules/font-awesome/css/font-awesome.css /var/www/html/captive/css
-cp -f /var/www/html/node_modules/normalize.css/normalize.css /var/www/html/captive/css
-cp -rf /var/www/html/resources/fonts /var/www/html/captive
-cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
-ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
-convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/www/html/captive/images/bg
-
 # setup boot splash screen
 [[ `grep -c tty3 /boot/cmdline.txt` -eq 0 ]] && sed -i -e "s/tty1/tty3/g" /boot/cmdline.txt
 [[ `grep -c splash /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ splash &/' /boot/cmdline.txt
@@ -191,6 +179,18 @@ cd - > /dev/null
 # photobooth config
 cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc.php
+
+# copy captive protal content
+cp -rf /boot/captive /var/www/html
+mkdir -p /var/www/html/captive/css
+cp -f /var/www/html/resources/css/style.css /var/www/html/captive/css
+cp -f /var/www/html/resources/css/rounded.css /var/www/html/captive/css
+cp -f /var/www/html/node_modules/font-awesome/css/font-awesome.css /var/www/html/captive/css
+cp -f /var/www/html/node_modules/normalize.css/normalize.css /var/www/html/captive/css
+cp -rf /var/www/html/resources/fonts /var/www/html/captive
+cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
+ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
+convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/www/html/captive/images/bg
 
 # load v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
 #echo "bcm2835-v4l2" >> /etc/modules
