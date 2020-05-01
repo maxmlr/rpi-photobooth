@@ -1,6 +1,7 @@
 [Unit]
 Description=NoDogSplash Captive Portal
-After=network.target
+Requires=hostapd.service
+After=hostapd.service
 
 [Service]
 Type=forking
