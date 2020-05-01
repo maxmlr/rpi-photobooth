@@ -40,9 +40,11 @@ class Hostapd():
 
     def get_status(self):
         output = run_command(self.captive_portal_status_cmd)
-        if output and not output.startswith('ndsctl:'):
+        if output:
             parsed = ''
             for line in output:
+                if parsed.startswith('ndsctl:'):
+                    return None
                 if parsed and parsed[-1] == "}" and line == "{":
                     break
                 parsed += line
