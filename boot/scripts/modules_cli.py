@@ -38,7 +38,6 @@ class Modules():
                 for line in fin:
                     line = line.strip()
                     if line:
-                        print(line)
                         hostname, ip = line.split('@')
                         parsed [hostname] = ip
         return parsed
