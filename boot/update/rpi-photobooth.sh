@@ -197,7 +197,7 @@ chown -R www-data:www-data /var/www/
 cd - > /dev/null
 
 # photobooth config
-cp /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc_latest.php
+cp -f /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc_latest.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc_latest.php
 mv /tmp/my.config.inc.php /var/www/html/config/my.config.inc.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc.php
