@@ -19,9 +19,6 @@ apt install -y \
     iptables \
     python3-dev \
     python3-venv \
-    uwsgi \
-    uwsgi-emperor \
-    uwsgi-plugin-python3 \
     gphoto2 \
     cups \
     chromium-browser \
@@ -91,7 +88,8 @@ python3 -m venv /opt/photobooth/flask/apienv
 source /opt/photobooth/flask/apienv/bin/activate
 pip install --upgrade pip && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install flask flask-cors bootstrap-flask Flask-FontAwesome flask-login python-dotenv
+ pip install wheel && \
+ pip install flask flask-cors Flask-FontAwesome flask-login flask-socketio eventlet python-dotenv
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
@@ -103,13 +101,6 @@ echo "API_KEY=$(openssl rand -base64 42)" >> /opt/photobooth/flask/api/.env
 mkdir -p /opt/photobooth/conf/custom
 cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
 chown www-data:www-data /opt/photobooth/conf/custom/trigger.json
-
-# register flask apps
-mv /opt/photobooth/flask/api/api.ini /etc/uwsgi/apps-available/
-ln -s /etc/uwsgi/apps-available/api.ini /etc/uwsgi/apps-enabled/
-
-# restart uwsgi
-systemctl restart uwsgi
 
 # install nodogsplash
 wget -O nodogsplash.tar.gz https://github.com/nodogsplash/nodogsplash/archive/v${NODOGSPLASH_RELEASE}.tar.gz && tar xzf nodogsplash.tar.gz && rm nodogsplash.tar.gz

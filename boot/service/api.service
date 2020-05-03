@@ -1,0 +1,14 @@
+[Unit]
+Description=Photobooth API
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/photobooth/flask/api
+Environment="PATH=$PATH:/opt/photobooth/flask/apienv/bin"
+ExecStart=/opt/photobooth/flask/apienv/bin/python3 main.py
+ExecReload=/bin/kill -s HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
