@@ -1,10 +1,9 @@
 from os import environ
 from pathlib import Path
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, send_file, json, jsonify, redirect, url_for
+from flask import Flask, Blueprint, render_template, request, send_file, json, jsonify, redirect, url_for, abort
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
-from flask_fontawesome import FontAwesome
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from flask_socketio import SocketIO
 from helpers import getQRCodeImage, run_command
@@ -30,6 +29,10 @@ SECRET_KEY = environ.get('SECRET_KEY')
 API_KEY = environ.get('API_KEY')
 logging.basicConfig(filename='/var/log/api.log', level=logging.DEBUG)
 
+# blueprints
+setup = Blueprint('setup', 'setup', url_prefix='/setup')
+restapi = Blueprint('restapi', 'restapi',  url_prefix='/api/v1')
+
 # login Manager
 login_manager = LoginManager()
 
@@ -37,8 +40,6 @@ login_manager = LoginManager()
 app = Flask(__name__)
 app.config.from_object(__name__)
 login_manager.init_app(app)
-
-fa = FontAwesome(app)
 socketio = SocketIO(app)
 
 # enable CORS
@@ -69,7 +70,7 @@ def request_loader(request):
     else:
         return None
 
-@app.route('/setup/login', methods=['GET', 'POST'])
+@setup.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         if current_user.is_authenticated:
@@ -86,24 +87,24 @@ def login():
 
     return render_template('login.html', **{ 'errors': "Wrong password." })
 
-@app.route('/setup/logout')
+@setup.route('/logout')
 def logout():
     logout_user()
     return render_template('login.html')
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return redirect(url_for('login'))
+    return redirect(url_for('setup.login'))
 
 @app.context_processor
 def inject_enumerate():
     return dict(enumerate=enumerate)
 
-@app.route('/api/v1/ping', methods=['GET'])
+@restapi.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
 
-@app.route('/setup', methods=['GET'], endpoint='setup.home')
+@setup.route('', methods=['GET'], endpoint='home')
 @login_required
 def home():
     ap_args = ap()
@@ -133,11 +134,11 @@ def home():
     }
     return render_template('index.html', **{**ap_args , **trigger_args, **ledpanel_args, **gpio_args})
 
-@app.route('/setup/status', methods=['GET'], endpoint='setup.status')
+@setup.route('/status', methods=['GET'], endpoint='status')
 def status():
     return render_template('status.html', **request.args)
 
-@app.route('/setup/wifi/list', methods=['GET'], endpoint='wifi.list')
+@setup.route('/wifi/list', methods=['GET'], endpoint='wifi-list')
 @login_required
 def wifi():
     wpa = WPAcli()
@@ -149,7 +150,7 @@ def wifi():
     wifi_args['wifi_active'] = wifi_active
     return render_template('wifi.html', **wifi_args)
 
-@app.route('/setup/modules/list', methods=['GET'], endpoint='modules.list')
+@setup.route('/modules/list', methods=['GET'], endpoint='modules-list')
 @login_required
 def modules():
     m = Modules()
@@ -193,7 +194,7 @@ def trigger_write(json_data):
     with trigger_json_file.open('w') as fout:
          json.dump(json_data, fout)
 
-@app.route('/setup/wifi/connect', methods=['POST'], endpoint='wifi.connect')
+@setup.route('/wifi/connect', methods=['POST'], endpoint='wifi-connect')
 @login_required
 def wifi_connect():
     wpa = WPAcli()
@@ -203,7 +204,7 @@ def wifi_connect():
     wpa.connect(ssid=ssid, psk=password, key_mgmt='WPA-PSK')
     return jsonify({'success': True})
 
-@app.route('/setup/wifi/ap/settings', methods=['POST'], endpoint='wifi.ap.settings')
+@setup.route('/wifi/ap/settings', methods=['POST'], endpoint='wifi-ap-settings')
 @login_required
 def ap_settings():
     hostapd = Hostapd()
@@ -235,20 +236,20 @@ def ap_settings():
         run_command('/opt/photobooth/bin/reboot.sh 3', wait=False)
     return jsonify({'success': True})
 
-@app.route('/setup/wifi/ap/passthrough/<int:status>', methods=['GET'], endpoint='wifi.ap.passthrough')
+@setup.route('/wifi/ap/passthrough/<int:status>', methods=['GET'], endpoint='wifi-ap-passthrough')
 @login_required
 def ap_passthrough(status):
     hostapd = Hostapd()
     hostapd.set_inet_passthrough(status)
     return jsonify({'success': True})
 
-@app.route('/setup/qr/get/<string:data>', methods=['GET'], endpoint='qr.create')
+@setup.route('/qr/get/<string:data>', methods=['GET'], endpoint='qr-create')
 def get_qr(data):
     ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes
     return send_file(out, mimetype='image/png', as_attachment=False)
 
-@app.route('/setup/qr/get/ap', methods=['GET'], endpoint='qr.ap')
+@setup.route('/qr/get/ap', methods=['GET'], endpoint='qr-ap')
 def get_qr_ap():
     ap_args = ap(detailed=False)
     ap_auth = 'WPA' if ap_args['ap_auth'] != 'none' else 'nopass'
@@ -260,11 +261,15 @@ def get_qr_ap():
     out = ap_qr_bytes
     return send_file(out, mimetype='image/png', as_attachment=False)
 
-@app.route('/setup/trigger/actions/update', methods=['POST'], endpoint='trigger.actions.update')
+@setup.route('/trigger/actions/update', methods=['POST'], endpoint='trigger-actions-update')
 def trigger_actions_update():
     json_data = request.get_json()
     trigger_write(json_data)
     return jsonify({'success': True})
+
+# register blueprints
+app.register_blueprint(restapi)
+app.register_blueprint(setup)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', debug=True)

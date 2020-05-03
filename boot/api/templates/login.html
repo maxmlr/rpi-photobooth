@@ -12,12 +12,9 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
     {% block styles %}
-
-    <!-- FontAwsome CSS -->
-    {{ fontawesome_html() }}
-
     <!-- Libs CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
     
     {% endblock %}
   
@@ -46,13 +43,13 @@
                 <a class="nav-link" href="/setup"><i class="fas fa-home mr-2"></i>Home <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ '' if current_user.is_authenticated else 'disabled' }}" href="logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                <a class="nav-link {{ '' if current_user.is_authenticated else 'disabled' }}" href="/setup/logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
               </li>
             </ul>
           </div>
         </nav>
         <div class="mt-2">
-          <img src="{{ url_for('qr.ap', box_size=5, border=0) }}" class="rounded mx-auto d-block mt-3" alt="QRcode">
+          <img src="{{ url_for('setup.qr-ap', box_size=5, border=0) }}" class="rounded mx-auto d-block mt-3" alt="QRcode">
           <small id="qrHelpBlock" class="d-flex justify-content-center form-text text-muted">
             Hotspot
           </small>
@@ -104,6 +101,7 @@
     <!-- Libs JS -->
     <script src="{{ url_for('static', filename='jquery/jquery-3.4.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='fontawesome/js/all.min.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery/loadingoverlay.min.js') }}"></script>
 
     {% endblock %}
