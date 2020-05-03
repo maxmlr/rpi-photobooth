@@ -1,20 +1,20 @@
 {% for key, val in clients.available.items() %}
-<div class="col-sm-3 mb-4">
+<div class="col-sm-4 mb-3">
   <div class="card text-center client-instance" data-uid="{{ key }}" data-type="client">
     <div class="card-body">
-      <h5 class="card-title"><i class="fas fa-desktop mr-1"></i>Client</h5>
-      <div class="card-text">
+      <h5 class="card-title" style="font-size: 0.9em"><i class="fas fa-desktop mr-1"></i>Client</h5>
+      <div class="card-text small">
         <div class="row">
-          <div class="col-sm-3">id</div>
-          <div class="col-sm-9">{{ key }}</div>
+          <div class="col-sm-4">id</div>
+          <div class="col-sm-8">{{ key }}</div>
         </div>
         <div class="row">
-          <div class="col-sm-3">ip</div>
-          <div class="col-sm-9">{{ clients.registered[key][1] if key in clients.registered }}</div>
+          <div class="col-sm-4">ip</div>
+          <div class="col-sm-8">{{ clients.registered[key][1] if key in clients.registered }}</div>
         </div>
         <div class="row">
-          <div class="col-sm-3">mac</div>
-          <div class="col-sm-9">{{ val }}</div>
+          <div class="col-sm-4">mac</div>
+          <div class="col-sm-8">{{ val }}</div>
         </div>
         <p class="card-text mt-1"><small class="text-muted">{{ clients.registered[key][0] if key in clients.registered }}</small></p>
       </div>
@@ -23,22 +23,22 @@
 </div>
 {% endfor %}
 {% for key, val in remotes.available.items() %}
-<div class="col-sm-3 mb-4">
+<div class="col-sm-4 mb-3">
   <div class="card text-center remote-instance" data-uid="{{ key }}" data-type="remote">
     <div class="card-body">
-      <h5 class="card-title"><i class="fas fa-microchip mr-1"></i>Remote</h5>
-      <div class="card-text">
+      <h5 class="card-title" style="font-size: 0.9em"><i class="fas fa-microchip mr-1"></i>Remote</h5>
+      <div class="card-text small">
         <div class="row">
-          <div class="col-sm-3">id</div>
-          <div class="col-sm-9">{{ key }}</div>
+          <div class="col-sm-4">id</div>
+          <div class="col-sm-8">{{ key }}</div>
         </div>
         <div class="row">
-          <div class="col-sm-3">ip</div>
-          <div class="col-sm-9">{{ remotes.registered[key][1] if key in remotes.registered }}</div>
+          <div class="col-sm-4">ip</div>
+          <div class="col-sm-8">{{ remotes.registered[key][1] if key in remotes.registered }}</div>
         </div>
         <div class="row">
-          <div class="col-sm-3">mac</div>
-          <div class="col-sm-9">{{ val }}</div>
+          <div class="col-sm-4">mac</div>
+          <div class="col-sm-8">{{ val }}</div>
         </div>
         <p class="card-text mt-1"><small class="text-muted">{{ remotes.registered[key][0] if key in remotes.registered }}</small></p>
       </div>

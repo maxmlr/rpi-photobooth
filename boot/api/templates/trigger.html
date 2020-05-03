@@ -1,19 +1,17 @@
-<div class="card mt-4">
-  <div class="card-body">
-    <h1 class="d-inline card-title display-4">Theme</h1>
-    <small id="themeHelpBlock" class="d-inline form-text text-muted ml-1">
-      Configure effects
-    </small>
-    <div class="card-text mt-4">
-      <div id="accordion" class="trigger-config">
+
+<div id="accordion" class="trigger-config">
+  <div class="card mt-3">
+    <div class="card-header" style="font-size: 1.3em">Theme</div>
+    <div class="card-body">
+      <div class="card-text mt-3">
         {% for aidx, aitem in enumerate(actions, 1) %}
         <div class="card" data-trigger="{{ aitem['trigger'] }}">
-          <div class="card-header d-flex justify-content-center" id="heading-{{ aidx }}">
+          <div class="card-header bg-transparent d-flex justify-content-center" id="heading-{{ aidx }}">
             <button class="btn btn-block text-uppercase" data-toggle="collapse" data-target="#collapse-{{ aidx }}" aria-expanded="true" aria-controls="collapse-{{ aidx }}">
               {{ aitem['trigger'] }}
             </button>
           </div>
-          <div id="collapse-{{ aidx }}" class="collapse {{ 'show' if aitem['trigger'] == 'default' }}" aria-labelledby="heading-{{ aidx }}" data-parent="#accordion">
+          <div id="collapse-{{ aidx }}" class="collapse {{ '' if aitem['trigger'] == 'default' }}" aria-labelledby="heading-{{ aidx }}" data-parent="#accordion">
             <div class="card-body">
               <div class="d-flex justify-content-center mt-2">
                 <ul class="nav nav-pills mb-3" id="actions-tab-{{ aidx }}" role="tablist">
@@ -203,7 +201,7 @@
                 </div>
               </div>
             </div>
-            <div class="card-footer">
+            <div class="card-footer bg-transparent">
               <div class="d-flex justify-content-center">
                 <button type="button" class="trigger-action-submit btn btn btn-block btn-success"><i class="fas fa-check"></i></button>
               </div>
@@ -211,12 +209,13 @@
           </div>
         </div>
         {% if aitem['trigger'] == "default" %}
-        <div class="my-4">
-          <h1 class="d-inline card-title display-4 ">Triggers</h1>
-          <small id="triggerHelpBlock" class="d-inline form-text text-muted ml-1">
-            Configure trigger
-          </small>
-        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card mt-3">
+    <div class="card-header" style="font-size: 1.3em">Stages</div>
+    <div class="card-body">
+      <div class="card-text mt-4">
         {% elif aidx < actions|length %}
         <div class="d-flex justify-content-center">
           <i class="fas fa-angle-double-down my-2"></i>
