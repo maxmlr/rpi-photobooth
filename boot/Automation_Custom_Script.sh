@@ -186,8 +186,12 @@ convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/
 # install vnstat-dashboard
 wget https://github.com/alexandermarston/vnstat-dashboard/archive/master.zip && \
  unzip master.zip && mv vnstat-dashboard-master/app/ /var/www/html/vnstat && \
- rm -rf master.zip vnstat-dashboard-master && \
- chown -R www-data:www-data  /var/www/html/vnstat
+ rm -rf master.zip vnstat-dashboard-master
+wget https://raw.githubusercontent.com/composer/getcomposer.org/ba1f97192942f1d0de9557258c5009ac6bd7b17d/web/installer -O - -q | php -- --quiet && mv composer.phar /usr/local/bin/composer
+cd /var/www/html/vnstat
+composer install
+cd - > /dev/null
+chown -R www-data:www-data  /var/www/html/vnstat
 grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="resources\/js\/photobooth.js"><\/script>' /var/www/html/index.php
 grep -qF '<div id="main">' /var/www/html/vnstat/templates/site_index.tpl || sed -i '/module_graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/site_index.tpl 
 grep -qF '<\div>' /var/www/html/vnstat/templates/site_index.tpl || sed -i '/module_table.tpl/a <\div>' /var/www/html/vnstat/templates/site_index.tpl 
