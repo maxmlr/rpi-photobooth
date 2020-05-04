@@ -5,7 +5,7 @@
     <div class="card-body">
       <div class="card-text mt-3">
         {% for aidx, aitem in enumerate(actions, 1) %}
-        <div class="card" data-trigger="{{ aitem['trigger'] }}">
+        <div class="card trigger-card" data-trigger="{{ aitem['trigger'] }}">
           <div class="card-header bg-transparent d-flex justify-content-center" id="heading-{{ aidx }}">
             <button class="btn btn-block text-uppercase" data-toggle="collapse" data-target="#collapse-{{ aidx }}" aria-expanded="true" aria-controls="collapse-{{ aidx }}">
               {{ aitem['trigger'] }}

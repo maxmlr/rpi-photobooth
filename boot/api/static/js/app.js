@@ -251,7 +251,7 @@ function parse_trigger_actions(){
         'actions': []
     }
     
-    $('#accordion > div.card').each(function(trigger_idx, trigger_card) {			
+    $('#accordion div.trigger-card').each(function(trigger_idx, trigger_card) {			
         trigger = $(trigger_card).data('trigger');
         index = trigger_idx + 1;
     
@@ -358,13 +358,13 @@ function add_color_picker($target){
                 "padding"       : "10px"
             }
         });
-        var colorpicker_close = $('<i>', {
+        var colorpicker_close = $('<div>').append($('<i>', {
             "class" : "color-picker-close fas fa-times-circle fa-2x",
             "css"   : {
                 "position" : "relative",
                 "left"    : "100px"
             }
-        });
+        }));
         $.LoadingOverlay("show", {
             image       : "",
             custom      : customElement,
