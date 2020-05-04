@@ -183,6 +183,15 @@ cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
 ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
 convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/www/html/captive/images/bg
 
+# install vnstat-dashboard
+wget https://github.com/alexandermarston/vnstat-dashboard/archive/master.zip && \
+ unzip master.zip && mv vnstat-dashboard-master/app/ /var/www/html/vnstat && \
+ rm -rf master.zip vnstat-dashboard-master && \
+ chown -R www-data:www-data  /var/www/html/vnstat
+grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="resources\/js\/photobooth.js"><\/script>' /var/www/html/index.php
+grep -qF '<div id="main">' /var/www/html/vnstat/templates/site_index.tpl || sed -i '/module_graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/site_index.tpl 
+grep -qF '<\div>' /var/www/html/vnstat/templates/site_index.tpl || sed -i '/module_table.tpl/a <\div>' /var/www/html/vnstat/templates/site_index.tpl 
+
 # load v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
 #echo "bcm2835-v4l2" >> /etc/modules
 mv /etc/modprobe.d/dietpi-disable_rpi_camera.conf /etc/modprobe.d/dietpi-disable_rpi_camera.conf~

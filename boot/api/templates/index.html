@@ -247,6 +247,16 @@
         </div>
       </div>
       {% include 'trigger.html' %}
+      <div class="card my-3">
+        <div class="card-header" style="font-size: 1.3em">Stats</div>
+        <div class="card-body">
+          <div class="card-text">
+            <div id="stats-wrapper" class="w-100 justify-content-center">
+              <div class="my-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="row justify-content-center">
       <small id="help" class="d-inline form-text text-muted my-3">
@@ -265,6 +275,7 @@
     <script src="{{ url_for('static', filename='dropzone/dropzone.min.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery/loadingoverlay.min.js') }}"></script>
     <script src="{{ url_for('static', filename='iro/iro.min.js') }}"></script>
+    <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>    
 
     <!-- App JS -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>

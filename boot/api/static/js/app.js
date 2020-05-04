@@ -440,6 +440,214 @@ function load_modules(){
     });
 }
 
+function load_vnstat(){
+    $("#stats-wrapper").LoadingOverlay("show", {
+        image       : "",
+        fontawesome : "fa fa-sync-alt fa-spin",
+        fontawesomeColor: "Dodgerblue",
+        fade : [400, 200]
+    });
+    $("#stats-wrapper").load( "/vnstat #main", function() {
+        init_vnstat();
+        $("#stats-wrapper").LoadingOverlay("hide");
+    });
+}
+
+function init_vnstat(){
+    google.charts.load('current', { packages: [ 'bar' ] });
+    google.charts.load("current", { packages: [ 'corechart' ] });
+    
+    google.charts.setOnLoadCallback(drawHourlyChart);
+    google.charts.setOnLoadCallback(drawDailyChart);
+    google.charts.setOnLoadCallback(drawMonthlyChart);
+
+    function drawHourlyChart()
+    {
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('date', 'Hour');
+        data.addColumn('number', 'Traffic In');
+        data.addColumn('number', 'Traffic Out');
+        data.addColumn('number', 'Total Traffic');
+
+        data.addRows([
+            [new Date(2020, 4, 4, 0, 0, 0), 11.98, 85.33, 97.31],
+            [new Date(2020, 4, 4, 1, 0, 0), 8.85, 57.20, 66.05],
+            [new Date(2020, 4, 4, 2, 0, 0), 10.20, 103.51, 113.71],
+            [new Date(2020, 4, 4, 3, 0, 0), 8.75, 40.58, 49.33],
+            [new Date(2020, 4, 4, 4, 0, 0), 4.36, 24.82, 29.19],
+            [new Date(2020, 4, 4, 5, 0, 0), 1.89, 0.84, 2.74],
+            [new Date(2020, 4, 4, 6, 0, 0), 1.77, 0.83, 2.60],
+            [new Date(2020, 4, 4, 7, 0, 0), 10.41, 23.08, 33.49],
+            [new Date(2020, 4, 4, 8, 0, 0), 16.25, 42.34, 58.59],
+            [new Date(2020, 4, 4, 9, 0, 0), 4.00, 1.99, 5.98],
+            [new Date(2020, 4, 4, 10, 0, 0), 24.77, 92.95, 117.71],
+            [new Date(2020, 4, 3, 11, 0, 0), 3.71, 8.15, 11.86],
+            [new Date(2020, 4, 3, 12, 0, 0), 130.04, 59.97, 190.02],
+            [new Date(2020, 4, 3, 13, 0, 0), 14.00, 68.47, 82.47],
+            [new Date(2020, 4, 3, 14, 0, 0), 2.59, 3.31, 5.90],
+            [new Date(2020, 4, 3, 15, 0, 0), 1.91, 0.95, 2.86],
+            [new Date(2020, 4, 3, 16, 0, 0), 7.10, 31.54, 38.64],
+            [new Date(2020, 4, 3, 17, 0, 0), 2.55, 5.58, 8.13],
+            [new Date(2020, 4, 3, 18, 0, 0), 11.68, 143.39, 155.08],
+            [new Date(2020, 4, 3, 19, 0, 0), 2.40, 9.85, 12.25],
+            [new Date(2020, 4, 3, 20, 0, 0), 5.41, 57.69, 63.10],
+            [new Date(2020, 4, 3, 21, 0, 0), 4.88, 44.96, 49.84],
+            [new Date(2020, 4, 3, 22, 0, 0), 1.80, 0.84, 2.64],
+            [new Date(2020, 4, 3, 23, 0, 0), 4.15, 21.74, 25.90],
+        ]);
+
+        let options = {
+            title: 'Hourly Network Traffic',
+            orientation: 'horizontal',
+            legend: { position: 'right' },
+            explorer: { 
+                axis: 'horizontal',
+                maxZoomIn: 4.0,
+                maxZoomOut: 3.0
+            },
+            vAxis: {
+                title: 'Data',
+                format: '##.## MB'
+            },
+            hAxis: {
+                title: 'Hour',
+                format: 'HH:mm',
+                direction: -1,
+                ticks: [
+                    new Date(2020, 4, 4, 0, 0, 0),
+                    new Date(2020, 4, 4, 1, 0, 0),
+                    new Date(2020, 4, 4, 2, 0, 0),
+                    new Date(2020, 4, 4, 3, 0, 0),
+                    new Date(2020, 4, 4, 4, 0, 0),
+                    new Date(2020, 4, 4, 5, 0, 0),
+                    new Date(2020, 4, 4, 6, 0, 0),
+                    new Date(2020, 4, 4, 7, 0, 0),
+                    new Date(2020, 4, 4, 8, 0, 0),
+                    new Date(2020, 4, 4, 9, 0, 0),
+                    new Date(2020, 4, 4, 10, 0, 0),
+                    new Date(2020, 4, 3, 11, 0, 0),
+                    new Date(2020, 4, 3, 12, 0, 0),
+                    new Date(2020, 4, 3, 13, 0, 0),
+                    new Date(2020, 4, 3, 14, 0, 0),
+                    new Date(2020, 4, 3, 15, 0, 0),
+                    new Date(2020, 4, 3, 16, 0, 0),
+                    new Date(2020, 4, 3, 17, 0, 0),
+                    new Date(2020, 4, 3, 18, 0, 0),
+                    new Date(2020, 4, 3, 19, 0, 0),
+                    new Date(2020, 4, 3, 20, 0, 0),
+                    new Date(2020, 4, 3, 21, 0, 0),
+                    new Date(2020, 4, 3, 22, 0, 0),
+                    new Date(2020, 4, 3, 23, 0, 0),
+                ]
+            }
+        };
+        
+        var formatDate = new google.visualization.DateFormat({ pattern: 'dd/MM/yyyy HH:mm' });
+        formatDate.format(data, 0);
+        
+        var formatNumber = new google.visualization.NumberFormat({ pattern: '##.## MB' });
+        formatNumber.format(data, 1);
+        formatNumber.format(data, 2);
+        formatNumber.format(data, 3);
+
+        let chart = new google.visualization.BarChart(document.getElementById('hourlyNetworkTrafficGraph'));
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    function drawDailyChart()
+    {
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('date', 'Day');
+        data.addColumn('number', 'Traffic In');
+        data.addColumn('number', 'Traffic Out');
+        data.addColumn('number', 'Total Traffic');
+
+        data.addRows([
+            [new Date(2020, 4, 4, 0, 0, 0), 103.23, 473.47, 576.70],
+            [new Date(2020, 4, 3, 0, 0, 0), 214.52, 471.15, 685.66],
+            [new Date(2020, 4, 2, 0, 0, 0), 407.96, 96.35, 504.31],
+        ]);
+        
+        let options = {
+            title: 'Daily Network Traffic',
+            orientation: 'horizontal',
+            legend: { position: 'right' },
+            explorer: { 
+                axis: 'horizontal',
+                maxZoomIn: 4.0,
+                maxZoomOut: 3.0
+            },
+            vAxis: {
+                title: 'Data',
+                format: '##.## MB'
+            },
+            hAxis: {
+                title: 'Day',
+                format: 'dd/MM/YYYY',
+                direction: -1
+            }
+        };
+        
+        var formatDate = new google.visualization.DateFormat({ pattern: 'dd/MM/yyyy' });
+        formatDate.format(data, 0);
+        
+        var formatNumber = new google.visualization.NumberFormat({ pattern: '##.## MB' });
+        formatNumber.format(data, 1);
+        formatNumber.format(data, 2);
+        formatNumber.format(data, 3);
+
+        let chart = new google.visualization.BarChart(document.getElementById('dailyNetworkTrafficGraph'));
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    function drawMonthlyChart()
+    {
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('date', 'Month');
+        data.addColumn('number', 'Traffic In');
+        data.addColumn('number', 'Traffic Out');
+        data.addColumn('number', 'Total Traffic');
+
+        data.addRows([
+            [new Date(2020, 4, 10, 0, 0, 0), 0.71, 1.02, 1.73],
+        ]);
+
+        let options = {
+            title: 'Monthly Network Traffic',
+            orientation: 'horizontal',
+            legend: { position: 'right' },
+            explorer: { 
+                axis: 'horizontal',
+                maxZoomIn: 4.0,
+                maxZoomOut: 3.0
+            },
+            vAxis: {
+                title: 'Data',
+                format: '##.## GB'
+            },
+            hAxis: {
+                title: 'Month',
+                format: 'MMMM YYYY',
+                direction: -1
+            }
+        };
+        
+        var formatDate = new google.visualization.DateFormat({ pattern: 'MMMM YYYY' });
+        formatDate.format(data, 0);
+        
+        var formatNumber = new google.visualization.NumberFormat({ pattern: '##.## GB' });
+        formatNumber.format(data, 1);
+        formatNumber.format(data, 2);
+        formatNumber.format(data, 3);
+
+        let chart = new google.visualization.BarChart(document.getElementById('monthlyNetworkTrafficGraph'));
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+};
+
 function update_remotes_selector(target){
     target.click(function() {
         var $that = $(this);
@@ -481,11 +689,12 @@ $(function() {
         socket.emit('manager_connect', {data: 'Manager connected'});
     });
 
+    set_ledpanel_defaults();
     load_wifis();
     load_backgrounds();
     load_frames();
     load_modules();
-    set_ledpanel_defaults();
+    //load_vnstat();
 
     var backgroundDrop = $("div#background-card").dropzone({
         url: "/manager/api/background/store",
