@@ -1,6 +1,8 @@
 Dropzone.autoDiscover = false;
 var backgroundGlider;
 var frameGlider;
+var ledpanel_default;
+var socket;
 
 function load_images(callback){
     [].forEach.call(this.querySelectorAll('img'),function(img){
@@ -347,9 +349,14 @@ function parse_trigger_actions(){
     return trigger_parsed
 }
 
+function colorChangeCallback(color, action) {
+    socket.emit('setup_ledpanel_realtime_color_change', {action: action, color: color.rgbString, alpha: color.alpha});
+}
+
 function add_color_picker($target){
     $target.click(function() {
-        var $wrapper = $($(this).data('target'));
+        var action = $('option:selected', $(this).data('action')).text();
+        var trigger = $(this).data('trigger');
         var customElement = $('<div>', {
             "id" : "color-picker",
             "class" : "color-picker-area",
@@ -373,15 +380,30 @@ function add_color_picker($target){
         customElement.prepend(colorpicker_close);
 
         var color_picker = show_color_picker("#color-picker", $target);
+        color_picker.on("color:change", function(color){
+            colorChangeCallback(color, action);
+        });
         colorpicker_close.click(function() {
             var color = color_picker.color;
             $target.children().first().css("color", color.rgbString);
             $target.children().first().next().text((Math.round(color.alpha * 100) / 100).toFixed(2));
             $target.next().val(color.rgbString);
             $target.next().next().val(color.alpha);
+            if (trigger == "default") {
+                set_ledpanel_defaults();
+            } else {
+                socket.emit('setup_ledpanel_realtime_color_change', ledpanel_default);
+            }
             $.LoadingOverlay("hide");
         });
     });
+}
+
+function set_ledpanel_defaults() {
+    var _action = $('.theme-defaults .slot select[data-field="action"]').val();
+    var _color = $('.theme-defaults .slot input[data-field="color"]').val()
+    var _alpha = $('.theme-defaults .slot input[data-field="brightness"]').val()
+    ledpanel_default = {action: _action, color: _color, alpha: _alpha};
 }
 
 function show_color_picker(target, btn){    
@@ -453,10 +475,17 @@ function gpioUpdate(action, params) {
 
 $(function() {
 
+    socket = io();
+    
+    socket.on('connect', function() {
+        socket.emit('manager_connect', {data: 'Manager connected'});
+    });
+
     load_wifis();
     load_backgrounds();
     load_frames();
     load_modules();
+    set_ledpanel_defaults();
 
     var backgroundDrop = $("div#background-card").dropzone({
         url: "/manager/api/background/store",

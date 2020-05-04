@@ -11,6 +11,7 @@ from wpa_cli import WPAcli
 from hostapd_cli import Hostapd
 from modules_cli import Modules
 from gpio_led import LEDPanel
+from ctl_ledpanel import LEDpanelControl
 import logging
 
 """
@@ -33,6 +34,9 @@ logging.basicConfig(filename='/var/log/api.log', level=logging.DEBUG)
 setup = Blueprint('setup', 'setup', url_prefix='/setup')
 restapi = Blueprint('restapi', 'restapi',  url_prefix='/api/v1')
 
+# photobooth controller
+ledpanel = LEDpanelControl()
+
 # login Manager
 login_manager = LoginManager()
 
@@ -40,10 +44,12 @@ login_manager = LoginManager()
 app = Flask(__name__)
 app.config.from_object(__name__)
 login_manager.init_app(app)
-socketio = SocketIO(app)
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
+
+# enable websockets
+socketio = SocketIO(app)
 
 # users
 users = {'admin@photomateur.de': {'password': 'admin'}}
@@ -266,6 +272,18 @@ def trigger_actions_update():
     json_data = request.get_json()
     trigger_write(json_data)
     return jsonify({'success': True})
+
+@socketio.on('manager_connect', namespace='/')
+def handle_manager_connect_event(json):
+    logging.debug('new connection ' + str(json))
+
+@socketio.on('setup_ledpanel_realtime_color_change', namespace='/')
+def ledpanel_realtime_color_change(data):
+    logging.debug('received realtime color change: ' + str(data))
+    args_dict = {
+        'color': data['color']
+    }
+    ledpanel.send(data['action'], False, float(data['alpha']), args_dict, logging)
 
 # register blueprints
 app.register_blueprint(restapi)
