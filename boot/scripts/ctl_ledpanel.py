@@ -2,14 +2,29 @@
 
 
 import argparse
-from Pyro5.compatibility import Pyro4
+from Pyro5.api import Proxy
 from gpio_led import LEDPanel
 from helpers import retry
 
 
-SERVER_IP = 'localhost'
-PORT = 9090
-ENDPOINT = 'ledpanel.control'
+class LEDpanelControl:
+
+    SERVER_IP = 'localhost'
+    PORT = 9090
+    ENDPOINT = 'ledpanel.control'
+    
+    def __init__(self, verbose=False, save=False):
+        self.verbose = verbose
+        self.save = save
+
+    def send(self, action, resume=False, brightness=1, args_dict={}, logger=None):
+        @retry(Exception, tries=25, delay=1, backoff=1, verbose=self.verbose, catchAll=self.save)
+        def send_(verbose, *args):
+            if verbose:
+                print(f'sending: {args}')
+            proxy = Proxy(f'PYRO:{self.ENDPOINT}@{self.SERVER_IP}:{self.PORT}')
+            proxy.ledCtl(*args)
+        send_(self.verbose, action, resume, brightness, args_dict)
 
 
 if __name__ == "__main__":
@@ -35,12 +50,4 @@ if __name__ == "__main__":
     verbose = args_dict.pop('verbose')
     save = args_dict.pop('save')
 
-    @retry(Exception, tries=25, delay=1, backoff=1, verbose=verbose, catchAll=save)
-    def send(proxy, *args):
-        if verbose:
-            print(f'sending: {args}')
-        proxy.ledCtl(*args)
-
-    # proxy = Pyro4.Proxy(f'PYRONAME:{ENDPOINT}')
-    proxy = Pyro4.Proxy(f'PYRO:{ENDPOINT}@{SERVER_IP}:{PORT}')
-    send(proxy, action, resume, brightness, args_dict)
+    LEDpanelControl(verbose, save).send(action, resume, brightness, args_dict)
