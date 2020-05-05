@@ -4,8 +4,14 @@
 apt install -y \
     multiarch-support \
     hostapd \
-    dnsmasq \
-    vnstat
+    dnsmasq
+
+# install vnstat
+wget https://github.com/vergoh/vnstat/releases/download/v2.6/vnstat-2.6.tar.gz
+tar xzf vnstat-2.6.tar.gz && rm vnstat-2.6.tar.gz
+cd vnstat-2.6
+./configure && make && make install
+cd - > /dev/null
 
 # install libssl1.0.0
 wget https://dietpi.com/downloads/binaries/all/libssl1.0.0_1.0.1t-1+deb8u7_armhf.deb -O 126.deb

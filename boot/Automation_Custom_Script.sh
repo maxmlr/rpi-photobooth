@@ -32,7 +32,9 @@ apt install -y \
     qrencode \
     jq \
     mosh \
-    imagemagick
+    imagemagick \
+    sqlite3 \
+    libsqlite3-dev
 
 # optional: if photobooth should be build from source, uncomment the next command.
 # note: if the python uinput library should be used for remote trigger (send key_press)
@@ -146,6 +148,9 @@ mkdir /var/www/dietpi && mv /var/www/*.php /var/www/*.html -t /var/www/dietpi
 # lighty-enable-mod ssl
 # cd ~/
 
+# install composer
+wget https://raw.githubusercontent.com/composer/getcomposer.org/ba1f97192942f1d0de9557258c5009ac6bd7b17d/web/installer -O - -q | php -- --quiet && mv composer.phar /usr/local/bin/composer
+
 # install photobooth
 echo "Installing photobooth"
 cd /var/www/html
@@ -171,6 +176,9 @@ cd - > /dev/null
 cp -f /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
 chown -R www-data:www-data /var/www/html/config/my.config.inc.php
 
+# photobooth hook
+grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="resources\/js\/photobooth.js"><\/script>' /var/www/html/index.php
+
 # copy captive protal content
 cp -rf /boot/captive /var/www/html
 mkdir -p /var/www/html/captive/css
@@ -183,18 +191,17 @@ cp -rf /var/www/html/node_modules/font-awesome/fonts /var/www/html/captive
 ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
 convert /var/www/html/resources/img/bg.jpg -quality 25 -resize 1920x1080\> /var/www/html/captive/images/bg
 
-# install vnstat-dashboard
-wget https://github.com/alexandermarston/vnstat-dashboard/archive/master.zip && \
- unzip master.zip && mv vnstat-dashboard-master/app/ /var/www/html/vnstat && \
- rm -rf master.zip vnstat-dashboard-master
-wget https://raw.githubusercontent.com/composer/getcomposer.org/ba1f97192942f1d0de9557258c5009ac6bd7b17d/web/installer -O - -q | php -- --quiet && mv composer.phar /usr/local/bin/composer
+# install vnstat-viewer
+wget https://github.com/dalbenknicker/vnstat-viewer/archive/master.zip && \
+ unzip master.zip && mv vnstat-viewer-master /var/www/html/vnstat && \
+ rm -rf master.zip vnstat-viewer-master
 cd /var/www/html/vnstat
 composer install
 cd - > /dev/null
-chown -R www-data:www-data  /var/www/html/vnstat
-grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="resources\/js\/photobooth.js"><\/script>' /var/www/html/index.php
-grep -qF '<div id="main">' /var/www/html/vnstat/templates/site_index.tpl || sed -i '/module_graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/site_index.tpl 
-grep -qF '<\div>' /var/www/html/vnstat/templates/site_index.tpl || sed -i '/module_table.tpl/a <\div>' /var/www/html/vnstat/templates/site_index.tpl 
+cp -f /boot/config/vnstat-viewer.php /var/www/html/vnstat/include/config.php
+chown -R www-data:www-data /var/www/html/vnstat
+grep -qF '<div id="main">' /var/www/html/vnstat/templates/main.tpl || sed -i '/graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/main.tpl 
+grep -qF '<\div>' /var/www/html/vnstat/templates/main.tpl || sed -i '/gscript.tpl/a <\div>' /var/www/html/vnstat/templates/main.tpl 
 
 # load v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
 #echo "bcm2835-v4l2" >> /etc/modules
@@ -266,7 +273,11 @@ ln -s /opt/photobooth/python/ctl_ledpanel.py /usr/local/bin/ledpanel
 mkdir -p /usr/local/lib/systemd/system/
 for service in /boot/service/*.service; do cp $service /usr/local/lib/systemd/system/`basename $service`; chmod -x /usr/local/lib/systemd/system/`basename $service`; done
 for service in /boot/service/*.timer; do cp $service /usr/local/lib/systemd/system/`basename $service`; chmod -x /usr/local/lib/systemd/system/`basename $service`; done
+# reload services
 systemctl daemon-reload
+# unmask services
+systemctl unmask vnstat.service
+# enable services
 for service in /boot/service/*.service; do systemctl enable `basename $service`; done
 for service in /boot/service/*.timer; do systemctl enable `basename $service`; done
 
