@@ -200,8 +200,8 @@ composer install
 cd - > /dev/null
 cp -f /boot/config/vnstat-viewer.php /var/www/html/vnstat/include/config.php
 chown -R www-data:www-data /var/www/html/vnstat
-grep -qF '<div id="main">' /var/www/html/vnstat/templates/main.tpl || sed -i '/graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/main.tpl 
-grep -qF '<\div>' /var/www/html/vnstat/templates/main.tpl || sed -i '/gscript.tpl/a <\div>' /var/www/html/vnstat/templates/main.tpl 
+grep -qF '<div id="main">' /var/www/html/vnstat/templates/main.tpl || sed -i '/graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/main.tpl
+grep -qF '<\div>' /var/www/html/vnstat/templates/main.tpl || sed -i '/gscript.tpl/a <\/div>' /var/www/html/vnstat/templates/main.tpl
 
 # load v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
 #echo "bcm2835-v4l2" >> /etc/modules
