@@ -19,23 +19,6 @@
             thrill_ref.apply(this, [arg1]);
         }
 
-        var cheese_ref = photoBooth.cheese;
-        photoBooth.cheese = function (arg1){
-            socket.emit('trigger', {action: 'cheese', args: arg1});
-            cheese_ref.apply(this, [arg1]);
-        }
-
-        var takePic_ref = photoBooth.takePic;
-        photoBooth.takePic = function (arg1){
-            socket.emit('trigger', {action: 'takePic', args: arg1});
-            takePic_ref.apply(this, [arg1]);
-        }
-        
-        var processPic_ref = photoBooth.processPic;
-        photoBooth.processPic = function (arg1, arg2){
-            socket.emit('trigger', {action: 'processPic', args: arg1});
-            processPic_ref.apply(this, [arg1, arg2]);
-        }
         var startCountdown_ref = photoBooth.startCountdown;
         photoBooth.startCountdown = function (start, element, cb){
             //startCountdown_ref.apply(this, [start, element, cb]);
@@ -43,7 +26,7 @@
             let current = start;
     
             function timerFunction() {
-                socket.emit('trigger', {action: 'countdown', args: current});
+                socket.emit('trigger', {action: 'startCountdown', args: current});
                 
                 element.text(current);
                 current--;
@@ -59,6 +42,31 @@
                 count++;
             }
             timerFunction();
+        }
+
+        var cheese_ref = photoBooth.cheese;
+        photoBooth.cheese = function (arg1){
+            socket.emit('trigger', {action: 'cheese', args: arg1});
+            cheese_ref.apply(this, [arg1]);
+            window.setTimeout(() => socket.emit('trigger', {action: 'default', args: 'fade'}), 10000);
+        }
+
+        var takePic_ref = photoBooth.takePic;
+        photoBooth.takePic = function (arg1){
+            socket.emit('trigger', {action: 'takePic', args: arg1});
+            takePic_ref.apply(this, [arg1]);
+        }
+        
+        var renderPic_ref = photoBooth.renderPic;
+        photoBooth.renderPic = function (arg1, arg2){
+            socket.emit('trigger', {action: 'renderPic', args: arg1});
+            renderPic_ref.apply(this, [arg1, arg2]);
+        }
+
+        var errorPic_ref = photoBooth.errorPic;
+        photoBooth.errorPic = function (arg1){
+            socket.emit('trigger', {action: 'errorPic', args: arg1});
+            errorPic_ref.apply(this, [arg1]);
         }
 
         console.log("Photobooth hooks loaded.");

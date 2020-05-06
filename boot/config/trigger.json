@@ -65,7 +65,23 @@
         {
             "remote": [
                 {
-                    "name": "default",
+                    "name": "5",
+                    "slots": []
+                },
+                {
+                    "name": "4",
+                    "slots": []
+                },
+                {
+                    "name": "3",
+                    "slots": []
+                },
+                {
+                    "name": "2",
+                    "slots": []
+                },
+                {
+                    "name": "1",
                     "slots": []
                 }
             ],
@@ -178,7 +194,7 @@
                     ]
                 }
             ],
-            "trigger": "countdown"
+            "trigger": "startCountdown"
         },
         {
             "remote": [
@@ -291,40 +307,6 @@
                     "slots": [
                         {
                             "func": "static",
-                            "gpio": "5",
-                            "state": "1"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.5",
-                            "color": "rgb(0,255,0)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "gotPic"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
                             "gpio": "24",
                             "state": "0"
                         }
@@ -344,41 +326,7 @@
                     ]
                 }
             ],
-            "trigger": "collage-start"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "24",
-                            "state": "1"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "1.0",
-                            "color": "rgb(0,255,0)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "collage-end"
+            "trigger": "collage"
         },
         {
             "remote": [
@@ -412,7 +360,7 @@
                     ]
                 }
             ],
-            "trigger": "processing-start"
+            "trigger": "renderPic"
         },
         {
             "remote": [
@@ -427,7 +375,7 @@
                     "slots": [
                         {
                             "func": "static",
-                            "gpio": "24",
+                            "gpio": "5",
                             "state": "1"
                         }
                     ]
@@ -440,13 +388,13 @@
                         {
                             "action": "setPanelColor",
                             "args": "",
-                            "brightness": "1.0",
-                            "color": "rgb(138,43,226)"
+                            "brightness": "0.5",
+                            "color": "rgb(0,255,0)"
                         }
                     ]
                 }
             ],
-            "trigger": "processing-end"
+            "trigger": "errorPic"
         }
     ]
 }

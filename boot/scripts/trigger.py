@@ -64,28 +64,28 @@ class Trigger():
             }
 
     def fire(self, action, params=''):
-        query_action = str(params) if action == "countdown" else "default"
+        query_action = str(params) if action == "startCountdown" else "default"
 
         # gpios, states, funcs
-        gpio_actions = self.actions[action]['gpio'][query_action]
+        gpio_actions = self.actions[action]['gpio'].get(query_action, [[], [], []])
 
         # actions, colors, brightness, args
-        ledpanel_actions = self.actions[action]['ledpanel'][query_action]
+        ledpanel_actions = self.actions[action]['ledpanel'].get(query_action, [])
 
         # remotes, payloads
-        remote_actions = self.actions[action]['remote'][query_action]
-
+        remote_actions = self.actions[action]['remote'].get(query_action, [])
         if gpio_actions[0]:
             cmd = f"{GPIO_CMD} {action} {','.join(gpio_actions[0])} {','.join(gpio_actions[1])} {','.join(gpio_actions[2])} {params}"
             run_command(cmd, wait=False)
-        for action in ledpanel_actions:
-            args_dict = action['args'] if action['args'] != '' else {}
-            args_dict['color'] = action['color']
+        for slot in ledpanel_actions:
+            args_dict = slot['args'] if slot['args'] != '' else {}
+            args_dict['color'] = slot['color']
             args_dict['iterations'] = 1
-            self.ledpanel.send(action['action'], False, float(action['brightness']), args_dict, None)
-        for action in remote_actions:
-            cmd = f"{REMOTE_CMD} -m {action['func']}{action['state']} -t photobooth/remote/{action['remoteuid']}"
+            self.ledpanel.send(slot['action'], False, float(slot['brightness']), args_dict, None)
+        for slot in remote_actions:
+            cmd = f"{REMOTE_CMD} -m {slot['func']}{slot['state']} -t photobooth/remote/{slot['remoteuid']}"
             run_command(cmd, wait=False)
+        self.log.debug(f'Trigger {action} fired successfully.')
 
 
 if __name__ == "__main__":
