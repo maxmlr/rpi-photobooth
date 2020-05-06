@@ -5,7 +5,6 @@ from flask import Flask, Blueprint, render_template, request, send_file, json, j
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
-from flask_socketio import SocketIO
 from helpers import getQRCodeImage, run_command
 from wpa_cli import WPAcli
 from hostapd_cli import Hostapd
