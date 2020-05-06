@@ -12,6 +12,7 @@ from hostapd_cli import Hostapd
 from modules_cli import Modules
 from gpio_led import LEDPanel
 from ctl_ledpanel import LEDpanelControl
+from trigger import Trigger
 import logging
 
 """
@@ -29,6 +30,7 @@ DEBUG = True
 SECRET_KEY = environ.get('SECRET_KEY')
 API_KEY = environ.get('API_KEY')
 logging.basicConfig(filename='/var/log/api.log', level=logging.DEBUG)
+log = logging.getLogger("Photobooth-API")
 
 # blueprints
 setup = Blueprint('setup', 'setup', url_prefix='/setup')
@@ -36,6 +38,7 @@ restapi = Blueprint('restapi', 'restapi',  url_prefix='/api/v1')
 
 # photobooth controller
 ledpanel = LEDpanelControl()
+trigger = Trigger(ledpanel=ledpanel, logger=log)
 
 # login Manager
 login_manager = LoginManager()
@@ -271,19 +274,29 @@ def get_qr_ap():
 def trigger_actions_update():
     json_data = request.get_json()
     trigger_write(json_data)
+    trigger.update_config(json_data)
     return jsonify({'success': True})
 
 @socketio.on('manager_connect', namespace='/')
 def handle_manager_connect_event(json):
-    logging.debug('new connection ' + str(json))
+    log.debug(f'new manager connection: {json["data"]}')
 
 @socketio.on('setup_ledpanel_realtime_color_change', namespace='/')
-def ledpanel_realtime_color_change(data):
-    logging.debug('received realtime color change: ' + str(data))
+def ledpanel_realtime_color_change(json):
+    log.debug(f'received realtime color change: {json}')
     args_dict = {
-        'color': data['color']
+        'color': json['color']
     }
-    ledpanel.send(data['action'], False, float(data['alpha']), args_dict, logging)
+    ledpanel.send(json['action'], False, float(json['alpha']), args_dict, log)
+
+@socketio.on('photobooth_connect', namespace='/photobooth')
+def handle_manager_connect_event(json):
+    log.debug(f'new photobooth connection: {json["data"]}')
+
+@socketio.on('trigger', namespace='/photobooth')
+def trigger_fire(json):
+    trigger.fire(json['action'], params=json['args'])
+    log.debug(f'received trigger action: {json["action"]}')
 
 # register blueprints
 app.register_blueprint(restapi)
