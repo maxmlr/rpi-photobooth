@@ -114,6 +114,11 @@ function addPhoto(img) {
     var $target = $('a', $img);
     if (instance) {
         instance.addContent($target);
+        if (getUrlParameter('mode') == 'presentation' && getUrlParameter('viewport') == 'zoomed') {
+            instance.next(5000).scaleToActual();
+        } else if (getUrlParameter('mode') == 'presentation') {
+            instance.next(5000);
+        }
     } else {
         $('html, body').animate({
             scrollTop: $target.offset().top
@@ -137,8 +142,8 @@ function addPhoto(img) {
 function initGallery() {
     // Create template for the button
     $.fancybox.defaults.btnTpl.pbShare = '<a data-fancybox-pbShare data-morphing data-src="" href="javascript:;" class="btn pb-share"><i class="fas fa-qrcode mr-1"></i>QR code</a>';
-    if (getUrlParameter('mode') == 'zoomed') {
-        fancybox_defaults['afterLoad'] = function (instance, slide) {
+    if (getUrlParameter('viewport') == 'zoomed') {
+        fancybox_defaults['afterShow'] = function (instance, slide) {
             instance.scaleToActual();
         }
     }
