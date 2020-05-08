@@ -94,12 +94,18 @@ class LEDPanel:
         return self.adjust_color_brightness((r, g, b) if self.order in (neopixel.RGB, neopixel.GRB) else (r, g, b, 0), brightness)
 
     def boot(self, **kwargs):
+        import json
         import logging
         import pystemd.journal
+        from pathlib import Path
         from pystemd.systemd1 import Unit
         
+        CONFIG = '/opt/photobooth/conf/custom/trigger.json'
         unit = Unit(b'graphical.target')
         unit.load()
+        config = Path(CONFIG)
+        color = 'black'
+        brightness = 0
 
         status = (unit.Unit.ActiveState).decode()
         while status != 'active':
@@ -115,10 +121,22 @@ class LEDPanel:
             MESSAGE=f'Graphical target: {status}',
             SYSLOG_IDENTIFIER='ledpanel'
         )
-        
+
         self.clear()
-        self.setBrightness(1)
-        self.setPanelColor('yellow')
+        default_set = False
+        if config.exists():
+            with config.open() as fin:
+                for action in json.load(fin)['actions']:
+                    if action['trigger'] == 'default' and not default_set:
+                        for sub in action['ledpanel']:
+                            if sub['name'] == 'default' and not default_set:
+                                for slot in sub['slots']:
+                                    self.setPanelColor(slot['color'])
+                                    self.setBrightness(float(slot['brightness']))
+                                    default_set = True
+        if not default_set:
+            self.setPanelColor(color)
+            self.setBrightness(brightness)
 
     def get_effects(self):
         return Effects(panel=self)
