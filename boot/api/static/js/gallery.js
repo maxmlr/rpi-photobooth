@@ -170,15 +170,19 @@ function filterGallery() {
 }
 
 $(function () {
-
     $grid = $('.grid');
+    $.LoadingOverlay("show", {
+        image       : "",
+        fontawesome : "fa fa-sync-alt fa-spin",
+        fontawesomeColor: "Dodgerblue",
+        fade : [400, 200]
+    });
     $.ajax({
         type: 'GET',
         contentType: 'application/json',
         url: '/api/v1/images',
         dataType: 'json',
         success: function (result) {
-
             var $images = [];
             result.forEach(function (img) {
                 $images.push(
@@ -187,37 +191,33 @@ $(function () {
                 );
             });
             $grid.append($images);
-
             $grid.promise().done(function () {
-                // Create reponsive grid
-                $grid = $grid.packery({
-                    itemSelector: '.grid-item',
-                    columnWidth: '.grid-sizer',
-                    //rowHeight: '.grid-sizer',
-                    gutter: '.gutter-sizer',
-                    percentPosition: true,
-                    stagger: 30,
-                    resize: false,
-                })
-                .isotope({
-                    initLayout: false,
-                    itemSelector: '.grid-item',
-                    layoutMode: 'packery',
-                    packery: {
+                $grid.imagesLoaded().always(function () {
+                    // Create reponsive grid
+                    $grid = $grid.packery({
+                        itemSelector: '.grid-item',
                         columnWidth: '.grid-sizer',
                         //rowHeight: '.grid-sizer',
-                        gutter: '.gutter-sizer'
-                    },
-                    percentPosition: true,
-                });
-
-                // layout Packery after each image loads
-                $grid.imagesLoaded().progress(function () {
-                    $grid.packery();
+                        gutter: '.gutter-sizer',
+                        percentPosition: true,
+                        stagger: 30,
+                        resize: false,
+                    })
+                    .isotope({
+                        initLayout: false,
+                        itemSelector: '.grid-item',
+                        layoutMode: 'packery',
+                        packery: {
+                            columnWidth: '.grid-sizer',
+                            //rowHeight: '.grid-sizer',
+                            gutter: '.gutter-sizer'
+                        },
+                        percentPosition: true,
+                    }).packery();
                     initGallery();
+                    $.LoadingOverlay("hide");
                 });
             });
-
         },
         error: function (result) {
             console.log(result);
