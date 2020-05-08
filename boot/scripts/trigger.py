@@ -30,25 +30,28 @@ class Trigger():
                 config = json.load(fin)
                 if config:
                     self.actions = {}
-                for action in config['actions']:
-                    self.actions[action['trigger']] = {
-                        'gpio_raw': {},
-                        'gpio': {},
-                        'ledpanel': {},
-                        'remote': {}
-                    }
-                    for sub in action['gpio']:
-                        self.actions[action['trigger']]['gpio_raw'][sub['name']] = sub['slots']
-                        gpio_actions = [[], [], []]
-                        for slot in sub['slots']:
-                            gpio_actions[0] += [slot['gpio']]
-                            gpio_actions[1] += [slot['state']]
-                            gpio_actions[2] += [slot['func']]
-                        self.actions[action['trigger']]['gpio'][sub['name']] = gpio_actions
-                    for sub in action['ledpanel']:
-                         self.actions[action['trigger']]['ledpanel'][sub['name']] = sub['slots']
-                    for sub in action['remote']:
-                         self.actions[action['trigger']]['remote'][sub['name']] = sub['slots']
+                self.preprocess_config(config)
+
+    def preprocess_config(self, config):
+        for action in config['actions']:
+            self.actions[action['trigger']] = {
+                'gpio_raw': {},
+                'gpio': {},
+                'ledpanel': {},
+                'remote': {}
+            }
+            for sub in action['gpio']:
+                self.actions[action['trigger']]['gpio_raw'][sub['name']] = sub['slots']
+                gpio_actions = [[], [], []]
+                for slot in sub['slots']:
+                    gpio_actions[0] += [slot['gpio']]
+                    gpio_actions[1] += [slot['state']]
+                    gpio_actions[2] += [slot['func']]
+                self.actions[action['trigger']]['gpio'][sub['name']] = gpio_actions
+            for sub in action['ledpanel']:
+                    self.actions[action['trigger']]['ledpanel'][sub['name']] = sub['slots']
+            for sub in action['remote']:
+                    self.actions[action['trigger']]['remote'][sub['name']] = sub['slots']
 
     def reload_config(self):
         self.read_config()
@@ -56,12 +59,15 @@ class Trigger():
     def update_config(self, config):
         if config:
             self.actions = {}
-        for action in config['actions']:
-            self.actions[action['trigger']] = {
-                'gpio': action['gpio'],
-                'ledpanel': action['ledpanel'],
-                'remote': action['remote']
-            }
+        self.preprocess_config(config)
+        with Path(CONFIG).open('w') as fout:
+            json.dump(config, fout)
+
+    def get_config(self):
+        trigger_json = {}
+        with Path(CONFIG).open() as fin:
+            trigger_json = json.load(fin)
+        return trigger_json
 
     def fire(self, action, params=''):
         query_action = str(params) if action == "startCountdown" else "default"

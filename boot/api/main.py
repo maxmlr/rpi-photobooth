@@ -30,6 +30,8 @@ SECRET_KEY = environ.get('SECRET_KEY')
 API_KEY = environ.get('API_KEY')
 logging.basicConfig(filename='/var/log/api.log', level=logging.DEBUG)
 log = logging.getLogger("Photobooth-API")
+PHOTOBOOTH_HTML_ROOT = Path("/var/www/html")
+PHOTOBOOTH_IMG_FOLDER = PHOTOBOOTH_HTML_ROOT / Path("data/images")
 
 # blueprints
 setup = Blueprint('setup', 'setup', url_prefix='/setup')
@@ -112,11 +114,16 @@ def inject_enumerate():
 def ping_pong():
     return jsonify('pong!')
 
+@restapi.route('/images', methods=['GET'])
+def get_images():
+    image_pattern = '*.jpg'
+    return jsonify([img.name for img in PHOTOBOOTH_IMG_FOLDER.glob(image_pattern)])
+
 @setup.route('', methods=['GET'], endpoint='home')
 @login_required
 def home():
     ap_args = ap()
-    trigger_args = trigger_read()
+    trigger_args = trigger.get_config()
     gpio_args = {
         'relay_mapping': {
             '24': '1',
@@ -190,18 +197,6 @@ def ap(detailed=True):
         ap_args['ap_connections_cnt'] = ap_connections_cnt
     return ap_args
 
-def trigger_read():
-    trigger_json_file = Path('/opt/photobooth/conf/custom/trigger.json')
-    trigger_json = {}
-    with trigger_json_file.open() as fin:
-        trigger_json = json.load(fin)
-    return trigger_json
-
-def trigger_write(json_data):
-    trigger_json_file = Path('/opt/photobooth/conf/custom/trigger.json')
-    with trigger_json_file.open('w') as fout:
-         json.dump(json_data, fout)
-
 @setup.route('/wifi/connect', methods=['POST'], endpoint='wifi-connect')
 @login_required
 def wifi_connect():
@@ -272,7 +267,6 @@ def get_qr_ap():
 @setup.route('/trigger/actions/update', methods=['POST'], endpoint='trigger-actions-update')
 def trigger_actions_update():
     json_data = request.get_json()
-    trigger_write(json_data)
     trigger.update_config(json_data)
     return jsonify({'success': True})
 
@@ -292,9 +286,15 @@ def ledpanel_realtime_color_change(json):
 def handle_manager_connect_event(json):
     log.debug(f'new photobooth connection: {json["data"]}')
 
+@socketio.on('gallery_connect', namespace='/gallery')
+def handle_manager_connect_event(json):
+    log.debug(f'new gallery connection: {json["data"]}')
+
 @socketio.on('trigger', namespace='/photobooth')
 def trigger_fire(json):
     trigger.fire(json['action'], params=json['args'])
+    if json['action'] == "renderPic":
+        emit('newPic', {'img': json['args']}, namespace='/gallery', broadcast=True)
     log.debug(f'received trigger action: {json["action"]}')
 
 # register blueprints
