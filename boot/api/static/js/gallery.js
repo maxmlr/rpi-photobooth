@@ -1,5 +1,20 @@
 var $grid;
 
+function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+};
+
 var fancybox_defaults = {
     selector: '.grid a:visible',
     keyboard: true,
@@ -10,9 +25,6 @@ var fancybox_defaults = {
         $("[data-morphing]").fancyMorph({
             hash: 'morphing'
         });
-    },
-    afterLoad: function (instance, slide) {
-        instance.scaleToActual();
     },
     afterShow: function (instance, slide) {
         $('.pb-share').data('src', '/api/qrcode.php?filename=' + $(slide.opts.$orig).data('name'));
@@ -125,6 +137,11 @@ function addPhoto(img) {
 function initGallery() {
     // Create template for the button
     $.fancybox.defaults.btnTpl.pbShare = '<a data-fancybox-pbShare data-morphing data-src="" href="javascript:;" class="btn pb-share"><i class="fas fa-qrcode mr-1"></i>QR code</a>';
+    if (getUrlParameter('mode') == 'zoomed') {
+        fancybox_defaults['afterLoad'] = function (instance, slide) {
+            instance.scaleToActual();
+        }
+    }
     $().fancybox(fancybox_defaults);
 }
 
