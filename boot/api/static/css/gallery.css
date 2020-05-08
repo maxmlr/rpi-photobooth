@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+}
+
+/* ---- grid ---- */
+.grid {
+    background: #DDD;
+}
+
+/* clear fix */
+.grid:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+/* ---- .grid-item ---- */
+/* fluid 3 columns */
+.grid-sizer,
+.grid-item {
+    width: 33.2%;
+}
+
+/* 2 columns wide */
+.grid-item--width2 {
+    width: 66.4%;
+}
+
+/*
+/ height of 1 row /
+.grid-sizer,
+.grid-item { height: 30%; }
+/ 2 rows high /
+.grid-item--height2 { height: 120px; }
+*/
+
+.gutter-sizer {
+    width: 0.2%;
+}
+
+.grid-item {
+    float: left;
+}
+
+.grid-item img {
+    display: block;
+    max-width: 100%;
+}
