@@ -3,6 +3,7 @@
 # install dependencies
 apt install -y \
     build-essential \
+    libsqlite3-dev \
     multiarch-support \
     hostapd \
     dnsmasq
