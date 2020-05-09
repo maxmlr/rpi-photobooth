@@ -112,7 +112,7 @@ cd nodogsplash-${NODOGSPLASH_RELEASE}
 make && make install
 cd - > /dev/null
 rm -rf nodogsplash-${NODOGSPLASH_RELEASE}
-cp /boot/config/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
+cp /boot/config/wifi/ap-default/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
 cp /boot/config/nginx-nodogsplash.conf /etc/nginx/sites-available/nodogsplash
 ln -s /etc/nginx/sites-available/nodogsplash /etc/nginx/sites-enabled
 

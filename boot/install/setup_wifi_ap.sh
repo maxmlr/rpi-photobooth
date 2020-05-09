@@ -33,8 +33,8 @@ mv hostapd_cli-$ARM_VERSION $(which hostapd_cli)
 rm 60.zip hostapd-* hostapd_*
 
 # copy wlan1/2 device configuration
-cp /boot/config/wlan1.conf /etc/network/interfaces.d/wlan1
-cp /boot/config/wlan2.conf /etc/network/interfaces.d/wlan2
+cp /boot/config/wifi/wlan1.conf /etc/network/interfaces.d/wlan1
+cp /boot/config/wifi/wlan2.conf /etc/network/interfaces.d/wlan2
 
 # add hostapd.service override (bridge)
 mkdir -p /etc/systemd/system/hostapd.service.d
@@ -52,8 +52,8 @@ cat > /etc/banner_add_hosts << EOF
 EOF
 
 # Copy configs
-cp /boot/config/hostapd.conf /etc/hostapd/hostapd.conf
-cp /boot/config/dnsmasq.conf /etc/dnsmasq.d/photobooth
+cp /boot/config/wifi/ap-default/hostapd.conf/etc/hostapd/hostapd.conf
+cp /boot/config/wifi/ap-default/dnsmasq.conf /etc/dnsmasq.d/photobooth.conf
 
 # Reload systemctl deamon
 systemctl daemon-reload
