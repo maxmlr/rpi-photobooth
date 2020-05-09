@@ -9,6 +9,7 @@ apt install -y \
     dnsmasq
 
 # install vnstat
+useradd -r -s /bin/false vnstat
 wget https://github.com/vergoh/vnstat/releases/download/v2.6/vnstat-2.6.tar.gz
 tar xzf vnstat-2.6.tar.gz && rm vnstat-2.6.tar.gz
 cd vnstat-2.6
