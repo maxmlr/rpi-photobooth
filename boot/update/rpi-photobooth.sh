@@ -190,7 +190,7 @@ update_msg+=( " - new: /var/www/html/config/my.config.inc_latest.php" )
 fi
 
 # photobooth hook
-grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="resources\/js\/photobooth.js"><\/script>' /var/www/html/index.php
+grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="\/static\/js\/photobooth.js"><\/script>' /var/www/html/index.php
 
 # copy captive protal
 cp -rf /boot/captive /var/www/html
