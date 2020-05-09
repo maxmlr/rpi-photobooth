@@ -10,6 +10,7 @@ cp -f /boot/authorized_keys /root/.ssh/authorized_keys
 
 # setup WiFi AccessPoint
 /boot/install/setup_wifi_ap.sh
+chmod +x /boot/install/install-dongle.sh && ln -s /boot/install/install-dongle.sh /usr/local/bin/install-dongle
 
 # install dependencies
 apt -y update && \
