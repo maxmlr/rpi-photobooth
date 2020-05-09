@@ -2,6 +2,7 @@
 
 # install dependencies
 apt install -y \
+    build-essential \
     multiarch-support \
     hostapd \
     dnsmasq
