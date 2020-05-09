@@ -4,6 +4,78 @@ var frameGlider;
 var ledpanel_default;
 var socket;
 
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }
+
+function ping(url) {
+    return new Promise((resolve, reject) => {
+        var d = new Date();
+        $.ajax({
+            type: "GET",
+            url: url,
+            cache: false,
+            timeout: 60000,
+            success: function(html, status, req) {
+                var d2 = new Date();
+                var time = d2.getTime() - d.getTime();
+                if (req.status == 200 && time < 18000) {
+                    if (time > 10) {
+                        console.log(time + "ms.");
+                    }
+                    resolve(true);
+                } else {
+                    console.log("error! status: " + req.status);
+                    resolve(false);
+                }
+            },
+            error: function(req, status, error) {
+                console.log("error! status: " + req.status + " error: " + error);
+                resolve(false);
+            }
+        });
+    });
+}
+
+const reconnect = async(url, tries, burst, wait, $progressbar) => {
+    var status = false;
+    var progress = 0;
+    while (status == false && progress < 100) {
+        var ms;
+        if (progress == 0) {
+            ms = wait;
+        } else {
+            ms = burst;
+        }
+        await sleep(wait);
+        if (status == false) {
+            ping(url).then(ping_result => {
+                status = ping_result;
+                $progressbar.css('width', progress + '%').attr("aria-valuenow", progress);
+                progress = progress + (100 / tries);
+                console.log('ping', progress + '%', status);
+            })
+            .catch(error => {
+                //
+            });
+        }
+    }
+    progress = 100;
+    if (status == true) {
+        $('.loadingoverlay_element').fadeOut( function() {
+            $('.loadingoverlay_element').first().html('<i class="fas fa-check"></i>').css('color', 'green').fadeIn(  function() {
+                $.LoadingOverlay("hide");
+            });
+        });
+    } else {
+        $('.loadingoverlay_element').fadeOut( function() {
+            $('.loadingoverlay_element').first().html('<i class="fas fa-times"></i>').css('color', 'red').fadeIn(  function() {
+                $('.loadingoverlay_element').first().delay(2000).html('<small>Please reconnect...<small>');
+            });
+        });
+    }
+}
+
 function load_images(callback){
     [].forEach.call(this.querySelectorAll('img'),function(img){
         var _img = new Image,  _src = img.getAttribute('data-src');
@@ -46,7 +118,7 @@ function connect_wifi(){
     });
 }
 
-function update_ap(){
+async function update_ap(){
     $.LoadingOverlay("show", {
         image       : "",
         fontawesome : "fa fa-sync-alt fa-spin",
@@ -59,15 +131,9 @@ function update_ap(){
         'hidden': ($('#hideAP').is(":checked") ? 1 : 0)
     }
     $.post("/setup/wifi/ap/settings", data, function( data ){
-        $('#ap-password').val('');
-        $.LoadingOverlay("show", {
-            image  : '',
-            custom : '<div><h1>Restarting...</h1><small>Please reconnect to the photobooth hotspot in about 30 seconds.</small></div>',
-            size : 30,
-            minSize : 0,
-            maxSize : 0 
-        });
+        //
     });
+    reconnect('/', 10, 1000, 1000, $('#ap-update-info'));
 }
 
 function load_backgrounds(){
@@ -487,12 +553,6 @@ function gpioUpdate(action, params) {
 
 $(function() {
 
-    socket = io();
-    
-    socket.on('connect', function() {
-        socket.emit('manager_connect', {data: 'Manager connected'});
-    });
-
     set_ledpanel_defaults();
     load_wifis();
     load_backgrounds();
@@ -689,7 +749,7 @@ $(function() {
     $('#settingsAP-update').click(function() {
         password = $('#ap-password').val()
         $('#ap-password-error').hide();
-        if (/\s/g.test(password) || password.length < 8) {
+        if (/\s/g.test(password) || (password.length >0 && password.length < 8)) {
             $('#ap-password-error').fadeIn();
             return
         }
@@ -773,5 +833,11 @@ $(function() {
     });
 
     update_remotes_selector($('.remote-id-select'));
+
+    socket = io();
+    
+    socket.on('connect', function() {
+        socket.emit('manager_connect', {data: 'Manager connected'});
+    });
 
 });

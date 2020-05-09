@@ -7,11 +7,7 @@
 (function (w){
     $.getScript("/static/socketio/socket.io.js", function(){
 
-        socket = io('/photobooth');
-
-        socket.on('connect', function() {
-            socket.emit('photobooth_connect', {data: 'Photobooth connected'});
-        });
+        var socket;
 
         var thrill_ref = photoBooth.thrill;
         photoBooth.thrill = function (arg1){
@@ -68,6 +64,12 @@
             socket.emit('trigger', {action: 'errorPic', args: arg1});
             errorPic_ref.apply(this, [arg1]);
         }
+
+        socket = io('/photobooth');
+
+        socket.on('connect', function() {
+            socket.emit('photobooth_connect', {data: 'Photobooth connected'});
+        });
 
         console.log("Photobooth hooks loaded.");
      });

@@ -32,12 +32,9 @@ mv hostapd-$WIFI_DRIVER-$ARM_VERSION $(which hostapd)
 mv hostapd_cli-$ARM_VERSION $(which hostapd_cli)
 rm 60.zip hostapd-* hostapd_*
 
-# copy wlan1 device configuration
+# copy wlan1/2 device configuration
 cp /boot/config/wlan1.conf /etc/network/interfaces.d/wlan1
-MAC_ADDRESS="$(cat /sys/class/net/wlan1/address)"
-MAC_ADDRESS_UPDATED=${MAC_ADDRESS%?}0
-MAC_ADDRESS_UPDATED=02${MAC_ADDRESS_UPDATED:2}
-sed -i -e "s/<MAC_ADDRESS>/$MAC_ADDRESS_UPDATED/g" /etc/network/interfaces.d/wlan1
+cp /boot/config/wlan2.conf /etc/network/interfaces.d/wlan2
 
 # add hostapd.service override (bridge)
 mkdir -p /etc/systemd/system/hostapd.service.d

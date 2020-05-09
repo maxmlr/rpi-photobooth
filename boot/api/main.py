@@ -184,6 +184,7 @@ def ap(detailed=True):
     ap_password = hostapd.get_config('wpa_passphrase')
     ap_show = int(hostapd.get_config('ignore_broadcast_ssid'))
     ap_auth = hostapd.get_config('wpa')
+    ap_args['ap_mode'] = hostapd.mode
     ap_args['ap_name'] = ap_name
     ap_args['ap_password'] = '' if ap_password is None else ap_password
     ap_args['ap_show'] = ap_show
@@ -236,8 +237,10 @@ def ap_settings():
         update = True
 
     if update:
-        run_command('/opt/photobooth/bin/reboot.sh 3', wait=False)
-    return jsonify({'success': True})
+        log.debug('restarting hostapd...')
+        hostapd.restart()
+
+    return jsonify({'success': update})
 
 @setup.route('/wifi/ap/passthrough/<int:status>', methods=['GET'], endpoint='wifi-ap-passthrough')
 @login_required

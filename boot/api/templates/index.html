@@ -124,9 +124,10 @@
                     <div class="col">
                       <div class="alert alert-warning" role="alert">
                         <span>
-                          <i class="fas fa-exclamation-triangle mr-2"></i>Changes in the settings below will <strong><u>restart</u></strong> the Hostpot and disconnect all clients.
+                          <i class="fas fa-exclamation-triangle mr-2"></i>Changes in the settings below will <strong><u>temporarily</u></strong> disconnect all clients
                         </span>
                       </div>
+                      {% if ap_mode == 2 %}
                       <div class="input-group mb-3">
                         <div class="input-group-prepend">
                           <div class="input-group-text">
@@ -151,6 +152,7 @@
                           The password must have at least 8 characters and can not contain spaces.
                         </small>
                       </div>
+                      {% endif %}
                       <div class="row mt-2">
                         <div class="col col-auto">
                           <label class="switch">
@@ -275,7 +277,6 @@
     <script src="{{ url_for('static', filename='dropzone/dropzone.min.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery/loadingoverlay.min.js') }}"></script>
     <script src="{{ url_for('static', filename='iro/iro.min.js') }}"></script>
-    <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>    
 
     <!-- App JS -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
