@@ -1,5 +1,5 @@
 /* Fancybox morphing element */
-.btn {
+.mbtn {
     background: #FF6666;
     border-width: 0;
     color: #fff;
@@ -22,8 +22,8 @@
     user-select: none;
 }
 
-.btn:hover,
-.btn:focus {
+.mbtn:hover,
+.mbtn:focus {
     color: #fff;
 }
 

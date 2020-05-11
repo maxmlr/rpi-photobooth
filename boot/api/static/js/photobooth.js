@@ -5,7 +5,24 @@
 */
 
 (function (w){
-    $.getScript("/static/socketio/socket.io.js", function(){
+    $.when(
+        $.getScript("/static/socketio/socket.io.js"),
+        $.getScript("/static/fancybox/jquery.fancybox.min.js"),
+        $.getScript("/static/js/morphing.js"),
+        // $.Deferred(function( deferred ){
+        //     $( deferred.resolve );
+        // })
+    ).done(function(){
+        $('<link/>', {
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: '/static/css/morphing.css'
+         }).appendTo('head');
+         $('<link/>', {
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: '/static/css/photobooth.css'
+         }).appendTo('head');
 
         var socket;
 
@@ -63,6 +80,19 @@
             socket.emit('trigger', {action: 'errorPic', args: arg1});
             errorPic_ref.apply(this, [arg1]);
         }
+
+        // $('.gallery-button').prop("onclick", null).off("click").click((event) => {
+        //     event.preventDefault();
+        //     photoBooth.closeNav();
+        // })
+        // .data('src', '/gallery')
+        // .attr('href', 'javascript:;')
+        // .attr('data-fancybox-gallery', '')
+        // .removeClass('gallery-button')
+        // .addClass('mbtn gallery-button-morphing')
+        // .attr('data-morphing', '').fancyMorph({
+        //     hash: 'morphing'
+        // });
 
         socket = io('/photobooth');
 
