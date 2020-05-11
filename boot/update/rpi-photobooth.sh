@@ -29,7 +29,8 @@ apt install -y \
     mosh \
     imagemagick \
     sqlite3 \
-    libsqlite3-dev
+    libsqlite3-dev \
+    libatlas-base-dev
 fi
 
 if [[ "$DEVICE_TYPE" = "client" ]]; then
@@ -84,10 +85,10 @@ pip3 install --upgrade pip && \
 # install flask
 if [[ "$DEVICE_TYPE" = "server" ]]; then
 source /opt/photobooth/flask/apienv/bin/activate
-pip install --upgrade pip && \
+pip install wheel && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install wheel && \
- pip install flask flask-cors Flask-FontAwesome flask-login flask-socketio eventlet python-dotenv
+ pip install --trusted-host pypi.python.org -r /boot/requirements_api.txt && \
+ pip install --trusted-host pypi.python.org -r /boot/requirements_ai.txt &&
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
@@ -192,7 +193,11 @@ fi
 # photobooth hook
 grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="\/static\/js\/photobooth.js"><\/script>' /var/www/html/index.php
 
-# copy captive protal
+# create ai folders
+mkdir -p /var/www/html/data/ai
+chown www-data:www-data /var/www/html/data/ai
+
+# copy captive portal content
 cp -rf /boot/captive /var/www/html
 mkdir -p /var/www/html/captive/css
 cp -f /var/www/html/resources/css/style.css /var/www/html/captive/css

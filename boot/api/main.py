@@ -1,9 +1,12 @@
+import eventlet
+eventlet.monkey_patch()
+from eventlet import tpool
 from os import environ
 from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, Blueprint, render_template, request, send_file, json, jsonify, redirect, url_for, abort
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from helpers import getQRCodeImage, run_command
 from wpa_cli import WPAcli
@@ -12,7 +15,9 @@ from modules_cli import Modules
 from gpio_led import LEDPanel
 from ctl_ledpanel import LEDpanelControl
 from trigger import Trigger
-import logging
+from ai.face_recognition import FaceRecognition
+from logger import Logger
+
 
 """
 request.form: key/value pairs of data sent through POST
@@ -23,15 +28,18 @@ request.json: to obtain parsed JSON content
 request.method: HTTP method used by the request
 """
 
+
 # configuration
 load_dotenv()
 DEBUG = True
 SECRET_KEY = environ.get('SECRET_KEY')
 API_KEY = environ.get('API_KEY')
-logging.basicConfig(filename='/var/log/api.log', level=logging.DEBUG)
-log = logging.getLogger("Photobooth-API")
+logger = Logger(__name__, level="DEBUG")
+logger.addFileHandler(filename='/var/log/api.log', level="DEBUG")
+log = logger.getLogger()
 PHOTOBOOTH_HTML_ROOT = Path("/var/www/html")
 PHOTOBOOTH_IMG_FOLDER = PHOTOBOOTH_HTML_ROOT / Path("data/images")
+PHOTOBOOTH_AI_FOLDER = PHOTOBOOTH_HTML_ROOT / Path("data/ai")
 
 # blueprints
 setup = Blueprint('setup', 'setup', url_prefix='/setup')
@@ -40,6 +48,10 @@ restapi = Blueprint('restapi', 'restapi',  url_prefix='/api/v1')
 # photobooth controller
 ledpanel = LEDpanelControl()
 trigger = Trigger(ledpanel=ledpanel, logger=log)
+ai = FaceRecognition()
+
+# photobooth globals
+event_pool = eventlet.GreenPool(5)
 
 # login Manager
 login_manager = LoginManager()
@@ -53,7 +65,7 @@ login_manager.init_app(app)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # enable websockets
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode ='eventlet')
 
 # users
 users = {'admin@photomateur.de': {'password': 'admin'}}
@@ -262,7 +274,7 @@ def get_qr_ap():
     ap_name = ap_args['ap_name']
     ap_password = ap_args['ap_password']
     ap_show = ap_args['ap_show']
-    data = f'WIFI:T:{ap_auth};S:{ap_name};P:{ap_password};{"H:true;" if ap_show else ""};'
+    data = f'WIFI:T:{ap_auth};S:{ap_name};P:{ap_patpossword};{"H:true;" if ap_show else ""};'
     ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes
     return send_file(out, mimetype='image/png', as_attachment=False)
@@ -295,14 +307,24 @@ def handle_manager_connect_event(json):
 
 @socketio.on('trigger', namespace='/photobooth')
 def trigger_fire(json):
-    trigger.fire(json['action'], params=json['args'])
-    if json['action'] == "renderPic":
-        emit('newPic', {'img': json['args']}, namespace='/gallery', broadcast=True)
     log.debug(f'received trigger action: {json["action"]}')
+    event_pool.spawn_n(trigger.fire, json['action'], json['args'])
+    if json['action'] == "renderPic":
+        event_pool.spawn_n(async_trigger_render, json)
+        socketio.sleep(1)
+        event_pool.spawn_n(async_ai_face_recognition, json)
+    log.debug(f'trigger action resolved: {json["action"]}')
+
+def async_trigger_render(json):
+    socketio.emit('newPic', {'img': json['args']}, namespace='/gallery', broadcast=True)
+
+def async_ai_face_recognition(json):
+    event_pool.spawn_n(ai.process, PHOTOBOOTH_IMG_FOLDER / json['args'], PHOTOBOOTH_AI_FOLDER, socketio, json)
 
 # register blueprints
 app.register_blueprint(restapi)
 app.register_blueprint(setup)
 
+
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True)
+    socketio.run(app, host='0.0.0.0', use_reloader=False, debug=False)

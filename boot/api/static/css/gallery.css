@@ -2,9 +2,13 @@
     box-sizing: border-box;
 }
 
+html {
+    background: #000000;
+}
+
 /* ---- grid ---- */
 .grid {
-    background: #DDD;
+    background: #000000;
 }
 
 /* clear fix */

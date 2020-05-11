@@ -44,7 +44,6 @@
         photoBooth.cheese = function (arg1){
             socket.emit('trigger', {action: 'cheese', args: arg1});
             cheese_ref.apply(this, [arg1]);
-            window.setTimeout(() => socket.emit('trigger', {action: 'default', args: 'fade'}), 10000);
         }
 
         var takePic_ref = photoBooth.takePic;
@@ -69,6 +68,7 @@
 
         socket.on('connect', function() {
             socket.emit('photobooth_connect', {data: 'Photobooth connected'});
+            socket.emit('trigger', {action: 'default', args: 'fade'});
         });
 
         console.log("Photobooth hooks loaded.");

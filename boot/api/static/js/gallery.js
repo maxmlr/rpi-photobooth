@@ -180,7 +180,8 @@ $(function () {
         image       : "",
         fontawesome : "fa fa-sync-alt fa-spin",
         fontawesomeColor: "Dodgerblue",
-        fade : [400, 200]
+        fade : [400, 200],
+        background  : "rgba(0, 0, 0, 0.7)"
     });
     $.ajax({
         type: 'GET',
@@ -206,7 +207,7 @@ $(function () {
                         gutter: '.gutter-sizer',
                         percentPosition: true,
                         stagger: 30,
-                        resize: false,
+                        resize: true,
                     })
                     .isotope({
                         initLayout: false,
@@ -245,4 +246,20 @@ $(function () {
         console.log('newPic', data);
         addPhoto(data['img']);
     });
+
+    socket.on('updatePic', (data) => {
+        console.log('updatePic', data);
+        $img = $('.grid a[data-name="' + data['img'] + '"]');
+        if (data['data']) {
+            data['data'].forEach(function (data_attr) {
+                $img.data(data_attr['name'], data_attr['val']);
+            });
+        }
+        if (data['src']) {
+            $img.children().first().fadeOut(() => {
+                $img.attr('href', data['src']).children().first().attr('src', data['src']);
+            }).fadeIn();
+        }
+    });
+    
 });

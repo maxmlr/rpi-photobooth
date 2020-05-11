@@ -1,0 +1,7 @@
+flask
+flask-cors
+Flask-FontAwesome
+flask-login
+flask-socketio
+eventlet
+python-dotenv
