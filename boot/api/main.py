@@ -274,7 +274,7 @@ def get_qr_ap():
     ap_name = ap_args['ap_name']
     ap_password = ap_args['ap_password']
     ap_show = ap_args['ap_show']
-    data = f'WIFI:T:{ap_auth};S:{ap_name};P:{ap_patpossword};{"H:true;" if ap_show else ""};'
+    data = f'WIFI:T:{ap_auth};S:{ap_name};P:{ap_password};{"H:true;" if ap_show else ""};'
     ap_qr_bytes = getQRCodeImage(data, box_size=request.args.get('box_size', 10), border=request.args.get('border', 4), returnAs='bytes')
     out = ap_qr_bytes
     return send_file(out, mimetype='image/png', as_attachment=False)
