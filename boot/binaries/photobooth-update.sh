@@ -2,7 +2,6 @@
 
 ACTION=${1:-"rpi-photobooth"}
 PHOTOBOOTH_RELEASE=$2
-PHOTOBOOTH_UPDATE=$3
 
 echo "Downloading current rpi-photobooth..."
 cd /tmp
@@ -36,7 +35,7 @@ fi
 
 # Run update depending on specified action
 [[ "$ACTION" == "rpi-photobooth" ]] && echo "Updating base system..." && /boot/update/rpi-photobooth.sh
-[[ "$ACTION" == "photobooth-web" ]] && echo "Updating photobooth ..." && /boot/update/photobooth-web.sh $PHOTOBOOTH_RELEASE $PHOTOBOOTH_UPDATE
+[[ "$ACTION" == "photobooth-web" ]] && echo "Updating photobooth ..." && /boot/update/photobooth-web.sh $PHOTOBOOTH_RELEASE
 
 # customize banner
 sed -i -e 's|aENABLED\[1\]=[0,1]|aENABLED\[1\]=1|' /DietPi/dietpi/.dietpi-banner

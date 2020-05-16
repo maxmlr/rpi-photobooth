@@ -33,7 +33,7 @@ Obtain_Cpu_Temp
 Obtain_Cpu_Gov
 
 # Photobooth System Info
-echo -e "\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m\n \e[1mPhotobooth v${PHOTOBOOTH_RELEASE} [custom: v${PHOTOBOOTH_UPDATE}]\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m"
+echo -e "\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m\n \e[1mPhotobooth v${PHOTOBOOTH_RELEASE}\n \e[38;5;154m─────────────────────────────────────────────────────\e[0m"
 echo -e " Device Type  \e[90m|\e[0m     $DEVICE_TYPE"
 echo -e " Device ID    \e[90m|\e[0m     $DEVICE_ID"
 echo -e " Hostname     \e[90m|\e[0m     $(hostname)"

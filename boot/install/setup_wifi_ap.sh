@@ -52,7 +52,7 @@ cat > /etc/banner_add_hosts << EOF
 EOF
 
 # Copy configs
-cp /boot/config/wifi/ap-default/hostapd.conf/etc/hostapd/hostapd.conf
+cp /boot/config/wifi/ap-default/hostapd.conf /etc/hostapd/hostapd.conf
 cp /boot/config/wifi/ap-default/dnsmasq.conf /etc/dnsmasq.d/photobooth.conf
 
 # Reload systemctl deamon

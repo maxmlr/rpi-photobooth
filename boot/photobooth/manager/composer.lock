@@ -1,0 +1,61 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "169e0be2425b13c5d18b347a54dd5fa1",
+    "packages": [
+        {
+            "name": "marcj/php-rest-service",
+            "version": "0.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marcj/php-rest-service.git",
+                "reference": "38848264ee5c6dbb61291ead257ddd03b4b9cdb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marcj/php-rest-service/zipball/38848264ee5c6dbb61291ead257ddd03b4b9cdb1",
+                "reference": "38848264ee5c6dbb61291ead257ddd03b4b9cdb1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "RestService": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marc J. Schmidt",
+                    "email": "marc@kryn.org",
+                    "homepage": "http://marcjschmidt.de"
+                }
+            ],
+            "description": "PHPRestService is a simple and fast PHP class for server side RESTful APIs.",
+            "keywords": [
+                "api",
+                "php",
+                "rest",
+                "restful"
+            ],
+            "time": "2013-12-06T02:32:09+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

@@ -10,6 +10,7 @@ cp -f /boot/authorized_keys /root/.ssh/authorized_keys
 
 # setup WiFi AccessPoint
 /boot/install/setup_wifi_ap.sh
+mkdir -p /opt/photobooth/conf
 cp -rf /boot/config/wifi/* /opt/photobooth/conf
 chmod +x /boot/install/install-dongle.sh && ln -s /boot/install/install-dongle.sh /usr/local/bin/install-dongle
 
@@ -101,9 +102,10 @@ cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
 /opt/photobooth/python
 EOF
-chown -R www-data:www-data /opt/photobooth/flask/api
-echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/.env
-echo "API_KEY=$(openssl rand -base64 42)" >> /opt/photobooth/flask/api/.env
+echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/app/.env
+echo "API_KEY=$(openssl rand -base64 42)" >> /opt/photobooth/flask/api/app/.env
+echo "ADMIN_USER=$ADMIN_EMAIL" >> /opt/photobooth/flask/api/app/.env
+echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> /opt/photobooth/flask/api/app/.env
 mkdir -p /opt/photobooth/conf/custom
 cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
 chown www-data:www-data /opt/photobooth/conf/custom/trigger.json
@@ -156,36 +158,29 @@ mkdir /var/www/dietpi && mv /var/www/*.php /var/www/*.html -t /var/www/dietpi
 wget https://raw.githubusercontent.com/composer/getcomposer.org/ba1f97192942f1d0de9557258c5009ac6bd7b17d/web/installer -O - -q | php -- --quiet && mv composer.phar /usr/local/bin/composer
 
 # install photobooth
-echo "Installing photobooth"
 cd /var/www/html
 wget -O photobooth.tar.gz https://github.com/andreknieriem/photobooth/releases/download/v${PHOTOBOOTH_RELEASE}/photobooth-${PHOTOBOOTH_RELEASE}.tar.gz && tar xzf photobooth.tar.gz && rm photobooth.tar.gz
-# TODO: replace master with v${PHOTOBOOTH_UPDATE}
-wget -O photobooth_update.tar.gz https://github.com/maxmlr/photobooth/archive/master.tar.gz && tar xzf photobooth_update.tar.gz && rm photobooth_update.tar.gz
-# TODO: replace master with ${PHOTOBOOTH_UPDATE}
-cp -r photobooth-master/* . && rm -rf photobooth-master/
 # optional: if photobooth should be build from source, uncomment:
 # PHOTOBOOTH_RELEASE="build-latest"
 # cd /var/www/ && rm -rf html
-# git clone https://github.com/maxmlr/photobooth html
+# git clone https://github.com/andreknieriem/photobooth html
 # cd /var/www/html
 # git submodule update --init
 # rm yarn.lock
 # yarn install
 # yarn build
-echo "v${PHOTOBOOTH_RELEASE} [${PHOTOBOOTH_UPDATE}]" > /var/www/html/version.html
-chown -R www-data:www-data /var/www/
+echo "v${PHOTOBOOTH_RELEASE}" > /var/www/html/version.html
 cd - > /dev/null
 
-# photobooth config
-cp -f /boot/config/photobooth.webinterface.php /var/www/html/config/my.config.inc.php
-chown -R www-data:www-data /var/www/html/config/my.config.inc.php
-
-# photobooth hook
-grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="\/static\/js\/photobooth.js"><\/script>' /var/www/html/index.php
+# photobooth updates and config
+cp -rf /boot/photobooth/manager /var/www/html/
+cd /var/www/html/manager
+composer install
+cd - > /dev/null
+cp -f /boot/photobooth/my.config.inc.php /var/www/html/config/my.config.inc.php
 
 # create ai folders
 mkdir -p /var/www/html/data/ai
-chown www-data:www-data /var/www/html/data/ai
 
 # copy captive portal content
 cp -rf /boot/captive /var/www/html
@@ -210,6 +205,12 @@ cp -f /boot/config/vnstat-viewer.php /var/www/html/vnstat/include/config.php
 chown -R www-data:www-data /var/www/html/vnstat
 grep -qF '<div id="main">' /var/www/html/vnstat/templates/main.tpl || sed -i '/graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/main.tpl
 grep -qF '<\div>' /var/www/html/vnstat/templates/main.tpl || sed -i '/gscript.tpl/a <\/div>' /var/www/html/vnstat/templates/main.tpl
+
+# make nginx user owner of /var/www/
+chown -R www-data:www-data /var/www/
+
+# photobooth hook
+grep -qF photobooth.js /var/www/html/index.php || sed -i '/<\/body>/i \\t<script type="text\/javascript" src="\/static\/js\/photobooth.js"><\/script>' /var/www/html/index.php
 
 # load v4l2 driver module for Pi Camera seems not necessary using dietpi; only remove blacklisting
 #echo "bcm2835-v4l2" >> /etc/modules
