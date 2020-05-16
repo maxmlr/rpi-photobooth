@@ -15,19 +15,20 @@ from video.stream import VideoStream
 
 
 """
-author: Maximilian Miller <mmiller@bromberglab.org>
+author: Maximilian Miller <miller.deutschland@gmail.com>
 """
 
 __version__ = 1.0
 
 
-logger = Logger(__name__, level="DEBUG")
+logger = Logger(__name__, level='DEBUG')
 # logger.addConsoleHandler()
-logger.addFileHandler(filename='/var/log/ai.log', level="DEBUG")
+logger.addFileHandler(filename='/var/log/api.log', level='DEBUG')
 log = logger.getLogger()
 
-DATA_FOLDER = Path("/opt/photobooth/data/facerecognition")
-DB_PATH = DATA_FOLDER / "gallery.json"
+DATA_FOLDER = Path('/opt/photobooth/data')
+FR_BASE_FOLDER = DATA_FOLDER / 'facerecognition'
+DB_PATH = DATA_FOLDER / 'gallery.json'
 IMG_PATTERN = '*.jpg'
 
 
@@ -38,15 +39,16 @@ class FaceRecognition:
 
     def __init__(self):
         log.info('FaceRecognition: init...')
+        self.stream = None
+        self.socketio = None
+        self.thread = None
         self.db = {}
         self.audience = {}
         self.audience_reported = set()
-        log.info('FaceRecognition: loading data...')
+        log.debug('FaceRecognition: loading data...')
         self.load_data()
         self.load_db()
-        log.info(f'FaceRecognition: got {len(self.known_face_encodings)} encodings')
-        self.socketio = None
-        self.thread = None
+        log.debug(f'FaceRecognition: got {len(self.known_face_encodings)} encodings')
         log.info('FaceRecognition: ready')
 
     def init(self):
@@ -117,9 +119,9 @@ class FaceRecognition:
         self.stream.stop(destroy=True)
     
     def load_data(self):
-        for item in [_.name for _ in DATA_FOLDER.glob('*/')]:
-            images_path =  DATA_FOLDER / item / 'img'
-            encodings_path =  DATA_FOLDER / item / 'enc'
+        for item in [_.name for _ in FR_BASE_FOLDER.glob('*/')]:
+            images_path =  FR_BASE_FOLDER / item / 'img'
+            encodings_path =  FR_BASE_FOLDER / item / 'enc'
             encodings = [_.stem for _ in encodings_path.glob('*.enc')]
             for file in images_path.glob(IMG_PATTERN):
                 fname = file.stem
@@ -191,17 +193,18 @@ class FaceRecognition:
             matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
             name = "Unknown"
             index = -1
-            if by_similarity:
-                face_distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
-                best_match_index = np.argmin(face_distances)
-                if matches[best_match_index]:
-                    name = self.known_face_identifiers[best_match_index]
-                    index = idx
-            else:
-                if True in matches:
-                    first_match_index = matches.index(True)
-                    name = self.known_face_identifiers[first_match_index]
-                    index = idx
+            if matches:
+                if by_similarity:
+                    face_distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
+                    best_match_index = np.argmin(face_distances)
+                    if matches[best_match_index]:
+                        name = self.known_face_identifiers[best_match_index]
+                        index = idx
+                else:
+                    if True in matches:
+                        first_match_index = matches.index(True)
+                        name = self.known_face_identifiers[first_match_index]
+                        index = idx
             if save:
                 log.debug(f'Face {idx}: {name}')
                 if index == -1:
@@ -209,9 +212,9 @@ class FaceRecognition:
                     variant = 1
                     log.debug(f'Saving new encoding as {name}')
                 else:
-                    variant = len(list((DATA_FOLDER / name / 'enc').glob('*.enc'))) + 1
+                    variant = len(list((FR_BASE_FOLDER / name / 'enc').glob('*.enc'))) + 1
                     log.debug(f'Saving encoding {variant} for {name}')
-                base_path = DATA_FOLDER / name
+                base_path = FR_BASE_FOLDER / name
                 encoding_path = base_path / 'enc' / f'{variant}.enc'
                 image_path = base_path / 'img' / f'{variant}.jpg'
                 if not base_path.exists():
@@ -231,7 +234,7 @@ class FaceRecognition:
             self.update_db(uid, face_identifiers)
         return face_identifiers, face_locations
 
-    def find(self, frame, kwargs):
+    def find(self, grabbed, frame, kwargs):
         frame = self.frame_preprocess(frame)
         face_identifiers, face_locations = self.frame_analyze(frame)
         res = self.post_process(face_locations, face_identifiers)
