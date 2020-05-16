@@ -91,11 +91,11 @@
         <div class="card-header" style="font-size: 1.3em">
           Hotspot
           <small class="d-inline form-text text-muted ml-1">
-            <div class="d-inline" ><i class="fas fa-eye{{ '-slash' if ap_show else '' }} fa-sm"></i><span class="ml-2">{{ ap_name }}</span></div>
+            <div class="d-inline" ><i id="hotspot-visibility" class="fas fa-eye{{ '-slash' if ap_show else '' }} fa-sm"></i><span class="ml-2">{{ ap_name }}</span></div>
             <span class="mx-1">|</span>
             <div class="d-inline"  id="wifiHelpBlock">{{ ap_connections_cnt }} connection(s)</div>
             <span class="mx-1">|</span>
-            <div class="d-inline" ><i class="fas fa-lock{{ '' if ap_password|length else '-open' }} fa-sm"></i><span class="ml-2">{{ ap_password }}</span></div>
+            <div class="d-inline" ><i id="hotspot-security" class="fas fa-lock{{ '' if ap_password|length else '-open' }} fa-sm"></i><span class="ml-2">{{ ap_password }}</span></div>
           </small>
         </div>
         <div class="card-body">

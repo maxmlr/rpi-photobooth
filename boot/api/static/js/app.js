@@ -21,7 +21,7 @@ function ping(url) {
                 var time = d2.getTime() - d.getTime();
                 if (req.status == 200 && time < 18000) {
                     if (time > 10) {
-                        console.log(time + "ms.");
+                        // console.log(time + "ms.");
                     }
                     resolve(true);
                 } else {
@@ -53,7 +53,7 @@ const reconnect = async(url, tries, burst, wait, $progressbar) => {
                 status = ping_result;
                 $progressbar.css('width', progress + '%').attr("aria-valuenow", progress);
                 progress = progress + (100 / tries);
-                console.log('ping', progress + '%', status);
+                // console.log('ping', progress + '%', status);
             })
             .catch(error => {
                 //
@@ -131,9 +131,28 @@ async function update_ap(){
         'hidden': ($('#hideAP').is(":checked") ? 1 : 0)
     }
     $.post("/setup/wifi/ap/settings", data, function( data ){
-        //
+        // might not return due to hostapd restart
     });
-    reconnect('/', 10, 1000, 1000, $('#ap-update-info'));
+    reconnect('/', 10, 1000, 1000, $('#ap-update-info')).then(() => {
+        if ($('#hideAP').is(":checked")) {
+            $('#hotspot-visibility')
+             .addClass('fa-eye-slash')
+             .removeClass('fa-eye');
+        } else {
+            $('#hotspot-visibility')
+             .addClass('fa-eye')
+             .removeClass('fa-eye-slash');
+        }
+        if ($('#ap-password').val() == '') {
+            $('#hotspot-security')
+             .addClass('fa-lock-open')
+             .removeClass('fa-lock');
+        } else {
+            $('#hotspot-security')
+             .addClass('fa-lock')
+             .removeClass('fa-lock-open');
+        }
+    });
 }
 
 function load_backgrounds(){
@@ -837,7 +856,7 @@ $(function() {
     socket = io();
     
     socket.on('connect', function() {
-        socket.emit('manager_connect', {data: 'Manager connected'});
+        socket.emit('manager_connect', {data: socket.id});
     });
 
 });

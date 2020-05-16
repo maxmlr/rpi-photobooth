@@ -50,3 +50,156 @@ html {
     display: block;
     max-width: 100%;
 }
+
+/* actio button */
+.action-btn-wrapper {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+}
+
+.menu {
+    width: calc(54px * 4 + 30px * 3);
+    height: 54px;
+    margin: 0 auto;
+    -webkit-filter: url("#goo");
+    filter: url("#goo");
+  }
+  
+  ul {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  li {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  svg {
+    overflow: hidden;
+  }
+  
+  .ico01 {
+    background-color: #d92567;
+    position: relative;
+    z-index: 4;
+  }
+  
+  .ico02 {
+    background-color: #d91e85;
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+    z-index: 3;
+  }
+  
+  .ico03 {
+    background-color: #f24405;
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.4s;
+    z-index: 2;
+  }
+  
+  .ico04 {
+    background-color: #f23030;
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.8s;
+    z-index: 1;
+  }
+  
+  .move-ico {
+    position: absolute;
+    top: 0;
+  }
+  
+  .active .ico02 {
+    transform: translateX(calc(54px + 30px));
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.8s;
+  }
+  
+  .active .ico03 {
+    transform: translateX(calc(54px * 2 + 30px * 2));
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.4s;
+  }
+  
+  .active .ico04 {
+    transform: translateX(calc(54px * 3 + 30px * 3));
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+.menu-object {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: calc(54px * 4 + 30px * 3);
+    height: 54px;
+  }
+  
+  .menu-object .ico01::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    height: 24px;
+    margin: auto;
+    background-color: #fff;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  
+  .menu-object .ico01::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 24px;
+    height: 4px;
+    margin: auto;
+    background-color: #fff;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  
+  .menu-object .link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    line-height: 1;
+  }
+  
+  .menu-object .link i, .menu-object .link svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+  }
+  
+  .menu-object .link01 {
+    font-size: 26px;
+  }
+  
+  .menu-object .link02 {
+    font-size: 30px;
+  }
+  
+  .menu-object .link03 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .active .menu-object .ico01::before {
+    transform: rotate(45deg);
+  }
+  
+  .active .menu-object .ico01::after {
+    transform: rotate(45deg);
+  }

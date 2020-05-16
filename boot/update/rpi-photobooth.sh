@@ -46,7 +46,8 @@ apt install -y \
     rsync \
     qrencode \
     jq \
-    mosh
+    mosh \
+    imagemagick
 fi
 
 # Configure managed services
@@ -87,24 +88,48 @@ if [[ "$DEVICE_TYPE" = "server" ]]; then
 source /opt/photobooth/flask/apienv/bin/activate
 pip install wheel && \
  pip install --trusted-host pypi.python.org -r /boot/requirements.txt && \
- pip install --trusted-host pypi.python.org -r /boot/requirements_api.txt && \
- pip install --trusted-host pypi.python.org -r /boot/requirements_ai.txt &&
+ pip install --trusted-host pypi.python.org -r /boot/requirements_api.txt
 deactivate
 cp -rf /boot/api /opt/photobooth/flask/
 cat > /opt/photobooth/flask/apienv/lib/python3.7/site-packages/photobooth.pth << EOF
 /opt/photobooth/python
 EOF
-chown -R www-data:www-data /opt/photobooth/flask/api
-if [[ ! -f /opt/photobooth/flask/api/.env ]]
+if [[ ! -f /opt/photobooth/flask/api/app/.env ]]
 then
     echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/app/.env
     echo "API_KEY=$(openssl rand -base64 42)" >> /opt/photobooth/flask/api/app/.env
     echo "ADMIN_USER=$ADMIN_EMAIL" >> /opt/photobooth/flask/api/app/.env
     echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> /opt/photobooth/flask/api/app/.env
 fi
+mkdir -p /opt/photobooth/data/facerecognition
+chown -R www-data:www-data /opt/photobooth/flask/api /opt/photobooth/data/facerecognition
 mkdir -p /opt/photobooth/conf/custom
 [[ -f /opt/photobooth/conf/custom/trigger.json ]] || cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
 chown www-data:www-data /opt/photobooth/conf/custom/trigger.json
+
+# install ai components
+# note: dependencies installed earlier -> libatlas-base-dev
+apt install -y \
+    libjpeg-dev \
+    libtiff5-dev \
+    libjasper-dev \
+    libpng-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libv4l-dev \
+    libxvidcore-dev \
+    libx264-dev \
+    libopenexr-dev \
+    libilmbase23 \
+    libhdf5-dev \
+    libhdf5-serial-dev \
+    libhdf5-103 \
+    libqtwebkit4 \
+    libqt4-test
+source /opt/photobooth/flask/apienv/bin/activate
+pip install --trusted-host pypi.python.org -r /boot/requirements_ai.txt
+deactivate
 
 # install nodogsplash
 systemctl stop nodogsplash.service
@@ -284,6 +309,7 @@ for binary in /boot/binaries/*.sh; do cp $binary /usr/bin/`basename $binary .sh`
 
 # copy python scripts to /opt/photobooth/python
 mkdir -p /opt/photobooth/python
+for pymodule in /boot/scripts/*/; do cp -rf $pymodule /opt/photobooth/python/; done
 for pyscript in /boot/scripts/*.py; do cp $pyscript /opt/photobooth/python/`basename $pyscript`; chmod +x /opt/photobooth/python/`basename $pyscript`; done
 
 # add symlinks to  /usr/local/bin/

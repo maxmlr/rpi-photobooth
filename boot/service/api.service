@@ -6,6 +6,7 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=/opt/photobooth/flask/api
+Environment=LD_PRELOAD=/usr/lib/arm-linux-gnueabihf/libatomic.so.1
 Environment="PATH=$PATH:/opt/photobooth/flask/apienv/bin"
 ExecStart=/opt/photobooth/flask/apienv/bin/python3 main.py
 ExecReload=/bin/kill -s HUP $MAINPID

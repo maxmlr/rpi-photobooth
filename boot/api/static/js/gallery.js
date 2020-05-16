@@ -1,4 +1,5 @@
 var $grid;
+var face_query = [];
 
 function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
@@ -151,26 +152,40 @@ function initGallery() {
 }
 
 var filterFns = {
-    // show if number is greater than 50
-    numberGreaterThan50: function () {
-        // use $(this) to get item element
-        var number = $(this).find('.number').text();
-        return parseInt(number, 10) > 50;
-    },
-    // show if name ends with -ium
-    ium: function () {
-        var name = $(this).find('a').attr('href');
-        return name.match(/1.jpg$/);
+    faces: function () {
+        var face_identifiers = $(this).find('a').data('face-identifiers') || ['na'];
+        if (face_query.length == 0) {
+            return true
+        } else {
+            return (face_query.filter(value => face_identifiers.includes(value))).length > 0
+        }
     }
 };
 
-function filterGallery() {
-    filterValue = filterFns['ium'];
+function filterGallery(search) {
+    face_query = search;
     $grid.isotope({
-        filter: filterValue
-    }).packery({ stagger: 0 });
-    $grid.on( 'arrangeComplete', function( event, laidOutItems ) {
-        //
+        filter: filterFns['faces']
+    })
+    .isotope('layout');
+    // .packery({ stagger: 0 });
+    // $grid.on( 'arrangeComplete', function( event, laidOutItems ) {
+    //     $grid.packery()
+    // });
+}
+
+function update_facerecognition() {
+    $.ajax({
+        type: 'GET',
+        contentType: 'application/json',
+        url: '/api/v1/ai/fr/db',
+        dataType: 'json',
+        success: function (result) {
+            $.each(result, function(key, value) {
+                $img = $('.grid a[data-name="' + key + '.jpg"]');
+                $img.data('face-identifiers', value);
+            });
+        }
     });
 }
 
@@ -219,26 +234,46 @@ $(function () {
                             gutter: '.gutter-sizer'
                         },
                         percentPosition: true,
-                    }).packery();
+                    })
+                    .packery()
+                    .isotope('layout');
                     initGallery();
                     $.LoadingOverlay("hide");
                 });
             });
+            update_facerecognition();
         },
         error: function (result) {
             console.log(result);
         }
     });
 
+    $('.ico01').click(function(){
+        $('.action-btn-wrapper').toggleClass('active');
+    })
+
+    $('.link.link02').click(function(){
+        var status = $(this).data('status');
+        if (status == 'off') {
+            $(this).data('status', 'on');
+            socket.emit('face_recognition', {action: 'start'});
+        } else {
+            $(this).data('status', 'off');
+            socket.emit('face_recognition', {action: 'stop'});
+            filterGallery([]);
+        }
+        $(this).children().first().toggleClass('fa-video fa-video-slash');
+    })
+
     socket = io('/gallery');
 
     socket.on('connect', function () {
         socket.emit('gallery_connect', {
-            data: 'Gallery connected'
+            data: socket.id
         });
     });
 
-    socket.on('welcome', (data) => {
+    socket.on('debug', (data) => {
         console.log(data);
     });
 
@@ -251,8 +286,8 @@ $(function () {
         console.log('updatePic', data);
         $img = $('.grid a[data-name="' + data['img'] + '"]');
         if (data['data']) {
-            data['data'].forEach(function (data_attr) {
-                $img.data(data_attr['name'], data_attr['val']);
+            $.each(data['data'], function(key, value) {
+                $img.data(key, value);
             });
         }
         if (data['src']) {
@@ -262,4 +297,8 @@ $(function () {
         }
     });
     
+    socket.on('filter', (data) => {
+        console.log('filter', data);
+        filterGallery(data['face-identifiers']);
+    });
 });

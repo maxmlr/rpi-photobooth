@@ -97,7 +97,7 @@
         socket = io('/photobooth');
 
         socket.on('connect', function() {
-            socket.emit('photobooth_connect', {data: 'Photobooth connected'});
+            socket.emit('photobooth_connect', {data: socket.id});
             socket.emit('trigger', {action: 'default', args: 'fade'});
         });
 
