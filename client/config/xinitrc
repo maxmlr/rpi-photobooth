@@ -1,0 +1,31 @@
+#!/bin/bash
+# start xserver with chromium in kiosk mode
+
+# Source photobooth config
+# In order to selectively set
+# specific arguments use:
+# `[[ "$VAR" -eq 1 ]] && echo "-h "`
+set -a && . /boot/photobooth.conf && "$@"
+
+xset -dpms
+xset s off
+xset s noblank
+
+/usr/bin/unclutter -idle 0 -root & \
+chromium-browser \
+        --no-sandbox \
+        --start-fullscreen \
+        --window-size=${DISPLAY_RESOLUTION_X},${DISPLAY_RESOLUTION_Y} \
+        --kiosk \
+        --incognito \
+        --noerrdialogs \
+        --disable-infobars \
+        --disable-translate \
+        --use-fake-ui-for-media-stream \
+        --no-first-run \
+        --fast \
+        --fast-start \
+        --disable-features=TranslateUI \
+        --disk-cache-dir=/dev/null \
+        --password-store=basic \
+        --app=${APP_URL}

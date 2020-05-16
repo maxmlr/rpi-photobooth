@@ -1,0 +1,11 @@
+setuptools
+virtualenv
+paho-mqtt
+gpiozero
+adafruit-circuitpython-neopixel
+Pyro5
+pystemd
+qrcode[pil]
+fbpygif
+requests
+psutil

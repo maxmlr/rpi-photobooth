@@ -49,7 +49,7 @@ print_help()
 	printf '%s\n' "Show help"
 	printf 'Usage: %s [-g|--git <arg>] [-c|--config <arg>] [-d|--dietpi <arg>] [-w|--wifi <arg>] [-k|--key <arg>] [-p|--photobooth <arg>] [-h|--help] <image>\n' "$0"
 	printf '\t%s\n' "<image>: path to dietpi image file"
-	printf '\t%s\n' "-g, --git: \"server\", \"server\" or path to local git repository (default: 'server')"
+	printf '\t%s\n' "-g, --git: \"server\", \"client\" or path to local git repository (default: 'server')"
 	printf '\t%s\n' "-c, --config: path to dietpi config file (no default)"
 	printf '\t%s\n' "-d, --dietpi: path to dietp.txt file (no default)"
 	printf '\t%s\n' "-w, --wifi: path to dietpi-wifi.txt file (no default)"
@@ -185,8 +185,7 @@ assign_positional_args 1 "${_positionals[@]}"
 
 MOUNT_POINT=/Volumes/boot
 DEVICE_SDCARD=`mount | grep "${MOUNT_POINT} " | sed "s|\(/dev/disk[0-9]\).*|\1|"`
-GIT_REPOSITORY_SERVER=https://github.com/maxmlr/rpi-photobooth.git
-GIT_REPOSITORY_CLIENT=https://github.com/maxmlr/rpi-photobooth-client.git
+GIT_REPOSITORY=https://github.com/maxmlr/rpi-photobooth.git
 
 dietpi="$_arg_image"
 git="$_arg_git"
@@ -212,12 +211,14 @@ create_sd () {
     repo=/tmp/rpi-photobooth
     if [[ $git =~ ^server$ ]]
     then
-        echo "Cloning server repository..."
-        git clone ${GIT_REPOSITORY_SERVER} ${repo}
+        echo "Cloning repository..."
+        git clone ${GIT_REPOSITORY} ${repo}
     elif [[ $git =~ ^client$ ]]
     then
-        echo "Cloning client repository..."
-        git clone ${GIT_REPOSITORY_CLIENT} ${repo}
+        echo "Cloning repository..."
+        git clone ${GIT_REPOSITORY} ${repo}
+		echo "Merging client..."
+        cp -rf ${repo}/client/* ${repo}/boot
     else
         repo="${git}"
     fi

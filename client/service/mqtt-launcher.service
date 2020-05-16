@@ -1,0 +1,18 @@
+[Unit]
+Description=MQTT Launcher
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+Environment=MQTTLAUNCHERCONFIG=/opt/mqtt-launcher/launcher.photobooth.conf
+ExecStart=/usr/bin/python3 /opt/mqtt-launcher/mqtt-launcher.py
+ExecStartPost=/opt/photobooth/bin/register.sh send
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=10
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
