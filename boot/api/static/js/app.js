@@ -3,6 +3,7 @@ var backgroundGlider;
 var frameGlider;
 var ledpanel_default;
 var socket;
+var psocket;
 
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -559,17 +560,6 @@ function update_remotes_selector(target){
     });
 }
 
-function gpioUpdate(action, params) {
-    $.ajax({
-        url: '/api/gpio.php',
-        method: 'POST',
-        data: {
-            action: action,
-            params: params
-        }
-    });
-}
-
 $(function() {
 
     set_ledpanel_defaults();
@@ -832,7 +822,7 @@ $(function() {
                         $('.collapse.show').LoadingOverlay("hide");
                     });
                 });
-                gpioUpdate('default', null);
+                psocket.emit('trigger', {action: 'default', args: 'fade'});
             },error : function(result){
                 $('.loadingoverlay_element').fadeOut( function() {
                     $('.loadingoverlay_element').first().html('<i class="fas fa-times"></i>').css('color', 'red').fadeIn(  function() {
@@ -854,6 +844,7 @@ $(function() {
     update_remotes_selector($('.remote-id-select'));
 
     socket = io();
+    psocket = io('/photobooth');
     
     socket.on('connect', function() {
         socket.emit('manager_connect', {data: socket.id});
