@@ -98,8 +98,6 @@ if [[ ! -f /opt/photobooth/flask/api/app/.env ]]
 then
     echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/app/.env
     echo "API_KEY=$(openssl rand -base64 42)" >> /opt/photobooth/flask/api/app/.env
-    echo "ADMIN_USER=$ADMIN_EMAIL" >> /opt/photobooth/flask/api/app/.env
-    echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> /opt/photobooth/flask/api/app/.env
 fi
 mkdir -p /opt/photobooth/data/facerecognition
 chown -R www-data:www-data /opt/photobooth/flask/api /opt/photobooth/data/facerecognition

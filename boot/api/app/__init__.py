@@ -12,11 +12,13 @@ from ctl_ledpanel import LEDpanelControl
 from trigger import Trigger
 from ai.gallery import FaceRecognition
 
+
+load_dotenv(dotenv_path='/boot/photobooth.conf')
 load_dotenv()
 DEBUG = True
 SECRET_KEY = environ.get('SECRET_KEY')
 API_KEY = environ.get('API_KEY')
-ADMIN_USER = environ.get('ADMIN_USER')
+ADMIN_USER = environ.get('ADMIN_EMAIL')
 ADMIN_PASSWORD = environ.get('ADMIN_PASSWORD')
 PHOTOBOOTH_HTML_ROOT = Path("/var/www/html")
 PHOTOBOOTH_IMG_FOLDER = PHOTOBOOTH_HTML_ROOT / Path("data/images")
@@ -35,6 +37,7 @@ event_pool = eventlet.GreenPool(5)
 ledpanel = LEDpanelControl()
 trigger = Trigger(ledpanel=ledpanel, logger=log)
 facerecognition = FaceRecognition()
+
 
 def create_app(debug=False):
     # create the app

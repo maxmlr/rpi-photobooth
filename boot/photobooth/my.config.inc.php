@@ -15,11 +15,12 @@ $config = array (
   'photo_key' => '32',
   'collage_key' => '67',
   'start_screen_subtitle' => 'By Max and Max',
+  'login_enabled' => true,
+  'login_username' => trim(explode('=', reset(preg_grep('/ADMIN_EMAIL/', file('/boot/photobooth.conf'))))[1]),
+  'login_password' => password_hash(trim(explode('=', reset(preg_grep('/ADMIN_PASSWORD/', file('/boot/photobooth.conf'))))[1]), PASSWORD_DEFAULT),
   'take_picture' =>
   array (
-    //cmd' => 'raspistill -n -o %s -q 100 -t 1 | echo Done',
     'cmd' => 'gphoto2 --capture-image-and-download --filename=%s',
-    //'msg' => 'Done',
     'msg' => 'New file is in location',
   ),
 );
