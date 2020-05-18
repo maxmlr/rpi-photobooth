@@ -38,6 +38,11 @@ ledpanel = LEDpanelControl()
 trigger = Trigger(ledpanel=ledpanel, logger=log)
 facerecognition = FaceRecognition()
 
+# photobooth globals
+GLOBALS = {
+    'trigger_lock': None
+}
+
 
 def create_app(debug=False):
     # create the app

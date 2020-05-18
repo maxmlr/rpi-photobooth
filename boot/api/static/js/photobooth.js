@@ -28,8 +28,13 @@
 
         var thrill_ref = photoBooth.thrill;
         photoBooth.thrill = function (arg1){
-            socket.emit('trigger', {action: 'thrill', args: arg1});
-            thrill_ref.apply(this, [arg1]);
+            socket.emit('trigger', {action: 'thrill', args: arg1}, (response) => {
+                if (response == true) {
+                    thrill_ref.apply(this, [arg1]);
+                } else {
+                    console.log('trigger in progress - skipping thirll');
+                }
+            });
         }
 
         var startCountdown_ref = photoBooth.startCountdown;

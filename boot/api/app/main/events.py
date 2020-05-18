@@ -1,6 +1,12 @@
 from flask import request
 from .. import log, ledpanel, trigger, facerecognition, socketio, event_pool, PHOTOBOOTH_IMG_FOLDER, PHOTOBOOTH_AI_FOLDER
+from .backend import set_trigger_lock, get_trigger_lock
 
+
+@socketio.on('disconnect', namespace='/photobooth')
+def photobooth_disconnect():
+    set_trigger_lock(False, request.sid)
+    log.info(f'photobooth disconnected: {request.sid}')
 
 @socketio.on('manager_connect', namespace='/')
 def handle_manager_connect_event(json):
@@ -25,12 +31,23 @@ def ledpanel_realtime_color_change(json):
 @socketio.on('trigger', namespace='/photobooth')
 def trigger_fire(json):
     log.debug(f'received trigger action: {json["action"]}')
+    if json['action'] == "thrill":
+        if get_trigger_lock():
+            log.info(f'trigger in progress - skipping thirll')
+            return False
+        else:
+            set_trigger_lock(True, request.sid)
     event_pool.spawn_n(trigger.fire, json['action'], json['args'])
     if json['action'] == "renderPic":
+        set_trigger_lock(False, request.sid)
         socketio.start_background_task(async_trigger_render, json)
         socketio.sleep(1)
         socketio.start_background_task(async_ai_face_recognition, json)
+    elif json['action'] == "errorPic":
+        set_trigger_lock(False, request.sid)
     log.debug(f'trigger action resolved: {json["action"]}')
+    if json['action'] == "thrill":
+        return True
 
 @socketio.on('face_recognition', namespace='/gallery')
 def gallery_face_recognition(json):
