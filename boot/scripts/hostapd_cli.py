@@ -14,6 +14,7 @@ class Hostapd():
     read_inet_passthrough_cmd = '/usr/bin/sudo /sbin/sysctl -n net.ipv4.ip_forward'
     write_inet_passthrough_cmd = '/usr/bin/sudo /sbin/sysctl -w net.ipv4.ip_forward'
     captive_portal_status_cmd = '/usr/bin/sudo /usr/bin/ndsctl json'
+    captive_portal_set_trusted_cmd = '/usr/bin/sudo /usr/bin/ndsctl trust'
     restart_cmd = '/usr/bin/sudo /usr/sbin/service hostapd restart'
     lsusb_cmd = '/usr/bin/lsusb'
 
@@ -63,10 +64,42 @@ class Hostapd():
         else:
             return None
 
+    def get_trusted(self):
+        output = run_command(self.captive_portal_status_cmd)
+        if output:
+            parsed = ''
+            trusted = []
+            parse = False
+            for line in output:
+                if parsed.startswith('ndsctl:'):
+                    return []
+                if parsed and parsed[-1] == "}" and line == "{":
+                    break
+                if line.startswith('"trusted":['):
+                    parse = True
+                    continue
+                if not parse:
+                    continue
+                else:
+                    if line == "]":
+                        break
+                    trusted += [line.replace('"', '').replace(',', '').strip()]
+                parsed += line
+            return trusted
+        else:
+            return []
+
+    def set_trusted(self, trusted):
+        for mac in trusted:
+            run_command(f'{self.captive_portal_set_trusted_cmd} {mac}')
+
     def restart(self):
+        trusted = self.get_trusted()
         run_command(self.restart_cmd)
+        time.sleep(1)
+        self.set_trusted(trusted)
 
 
 if __name__ == "__main__":
     h = Hostapd()
-    print(h.config, h.mode)
+    print(h.config, h.get_trusted(), h.mode)
