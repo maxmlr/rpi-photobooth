@@ -8,6 +8,7 @@ Type=simple
 Environment=MQTTLAUNCHERCONFIG=/opt/mqtt-launcher/launcher.photobooth.conf
 ExecStart=/usr/bin/python3 /opt/mqtt-launcher/mqtt-launcher.py
 ExecStartPost=/opt/photobooth/bin/register.sh send
+ExecStartPost=/sbin/wpa_cli -i wlan0 -a /opt/photobooth/bin/wifi_action.sh
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=30

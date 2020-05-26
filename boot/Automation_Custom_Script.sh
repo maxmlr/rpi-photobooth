@@ -282,6 +282,7 @@ cp /boot/scripts/timesync.sh /opt/photobooth/bin/timesync.sh
 cp /boot/scripts/boot.sh /opt/photobooth/bin/boot.sh
 cp /boot/scripts/reboot.sh /opt/photobooth/bin/reboot.sh
 cp /boot/scripts/register.sh /opt/photobooth/bin/register.sh
+cp /boot/scripts/wifi_action.sh /opt/photobooth/bin/wifi_action.sh
 chmod +x /opt/photobooth/bin/*.sh
 
 # add bash profile
@@ -346,6 +347,7 @@ www-data ALL=(ALL) NOPASSWD:/opt/photobooth/bin/reboot.sh [0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifup wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifdown wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl json
+www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl trust
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
 www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ledpanel *
