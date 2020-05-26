@@ -26,7 +26,7 @@ def ledpanel_realtime_color_change(json):
     args_dict = {
         'color': json['color']
     }
-    ledpanel.send(json['action'], False, float(json['alpha']), args_dict, log)
+    ledpanel.send(json['action'], True, float(json['alpha']), args_dict, log)
 
 @socketio.on('trigger', namespace='/photobooth')
 def trigger_fire(json):

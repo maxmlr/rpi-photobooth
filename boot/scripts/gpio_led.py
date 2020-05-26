@@ -68,18 +68,53 @@ class LEDPanel:
     def adjustBrightness(self, brightness):
         self.brightness_adjusted = brightness
 
-    def setPixelColor(self, pixels=[], color=None):
+    def colorFade(self, colorFrom, colorTo, wait=20, steps=24):
+        step_R, step_G, step_B = [(t-f)/float(steps) for f, t in zip(colorFrom, colorTo)]
+        r, g, b = colorFrom
+        r_, g_, b_ = colorTo
+        for x in range(steps):
+            c = (r, g, b)
+            # for i in range(self.num_pixels):
+            #     self.setPixelColor(i, c)
+            self.setPixelColor(pixels=None, color=c)
+            self.show()
+            time.sleep(wait / 1000.0)
+            r += int(step_R)
+            g += int(step_G)
+            b += int(step_B)
+        sign = lambda a: (a>0) - (a<0)
+        while (r,g,b) != colorTo:
+            c = (r, g, b)
+            # for i in range(self.num_pixels):
+            #     self.setPixelColor(i, c)
+            self.setPixelColor(pixels=None, color=c)
+            self.show()
+            time.sleep(wait / 1000.0)
+            r = max(min(max(0, r + sign(step_R)), r_), min(r + int(step_R), r_))
+            g = max(min(max(0, g + sign(step_G)), g_), min(g + int(step_G), g_))
+            b = max(min(max(0, b + sign(step_B)), b_), min(b + int(step_B), b_))
+        c = (r, g, b)
+        # for i in range(self.num_pixels):
+        #     self.setPixelColor(i, c)
+        self.setPixelColor(pixels=None, color=c)
+        self.show()
+
+    def setPixelColor(self, pixels=[], color=None, fade=0):
         if not color or isinstance(color, str):
             color_ = self.get_color(color)
         else:
             color_ = color
-        if pixels != None or (isinstance(pixels, list) and not pixels):
-            if isinstance(pixels, int):
-                pixels = [pixels]
-            for i in pixels:
-                self.pixels[i % self.num_pixels] = color_
+        if fade > 0:
+            colorFrom = self.pixels[0]
+            self.colorFade(colorFrom, color_, wait=20, steps=fade)
         else:
-            self.pixels.fill(color_)
+            if pixels != None or (isinstance(pixels, list) and not pixels):
+                if isinstance(pixels, int):
+                    pixels = [pixels]
+                for i in pixels:
+                    self.pixels[i % self.num_pixels] = color_
+            else:
+                self.pixels.fill(color_)
 
     def wheel(self, pos, brightness=None):
         """Generate rainbow colors across 0-255 positions."""
@@ -165,8 +200,8 @@ class LEDPanel:
             self.pixels[i % self.num_pixels] = self.get_color('black')
         self.pixels.show()
 
-    def setPanelColor(self, color=None, **kwargs):
-        self.setPixelColor(pixels=None, color=color)
+    def setPanelColor(self, color=None, fade=0, **kwargs):
+        self.setPixelColor(pixels=None, color=color, fade=fade)
 
     def setBrightness(self, brightness, **kwargs):
         for idx, (r,g,b) in enumerate(self.pixels):
