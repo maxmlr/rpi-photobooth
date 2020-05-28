@@ -72,7 +72,7 @@ class VideoStream:
         return self
 
     def touch(self):
-        if self.socketio is not None:
+        if self.socketio:
             self.socketio.sleep()
 
     def start(self):

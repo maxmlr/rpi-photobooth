@@ -8,6 +8,7 @@ import imutils
 import face_recognition
 import numpy as np
 from pathlib import Path
+from eventlet import tpool
 from PIL import Image, ImageDraw
 from timeit import default_timer as timer
 from logger import Logger
@@ -139,37 +140,58 @@ class FaceRecognition:
                 self.known_face_identifiers += [item]
 
     def processImage(self, image_uri: Path, out_path: Path, json=None, callback=None):
-        log.debug('Start face recognition...')
-        self.touch()
-        
-        # load into a numpy array
-        image = face_recognition.load_image_file(image_uri)
-        self.touch()
-        
-        # Find all the faces in the image using the default HOG-based model.
-        # This method is fairly accurate, but not as accurate as the CNN model and not GPU accelerated.
-        # See also: find_faces_in_picture_cnn.py
-        #face_locations = face_recognition.face_locations(image)
-        face_identifiers, face_locations = self.frame_analyze(image, uid=image_uri.stem, by_similarity=True, save=True)
-        self.touch()
-        
-        # source_img = Image.open(image_uri)
-        # draw = ImageDraw.Draw(source_img)
-        # for face_location in face_locations:
+        def process(image_uri, out_path, json, callback):
+            log.debug('Start face recognition...')
+            self.touch()
+            
+            # load into a numpy array
+            image = face_recognition.load_image_file(image_uri)
+            self.touch()
+            
+            # Find all the faces in the image using the default HOG-based model.
+            # This method is fairly accurate, but not as accurate as the CNN model and not GPU accelerated.
+            # See also: find_faces_in_picture_cnn.py
+            #face_locations = face_recognition.face_locations(image)
+            # face_identifiers, face_locations = eventlet.tpool.execute(
+            #     self.frame_analyze,
+            #     image, image_uri.stem, True,  True
+            # )
+            face_identifiers, face_locations = self.frame_analyze(image, uid=image_uri.stem, by_similarity=True, save=True)
+            self.touch()
+            
+            # source_img = Image.open(image_uri)
+            # draw = ImageDraw.Draw(source_img)
+            # for face_location in face_locations:
 
-        #     # Print the location of each face in this image
-        #     top, right, bottom, left = face_location
-        #     log.debug(f'A face is located at pixel location Top: {top}, Left: {left}, Bottom: {bottom}, Right: {right}')
-        #     draw.rectangle([(left,bottom),(right,top)], fill=None, outline="red", width=10)
-        #     #draw.text((20, 70), "something123", font=ImageFont.truetype("font_path123"))
-        #     # You can access the actual face itself like this:
-        #     #face_image = image[top:bottom, left:right]
-        #     #pil_image = Image.fromarray(face_image)
-        #     #pil_image.show()
-        # source_img.save(out_path / image_uri.name, "JPEG")
-        # self.touch()
-        if callback is not None:
-            callback(json, face_identifiers)
+            #     # Print the location of each face in this image
+            #     top, right, bottom, left = face_location
+            #     log.debug(f'A face is located at pixel location Top: {top}, Left: {left}, Bottom: {bottom}, Right: {right}')
+            #     draw.rectangle([(left,bottom),(right,top)], fill=None, outline="red", width=10)
+            #     #draw.text((20, 70), "something123", font=ImageFont.truetype("font_path123"))
+            #     # You can access the actual face itself like this:
+            #     #face_image = image[top:bottom, left:right]
+            #     #pil_image = Image.fromarray(face_image)
+            #     #pil_image.show()
+            # source_img.save(out_path / image_uri.name, "JPEG")
+            # self.touch()
+            if callback is not None:
+                callback(json, face_identifiers)
+        
+        if self.socketio:
+            log.debug('Running FaceRecognition using socketio')
+            eventlet.spawn(tpool.execute, process, image_uri, out_path, json, callback)
+        else:
+            log.debug('Running FaceRecognition using threading')
+            if self.thread is None:
+                from threading import Thread
+            self.thread = Thread(
+                target=self.stream.process,
+                args=(
+                    image_uri, out_path, json, callback,
+                )
+            )
+            self.thread.start()
+        log.debug('Spawned FaceRecognition...')
 
     def frame_preprocess(self, frame, resize=None):
         if resize:
@@ -180,7 +202,9 @@ class FaceRecognition:
         return rgb_frame
 
     def frame_analyze(self, frame, uid=None, by_similarity=True, save=False):
+        log.debug('Analyzing face positions...')
         face_locations = face_recognition.face_locations(frame)
+        log.debug('Analyzing face positions...done')
         self.touch()
         if save:
             log.info(f'Found {len(face_locations)} face(s)')

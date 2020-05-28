@@ -1,5 +1,11 @@
-import eventlet  # eventlet.monkey_patch() not required
-from eventlet import tpool
+import eventlet 
+eventlet.monkey_patch(
+    os=False,
+    select=False,
+    socket=False,
+    thread=True,
+    time=False
+)
 from os import environ
 from dotenv import load_dotenv
 from pathlib import Path

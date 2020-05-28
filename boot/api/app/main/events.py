@@ -42,7 +42,7 @@ def trigger_fire(json):
         set_trigger_lock(False, request.sid)
         socketio.start_background_task(async_trigger_render, json)
         socketio.sleep(1)
-        socketio.start_background_task(async_ai_face_recognition, json)
+        facerecognition.processImage(PHOTOBOOTH_IMG_FOLDER / json['args'], PHOTOBOOTH_AI_FOLDER, json, async_ai_face_recognition_callback)
     elif json['action'] == "errorPic":
         set_trigger_lock(False, request.sid)
     log.debug(f'trigger action resolved: {json["action"]}')
@@ -69,9 +69,6 @@ def gallery_face_recognition_filter(face_identifiers, client_id):
 def async_trigger_render(json):
     log.debug(f'got new {json}')
     socketio.emit('newPic', {'img': json['args']}, namespace='/gallery', broadcast=True)
-
-def async_ai_face_recognition(json):
-    socketio.start_background_task(facerecognition.processImage, PHOTOBOOTH_IMG_FOLDER / json['args'], PHOTOBOOTH_AI_FOLDER, json, async_ai_face_recognition_callback)
 
 def async_ai_face_recognition_callback(json, face_identifiers):
     log.debug(f'got update {face_identifiers}')
