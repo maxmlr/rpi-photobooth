@@ -4,17 +4,21 @@
 import argparse
 import json
 import time
+from collections import OrderedDict
 from helpers import run_command, retry
 
 
 class WPAcli():
 
+    wpa_supplicant_conf = '/etc/wpa_supplicant/wpa_supplicant.conf'
     wpa_cli_bin = '/usr/bin/sudo /sbin/wpa_cli'
     dev_up = '/usr/bin/sudo /sbin/ifup'
     dev_down = '/usr/bin/sudo /sbin/ifdown'
+    wifi_connect = '/usr/bin/sudo /opt/photobooth/bin/wifi_connect.sh'
 
     def __init__(self, interface='wlan0'):
-        self.iface  = interface
+        self.iface = interface
+        self.config = self.read_config()
         self.wpa_status = f'{self.wpa_cli_bin} -i {self.iface} status'
         self.wpa_scan = f'{self.wpa_cli_bin} -i {self.iface} scan'
         self.wpa_scan_results = f'{self.wpa_cli_bin} -i {self.iface} scan_results'
@@ -27,7 +31,12 @@ class WPAcli():
         self.wpa_enable = f'{self.wpa_cli_bin} -i {self.iface} enable_network 1'
         self.wpa_update_conf = f'{self.wpa_cli_bin} -i {self.iface} set update_config 1'
         self.wpa_save_conf = f'{self.wpa_cli_bin} -i {self.iface} save_config'
-        self.wpa_select = f'{self.wpa_cli_bin} -i {self.iface} select_network 1'
+        self.wpa_select = f'{self.wpa_cli_bin} -i {self.iface} select_network'
+        self.wpa_reconnect = f'{self.wpa_cli_bin} -i {self.iface} reconnect'
+
+    def read_config(self):
+        with open(self.wpa_supplicant_conf) as f:
+            return WpaSupplicantConf(f.readlines())
 
     def run(self, func_name, kwargs):
         func = getattr(self, func_name, None)
@@ -142,17 +151,104 @@ class WPAcli():
         if wpa_save_conf_status != 'OK':
             return (9, 'WPA_CLI save config error')
 
-        wpa_select_status = self.exec_wpa_cli(self.wpa_select, quiet=quiet)
-        if wpa_select_status != 'OK':
-            return (10, 'WPA_CLI select network error')
+        # wpa_select_status = self.exec_wpa_cli(f'{self.wpa_select} 1', quiet=quiet)
+        # if wpa_select_status != 'OK':
+        #     return (10, 'WPA_CLI select network error')
 
-        return (0, 'Successfully chaanged network')
+        return (0, 'Successfully changed network')
 
     def connect(self, ssid, psk, key_mgmt='WPA-PSK', quiet=True):
-        run_command(f'{self.dev_down} {self.iface}')
-        network_status = self.set_network(ssid, psk, key_mgmt, quiet)
-        run_command(f'{self.dev_up} {self.iface}')
-        return network_status
+        connect_status = self.set_network(ssid, psk, key_mgmt, quiet)
+        if connect_status[0] > 0:
+            return connect_status
+        network = 0 if ssid == next(iter(self.config.networks())) else 1
+        wifi_connect_out = run_command(f'{self.wifi_connect} {self.iface} {network}')
+        wifi_connect_status = wifi_connect_out[-1]
+        status = self.status().get('wpa_state')
+        if wifi_connect_status == 'success' and status == 'COMPLETED':
+            connect_status = (0, status)
+        else:
+            connect_status = (11, 'ERROR')
+        return connect_status
+
+
+class ParseError(ValueError):
+    pass
+
+
+class WpaSupplicantConf:
+
+    def __init__(self, lines):
+        self._fields = OrderedDict()
+        self._networks = OrderedDict()
+
+        network = None
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+
+            if line == "}":
+                if network is None:
+                    raise ParseError("unxpected '}'")
+
+                ssid = network.pop('ssid', None)
+                if ssid is None:
+                    raise ParseError('missing "ssid" for network')
+                self._networks[dequote(ssid)] = network
+                network = None
+                continue
+
+            parts = [x.strip() for x in line.split('=', 1)]
+            if len(parts) != 2:
+                raise ParseError("invalid line: %{!r}".format(line))
+
+            left, right = parts
+
+            if right == '{':
+                if left != 'network':
+                    raise ParseError('unsupported section: "{}"'.format(left))
+                if network is not None:
+                    raise ParseError("can't nest networks")
+
+                network = OrderedDict()
+            else:
+                if network is None:
+                    self._fields[left] = right
+                else:
+                    network[left] = right
+
+    def fields(self):
+        return self._fields
+
+    def networks(self):
+        return self._networks
+
+    def add_network(self, ssid, **attrs):
+        self._networks[ssid] = attrs
+
+    def remove_network(self, ssid):
+        self._networks.pop(ssid, None)
+
+    def write(self, f):
+        for name, value in self._fields.items():
+            f.write("{}={}\n".format(name, value))
+
+        for ssid, info in self._networks.items():
+            f.write("\nnetwork={\n")
+            f.write('    ssid="{}"\n'.format(ssid))
+            for name, value in info.items():
+                f.write("    {}={}\n".format(name, value))
+            f.write("}\n")
+
+
+def dequote(v):
+    if len(v) < 2:
+        return v
+    if v.startswith('"') and v.endswith('"'):
+        return v[1:-1]
+    return v
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='WPA cli Manager.')

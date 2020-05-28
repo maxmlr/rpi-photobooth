@@ -131,6 +131,7 @@ cp /boot/scripts/boot.sh /opt/photobooth/bin/boot.sh
 cp /boot/scripts/reboot.sh /opt/photobooth/bin/reboot.sh
 cp /boot/scripts/register.sh /opt/photobooth/bin/register.sh
 cp /boot/scripts/wifi_action.sh /opt/photobooth/bin/wifi_action.sh
+cp /boot/scripts/wifi_connect.sh /opt/photobooth/bin/wifi_connect.sh
 chmod +x /opt/photobooth/bin/*.sh
 
 # add bash profile

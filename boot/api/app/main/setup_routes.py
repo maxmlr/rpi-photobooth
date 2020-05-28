@@ -88,8 +88,8 @@ def wifi_connect():
     ssid = request.form['ssid']
     password = request.form['password']
     # TODO check key_mgmt
-    wpa.connect(ssid=ssid, psk=password, key_mgmt='WPA-PSK')
-    return jsonify({'success': True})
+    status = wpa.connect(ssid=ssid, psk=password, key_mgmt='WPA-PSK')
+    return jsonify({'status': status})
 
 
 @setup.route('/wifi/ap/settings', methods=['POST'], endpoint='wifi-ap-settings')

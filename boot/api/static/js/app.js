@@ -115,7 +115,19 @@ function connect_wifi(){
     }
     $.post("/setup/wifi/connect", data, function( data ) {
         $('#wifi-password').val('')
-        $("#wifi-setup").LoadingOverlay("hide");
+        if (data['status'][0] == 0) {
+            $('.loadingoverlay_element').fadeOut( function() {
+                $('.loadingoverlay_element').first().html('<i class="fas fa-check"></i>').css('color', 'green').fadeIn(  function() {
+                    $("#wifi-setup").LoadingOverlay("hide");
+                });
+            });
+        } else {
+            $('.loadingoverlay_element').fadeOut( function() {
+                $('.loadingoverlay_element').first().html('<i class="fas fa-times"></i>').css('color', 'red').fadeIn(  function() {
+                    $("#wifi-setup").LoadingOverlay("hide");
+                });
+            });
+        }
     });
 }
 
