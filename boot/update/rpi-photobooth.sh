@@ -99,8 +99,8 @@ then
     echo "SECRET_KEY=$(python3 -c 'import os; print(os.urandom(16))')" >> /opt/photobooth/flask/api/app/.env
     echo "API_KEY=$(openssl rand -base64 42)" >> /opt/photobooth/flask/api/app/.env
 fi
-mkdir -p /opt/photobooth/data/facerecognition
-chown -R www-data:www-data /opt/photobooth/flask/api /opt/photobooth/data/facerecognition
+mkdir -p /opt/photobooth/data/facerecognition /opt/photobooth/data/db
+chown -R www-data:www-data /opt/photobooth/flask/api /opt/photobooth/data/facerecognition /opt/photobooth/data/db
 mkdir -p /opt/photobooth/conf/custom
 [[ -f /opt/photobooth/conf/custom/trigger.json ]] || cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
 chown www-data:www-data /opt/photobooth/conf/custom/trigger.json

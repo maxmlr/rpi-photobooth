@@ -28,7 +28,7 @@ log = logger.getLogger()
 
 DATA_FOLDER = Path('/opt/photobooth/data')
 FR_BASE_FOLDER = DATA_FOLDER / 'facerecognition'
-DB_PATH = DATA_FOLDER / 'gallery.json'
+DB_PATH = DATA_FOLDER / 'db' / 'gallery.json'
 IMG_PATTERN = '*.jpg'
 
 
