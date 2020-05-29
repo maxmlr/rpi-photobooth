@@ -158,10 +158,13 @@ class WPAcli():
         return (0, 'Successfully changed network')
 
     def connect(self, ssid, psk, key_mgmt='WPA-PSK', quiet=True):
-        connect_status = self.set_network(ssid, psk, key_mgmt, quiet)
+        network = 0 if ssid == next(iter(self.config.networks())) else 1
+        if network:
+            connect_status = self.set_network(ssid, psk, key_mgmt, quiet)
+        else:
+            connect_status = (0, 'Using primary network')
         if connect_status[0] > 0:
             return connect_status
-        network = 0 if ssid == next(iter(self.config.networks())) else 1
         wifi_connect_out = run_command(f'{self.wifi_connect} {self.iface} {network}')
         wifi_connect_status = wifi_connect_out[-1]
         status = self.status().get('wpa_state')
