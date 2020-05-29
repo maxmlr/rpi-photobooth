@@ -8,11 +8,11 @@ import imutils
 import face_recognition
 import numpy as np
 from pathlib import Path
-from eventlet import tpool
 from PIL import Image, ImageDraw
 from timeit import default_timer as timer
 from logger import Logger
 from video.stream import VideoStream
+from multiprocessing import Process, Queue
 
 
 """
@@ -42,6 +42,7 @@ class FaceRecognition:
         log.info('FaceRecognition: init...')
         self.stream = None
         self.socketio = None
+        self.process_delay = 3
         self.thread = None
         self.db = {}
         self.audience = {}
@@ -141,8 +142,8 @@ class FaceRecognition:
 
     def processImage(self, image_uri: Path, out_path: Path, json=None, callback=None):
         def process(image_uri, out_path, json, callback):
-            log.debug('Start face recognition...')
-            self.touch()
+            log.debug(f'Starting face recognition (delay={self.process_delay}s)...')
+            self.socketio.sleep(self.process_delay)
             
             # load into a numpy array
             image = face_recognition.load_image_file(image_uri)
@@ -179,7 +180,10 @@ class FaceRecognition:
         
         if self.socketio:
             log.debug('Running FaceRecognition using socketio')
-            eventlet.spawn(tpool.execute, process, image_uri, out_path, json, callback)
+            self.socketio.start_background_task(
+                process,
+                image_uri, out_path, json, callback
+            )
         else:
             log.debug('Running FaceRecognition using threading')
             if self.thread is None:
@@ -191,7 +195,6 @@ class FaceRecognition:
                 )
             )
             self.thread.start()
-        log.debug('Spawned FaceRecognition...')
 
     def frame_preprocess(self, frame, resize=None):
         if resize:
@@ -202,8 +205,17 @@ class FaceRecognition:
         return rgb_frame
 
     def frame_analyze(self, frame, uid=None, by_similarity=True, save=False):
-        log.debug('Analyzing face positions...')
-        face_locations = face_recognition.face_locations(frame)
+        def run(frame):
+            q.put(face_recognition.face_locations(frame))
+        log.debug('Analyzing face positions...init')
+        q = Queue(1)
+        p = Process(target=run, args=(frame,))
+        p.start()
+        log.debug('Analyzing face positions...running')
+        while p.is_alive():
+            self.socketio.sleep(1)
+        p.join()
+        face_locations = q.get()
         log.debug('Analyzing face positions...done')
         self.touch()
         if save:
