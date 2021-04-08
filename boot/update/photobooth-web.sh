@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Currently installed photobooth release: v`cat /var/www/html/version.html`"
+echo "Currently installed photobooth release: `cat /var/www/html/version.html`"
 
 if [ $# -eq 0 ]
   then
@@ -44,7 +44,7 @@ ln -sf /opt/photobooth/flask/api/static /var/www/html/captive
 # install vnstat-viewer
 rm -rf 
 wget https://github.com/dalbenknicker/vnstat-viewer/archive/master.zip && \
- unzip master.zip && mv vnstat-viewer-master/* vnstat-viewer-master/.[!.]* /var/www/html/vnstat && \
+ unzip master.zip && cp -rf vnstat-viewer-master/* /var/www/html/vnstat && \
  rm -rf master.zip vnstat-viewer-master
 cd /var/www/html/vnstat
 composer install --no-interaction
