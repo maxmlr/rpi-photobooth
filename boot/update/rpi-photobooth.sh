@@ -202,7 +202,7 @@ cd - > /dev/null
 # photobooth updates and config
 cp -rf /boot/photobooth/manager /var/www/html/
 cd /var/www/html/manager
-composer install
+composer install --no-interaction
 cd - > /dev/null
 cp -f /boot/photobooth/my.config.inc.php /var/www/html/config/latest.my.config.inc.php
 mv /tmp/my.config.inc.php /var/www/html/config/my.config.inc.php
@@ -227,7 +227,7 @@ wget https://github.com/dalbenknicker/vnstat-viewer/archive/master.zip && \
  unzip master.zip && mv vnstat-viewer-master/* vnstat-viewer-master/.[!.]* /var/www/html/vnstat && \
  rm -rf master.zip vnstat-viewer-master
 cd /var/www/html/vnstat
-composer install
+composer install --no-interaction
 cd - > /dev/null
 cp -f /boot/config/vnstat-viewer.php /var/www/html/vnstat/include/config.php
 grep -qF '<div id="main">' /var/www/html/vnstat/templates/main.tpl || sed -i '/graph.tpl/i <div id="main">' /var/www/html/vnstat/templates/main.tpl
