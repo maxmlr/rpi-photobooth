@@ -2,6 +2,8 @@
 # Automatic setup photobooth-client and DietPi
 # @maxmlr
 
+BEGIN=$(date +%s)
+
 # source photobooth config
 source /boot/photobooth.conf
 
@@ -207,14 +209,10 @@ ifdown eth0 &>/dev/null
 # setup photobooth wifi
 cp -f /boot/config/wpa_supplicant.conf /etc/wpa_supplicant
 
-if [ $? -eq 0 ]
-then
-  echo "Photobooth setup finished successfully"
-  echo
-  echo "    --- PLEASE REBOOT TO FINISH---    "
-  echo
-  exit 0
-else
-  echo "Photobooth setup finished with errors" >&2
-  exit 0
-fi
+END=$(date +%s)
+
+echo " --- Photobooth setup finished --- "
+echo "  + duration : $(( (END - BEGIN) / 60 )) minutes"
+[ $? -eq 0 ] || echo "  + status : ERRORS"
+echo "Reboot - $(date) ..."
+reboot

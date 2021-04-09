@@ -212,10 +212,12 @@ create_sd () {
     if [[ $git =~ ^server$ ]]
     then
         echo "Cloning repository..."
+		rm -rf ${repo}
         git clone ${GIT_REPOSITORY} ${repo}
     elif [[ $git =~ ^client$ ]]
     then
         echo "Cloning repository..."
+		rm -rf ${repo}
         git clone ${GIT_REPOSITORY} ${repo}
 		echo "Merging client..."
         cp -rf ${repo}/client/* ${repo}/boot

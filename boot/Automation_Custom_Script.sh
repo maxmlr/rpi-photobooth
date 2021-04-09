@@ -2,6 +2,8 @@
 # Automatic setup photobooth and DietPi
 # @maxmlr
 
+BEGIN=$(date +%s)
+
 # source photobooth config
 source /boot/photobooth.conf
 
@@ -380,14 +382,10 @@ apt-get clean && apt-get autoremove -y
 sed -i -e 's|.*allow-hotplug eth0|#allow-hotplug eth0|' /etc/network/interfaces
 ifdown eth0 &>/dev/null
 
-if [ $? -eq 0 ]
-then
-  echo "Photobooth setup finished successfully"
-  echo
-  echo "    --- PLEASE REBOOT TO FINISH---    "
-  echo
-  exit 0
-else
-  echo "Photobooth setup finished with errors" >&2
-  exit 0
-fi
+END=$(date +%s)
+
+echo " --- Photobooth setup finished --- "
+echo "  + duration : $(( (END - BEGIN) / 60 )) minutes"
+[ $? -eq 0 ] || echo "  + status : ERRORS"
+echo "Reboot - $(date) ..."
+reboot
