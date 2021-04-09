@@ -51,26 +51,26 @@ apt install -y \
 fi
 
 # Configure managed services
-sort -u /boot/config/dietpi-services_include_exclude /DietPi/dietpi/.dietpi-services_include_exclude > /DietPi/dietpi/.dietpi-services_include_exclude
+sort -u /boot/config/dietpi-services_include_exclude /boot/dietpi/.dietpi-services_include_exclude > /boot/dietpi/.dietpi-services_include_exclude
 
-# Edit /DietPi/config.txt:
+# Edit /boot/config.txt:
 # - add photobooth.conf
 for config in "${DIETPI_CONFIG[@]}"
 do
     key=`echo "$config" | cut -d"=" -f1 | sed -e s"|\#||g"`
-    if tac /DietPi/config.txt | grep -m1 -q "$key"; then
-        config_old=`tac /DietPi/config.txt | grep -m1 "$key"`
+    if tac /boot/config.txt | grep -m1 -q "$key"; then
+        config_old=`tac /boot/config.txt | grep -m1 "$key"`
         if [[ "$config" = "$config_old" ]]
         then
             echo "[config] no change: $key" 
-            # tac /DietPi/config.txt | sed "/$key/ {s/.*/$config/; :loop; n; b loop}" | tac > /tmp/config.txt
-            # mv /tmp/config.txt /DietPi/config.txt
+            # tac /boot/config.txt | sed "/$key/ {s/.*/$config/; :loop; n; b loop}" | tac > /tmp/config.txt
+            # mv /tmp/config.txt /boot/config.txt
         else
-            update_msg+=( "[config] update - old: `tac /DietPi/config.txt | grep -m1 "$key"` -> new: $config (Please update manually in /DietPi/config.txt if required)" )
+            update_msg+=( "[config] update - old: `tac /boot/config.txt | grep -m1 "$key"` -> new: $config (Please update manually in /boot/config.txt if required)" )
         fi
     else
         echo "[config] new: $config"
-        echo "$config"  >> /DietPi/config.txt
+        echo "$config"  >> /boot/config.txt
     fi
 done
 
@@ -283,9 +283,6 @@ sed -i "s|\"right\":.*|\"right\":${DISPLAY_RESOLUTION_X}|" /root/.config/chromiu
 # add xorg settings
 cp /boot/config/xinitrc /root/.xinitrc
 
-# add /var/lib/dietpi/dietpi-autostart/custom.sh
-cp /boot/scripts/dietpi-custom.sh /var/lib/dietpi/dietpi-autostart/custom.sh
-
 # add scripts
 mkdir -p /opt/photobooth/bin
 cp /boot/scripts/start-kiosk.sh /opt/photobooth/bin/start-kiosk.sh
@@ -377,7 +374,7 @@ EOF
 fi
 
 #- disable NTP during boot
-sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
+sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /boot/dietpi.txt
 #- fix chromium not able to access GPU
 #- https://github.com/tipam/pi3d/issues/177
 ln -fs /usr/lib/chromium-browser/swiftshader/libEGL.so /usr/lib/arm-linux-gnueabihf/libEGL.so
@@ -394,8 +391,8 @@ then
 fi
 
 # customize banner
-cp /boot/config/dietpi-banner /DietPi/dietpi/.dietpi-banner
-echo "photobooth-status banner" > /DietPi/dietpi/.dietpi-banner_custom
+cp /boot/config/dietpi-banner /boot/dietpi/.dietpi-banner
+echo "photobooth-status banner" > /boot/dietpi/.dietpi-banner_custom
 
 # cleanup
 apt-get clean && apt-get autoremove -y

@@ -5,7 +5,7 @@
 . /boot/photobooth.conf
 
 # Import DietPi-Globals --------------------------------------------------------------
-. /DietPi/dietpi/func/dietpi-globals
+. /boot/dietpi/func/dietpi-globals
 G_PROGRAM_NAME='DietPi-CPU_info'
 G_CHECK_ROOT_USER
 G_INIT
@@ -51,7 +51,7 @@ echo -e " Architecture \e[90m|\e[0m     $(uname -m)"
 echo -e " Temperature  \e[90m|\e[0m     $CPU_TEMP_PRINT"
 echo -e " Governor     \e[90m|\e[0m     $CPU_GOV_CURRENT"
 if [[ $CPU_GOV_CURRENT == 'ondemand' || $CPU_GOV_CURRENT == 'conservative' ]]; then
-    echo -e " Throttle up  \e[90m|\e[0m     $(grep -m1 '^[[:blank:]]*CONFIG_CPU_USAGE_THROTTLE_UP=' /DietPi/dietpi.txt | sed 's/^[^=]*=//')% CPU usage"
+    echo -e " Throttle up  \e[90m|\e[0m     $(grep -m1 '^[[:blank:]]*CONFIG_CPU_USAGE_THROTTLE_UP=' /boot/dietpi.txt | sed 's/^[^=]*=//')% CPU usage"
 fi
 echo
 fi

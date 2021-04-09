@@ -34,35 +34,35 @@ apt install -y \
     imagemagick
 
 # Configure managed services
-cat /boot/config/dietpi-services_include_exclude >> /DietPi/dietpi/.dietpi-services_include_exclude
+cat /boot/config/dietpi-services_include_exclude >> /boot/dietpi/.dietpi-services_include_exclude
 
-# Edit /DietPi/config.txt:
+# Edit /boot/config.txt:
 # - merge configs from photobooth.conf
 for config in "${DIETPI_CONFIG[@]}"
 do
     key=`echo "$config" | cut -d"=" -f1 | sed -e s"|\#||g"`
-    if tac /DietPi/config.txt | grep -m1 -q "$key"; then
-        config_old=`tac /DietPi/config.txt | grep -m1 "$key"`
+    if tac /boot/config.txt | grep -m1 -q "$key"; then
+        config_old=`tac /boot/config.txt | grep -m1 "$key"`
         if [[ "$config" = "$config_old" ]]
         then
             echo "[config] no change: $key"
         else
-            update_msg+=( "[config] update - old: `tac /DietPi/config.txt | grep -m1 "$key"` -> new: $config" )
-            tac /DietPi/config.txt | sed "/$key/ {s/.*/$config/; :loop; n; b loop}" | tac > /tmp/config.txt
-            mv /tmp/config.txt /DietPi/config.txt
+            update_msg+=( "[config] update - old: `tac /boot/config.txt | grep -m1 "$key"` -> new: $config" )
+            tac /boot/config.txt | sed "/$key/ {s/.*/$config/; :loop; n; b loop}" | tac > /tmp/config.txt
+            mv /tmp/config.txt /boot/config.txt
         fi
     else
         echo "[config] new: $config"
-        echo "$config"  >> /DietPi/config.txt
+        echo "$config"  >> /boot/config.txt
     fi
 done
 # - enable Pi Camera
-#sed -i -e 's/#start_x=1/start_x=1/g' /DietPi/config.txt
+#sed -i -e 's/#start_x=1/start_x=1/g' /boot/config.txt
 # - adjust memory split
 if [ "$HEADLESS" -eq "0" ]; then
-    sed -i -e 's/gpu_mem_256=.*/gpu_mem_256=64/g' /DietPi/config.txt 
-    sed -i -e 's/gpu_mem_512=.*/gpu_mem_512=128/g' /DietPi/config.txt 
-    sed -i -e 's/gpu_mem_1024=.*/gpu_mem_1024=256/g' /DietPi/config.txt 
+    sed -i -e 's/gpu_mem_256=.*/gpu_mem_256=64/g' /boot/config.txt 
+    sed -i -e 's/gpu_mem_512=.*/gpu_mem_512=128/g' /boot/config.txt 
+    sed -i -e 's/gpu_mem_1024=.*/gpu_mem_1024=256/g' /boot/config.txt 
 fi
 
 # install required Python 3 modules
@@ -121,9 +121,6 @@ sed -i "s|\"right\":.*|\"right\":${DISPLAY_RESOLUTION_X}|" /root/.config/chromiu
 
 # add xorg settings
 cp /boot/config/xinitrc /root/.xinitrc
-
-# add /var/lib/dietpi/dietpi-autostart/custom.sh
-cp /boot/scripts/dietpi-custom.sh /var/lib/dietpi/dietpi-autostart/custom.sh
 
 # add scripts
 mkdir -p /opt/photobooth/bin
@@ -186,7 +183,7 @@ www-data ALL=(ALL) NOPASSWD:/bin/systemctl stop ngrok*
 EOF
 
 #- disable NTP during boot
-sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /DietPi/dietpi.txt
+sed -i -e 's/CONFIG_NTP_MODE=.*/CONFIG_NTP_MODE=0/g' /boot/dietpi.txt
 #- fix chromium not able to access GPU
 #- https://github.com/tipam/pi3d/issues/177
 ln -fs /usr/lib/chromium-browser/swiftshader/libEGL.so /usr/lib/arm-linux-gnueabihf/libEGL.so
@@ -196,8 +193,8 @@ ln -fs /usr/lib/chromium-browser/swiftshader/libGLESv2.so /usr/lib/arm-linux-gnu
 ldconfig -l
 
 # customize banner
-cp /boot/config/dietpi-banner /DietPi/dietpi/.dietpi-banner
-echo "photobooth-status banner" > /DietPi/dietpi/.dietpi-banner_custom
+cp /boot/config/dietpi-banner /boot/dietpi/.dietpi-banner
+echo "photobooth-status banner" > /boot/dietpi/.dietpi-banner_custom
 
 # cleanup
 apt-get clean && apt-get autoremove -y
@@ -214,5 +211,4 @@ END=$(date +%s)
 echo " --- Photobooth setup finished --- "
 echo "  + duration : $(( (END - BEGIN) / 60 )) minutes"
 [ $? -eq 0 ] || echo "  + status : ERRORS"
-echo "Reboot - $(date) ..."
-reboot
+echo "$(date) -> Reboot to finish photobooth setup..."
