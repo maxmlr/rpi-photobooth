@@ -6,7 +6,7 @@
 
 (function (w){
     $.when(
-        $.getScript("/static/socketio/socket.io.js"),
+        $.getScript("/static/socketio/socket.io.min.js"),
         $.getScript("/static/fancybox/jquery.fancybox.min.js"),
         $.getScript("/static/js/morphing.js"),
         // $.Deferred(function( deferred ){
