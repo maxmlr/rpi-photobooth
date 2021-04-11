@@ -24,7 +24,7 @@ __version__ = 1.0
 
 logger = Logger(__name__, level='DEBUG')
 # logger.addConsoleHandler()
-logger.addFileHandler(filename='/var/log/api.log', level='DEBUG')
+logger.addFileHandler(filename='/var/log/flask/api.log', level='DEBUG')
 log = logger.getLogger()
 
 DATA_FOLDER = Path('/opt/photobooth/data')

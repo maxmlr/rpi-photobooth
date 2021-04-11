@@ -31,7 +31,7 @@ PHOTOBOOTH_IMG_FOLDER = PHOTOBOOTH_HTML_ROOT / Path("data/images")
 PHOTOBOOTH_AI_FOLDER = PHOTOBOOTH_HTML_ROOT / Path("data/ai")
 
 logger = Logger(__name__, level="DEBUG")
-logger.addFileHandler(filename='/var/log/api.log', level="DEBUG")
+logger.addFileHandler(filename='/var/log/flask/api.log', level="DEBUG")
 log = logger.getLogger()
 
 socketio = SocketIO(async_mode ='eventlet')

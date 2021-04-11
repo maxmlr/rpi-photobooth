@@ -20,7 +20,7 @@ class Trigger():
         if logger is not None:
             self.log = logger
         else:
-            logging.basicConfig(filename='/var/log/api.log', level=logging.DEBUG)
+            logging.basicConfig(filename='/var/log/flask/api.log', level=logging.DEBUG)
             self.log = logging
 
     def read_config(self):

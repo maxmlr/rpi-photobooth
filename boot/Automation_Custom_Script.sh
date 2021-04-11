@@ -110,6 +110,7 @@ chown -R www-data:www-data /opt/photobooth/flask/api /opt/photobooth/data/facere
 mkdir -p /opt/photobooth/conf/custom
 cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
 chown www-data:www-data /opt/photobooth/conf/custom/trigger.json
+mkdir -p /var/log/flask && chown www-data:www-data /var/log/flask
 
 # install ai components
 # note: dependencies installed earlier -> libatlas-base-dev
@@ -255,6 +256,9 @@ ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled
 # copy nginx config
 cp /boot/config/nginx-photobooth-manager.conf /etc/nginx/sites-dietpi/photobooth-manager.conf
 
+# create nginx log dir
+mkdir -p /var/log/nginx && chown www-data:www-data /var/log/nginx
+
 # install mqtt-launcher
 cd /opt && git clone https://github.com/maxmlr/mqtt-launcher.git
 cp /boot/config/photobooth.mqtt.conf /opt/mqtt-launcher/launcher.photobooth.conf
@@ -348,13 +352,15 @@ www-data ALL=(ALL) NOPASSWD:/sbin/reboot --no-wall
 www-data ALL=(ALL) NOPASSWD:/opt/photobooth/bin/reboot.sh [0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifup wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifdown wlan[0-9]
+www-data ALL=(ALL) NOPASSWD:/usr/bin/chgrp www-data /tmp/ndsctl.sock
+www-data ALL=(ALL) NOPASSWD:/usr/bin/chmod g+w /tmp/ndsctl.sock
 www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl json
-www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl trust
+www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl trust *
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
 www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ledpanel *
 www-data ALL=(ALL) NOPASSWD:/usr/bin/convert *
-www-data ALL=(ALL) NOPASSWD:/usr/bin/mosquitto_pub -h photobooth *
+www-data ALL=(ALL) NOPASSWD:/usr/bin/mosquitto_pub *
 EOF
 
 # optimizations
@@ -385,3 +391,4 @@ echo " --- Photobooth setup finished --- "
 echo "  + duration : $(( (END - BEGIN) / 60 )) minutes"
 [ $? -eq 0 ] || echo "  + status : ERRORS"
 echo "$(date) -> Reboot to finish photobooth setup..."
+exit 0

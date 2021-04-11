@@ -19,7 +19,7 @@ see https://docs.opencv.org/master/d4/d15/group__videoio__flags__base.html
 
 
 logger = Logger(__name__, level='DEBUG')
-logger.addFileHandler(filename='/var/log/api.log', level='DEBUG')
+logger.addFileHandler(filename='/var/log/flask/api.log', level='DEBUG')
 log = logger.getLogger()
 
 
