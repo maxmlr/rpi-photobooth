@@ -9,6 +9,10 @@
 [[ `grep -c loglevel /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ loglevel=3 &/' /boot/cmdline.txt
 [[ `grep -c vt.global_cursor_default=0 /boot/cmdline.txt` -eq 0 ]] && sed -i -e "s/vt.global_cursor_default=[0,1]/vt.global_cursor_default=0/g" /boot/cmdline.txt
 
+# create log dirs
+mkdir -p /var/log/{nginx,flask} && chown www-data:www-data /var/log/{nginx,flask}
+
+# init wifi
 dongles=$(lsusb | grep -ic edimax)
 [[ -d /opt/photobooth/conf/ap-default ]] && ln -fs /opt/photobooth/conf/ap-default/interfaces /etc/network/interfaces
 if [[ -d /opt/photobooth/conf/ap-$dongles ]]
