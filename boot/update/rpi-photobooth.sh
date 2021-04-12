@@ -1,4 +1,6 @@
 #!/bin/bash
+
+BEGIN=$(date +%s)
 update_msg=()
 
 # source photobooth config
@@ -365,11 +367,13 @@ www-data ALL=(ALL) NOPASSWD:/sbin/ifup wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/sbin/ifdown wlan[0-9]
 www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl json
 www-data ALL=(ALL) NOPASSWD:/usr/bin/ndsctl trust
+www-data ALL=(ALL) NOPASSWD:/usr/bin/chgrp www-data /tmp/ndsctl.sock
+www-data ALL=(ALL) NOPASSWD:/usr/bin/chmod g+w /tmp/ndsctl.sock
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -n net.ipv4.ip_forward
 www-data ALL=(ALL) NOPASSWD:/sbin/sysctl -w net.ipv4.ip_forward=[0-1]
 www-data ALL=(ALL) NOPASSWD:/usr/local/bin/ledpanel *
 www-data ALL=(ALL) NOPASSWD:/usr/bin/convert *
-www-data ALL=(ALL) NOPASSWD:/usr/bin/mosquitto_pub -h photobooth *
+www-data ALL=(ALL) NOPASSWD:/usr/bin/mosquitto_pub *
 EOF
 fi
 
@@ -397,6 +401,8 @@ echo "photobooth-status banner" > /boot/dietpi/.dietpi-banner_custom
 # cleanup
 apt-get clean && apt-get autoremove -y
 
+END=$(date +%s)
+
 echo
 echo
 echo " --- Important update notes --- "
@@ -406,11 +412,7 @@ do
     echo "$msg"
 done
 
-if [ $? -eq 0 ]
-then
-  echo "Photobooth update finished successfully"
-  exit 0
-else
-  echo "Photobooth update finished with errors" >&2
-  exit 0
-fi
+echo " --- Photobooth update finished --- "
+echo "  + duration : $(( (END - BEGIN) / 60 )) minutes"
+[ $? -eq 0 ] || echo "  + status : ERRORS"
+exit 0
