@@ -256,9 +256,6 @@ ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled
 # copy nginx config
 cp /boot/config/nginx-photobooth-manager.conf /etc/nginx/sites-dietpi/photobooth-manager.conf
 
-# create nginx log dir
-mkdir -p /var/log/nginx && chown www-data:www-data /var/log/nginx
-
 # install mqtt-launcher
 cd /opt && git clone https://github.com/maxmlr/mqtt-launcher.git
 cp /boot/config/photobooth.mqtt.conf /opt/mqtt-launcher/launcher.photobooth.conf
@@ -388,11 +385,8 @@ then
  ifdown eth0 &> /dev/null
 fi
 
-systemctl stop dnsmasq hostapd nodogsplash
-/opt/photobooth/bin/boot.sh
-systemctl start dnsmasq && sleep 3
-systemctl start hostapd && sleep 3
-systemctl start nodogsplash
+# trigger delayed dietpi restart
+nohup /boot/install/setup_rebooth.sh > /tmp/nohup.out &
 
 END=$(date +%s)
 
