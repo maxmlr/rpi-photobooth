@@ -111,7 +111,6 @@ chown -R www-data:www-data /opt/photobooth/flask/api /opt/photobooth/data/facere
 mkdir -p /opt/photobooth/conf/custom
 cp /boot/config/trigger.json /opt/photobooth/conf/custom/trigger.json
 chown www-data:www-data /opt/photobooth/conf/custom/trigger.json
-mkdir -p /var/log/flask && chown www-data:www-data /var/log/flask
 
 # install ai components
 # note: dependencies installed earlier -> libatlas-base-dev
