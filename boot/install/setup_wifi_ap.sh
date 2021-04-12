@@ -22,15 +22,15 @@ dpkg --force-hold,confdef,confold -i 126.deb
 rm 126.deb
 
 # use dietpi hostapd
-ARM_VERSION=$(uname -m)
-ARM_VERSION=${ARM_VERSION:0:5}
-WIFI_DRIVER="nl80211" # rtl8188c
-wget https://dietpi.com/downloads/binaries/all/hostapd_2.5_all.zip -O 60.zip
-unzip -o 60.zip
-chmod +x hostapd-* hostapd_*
-mv hostapd-$WIFI_DRIVER-$ARM_VERSION $(which hostapd)
-mv hostapd_cli-$ARM_VERSION $(which hostapd_cli)
-rm 60.zip hostapd-* hostapd_*
+# ARM_VERSION=$(uname -m)
+# ARM_VERSION=${ARM_VERSION:0:5}
+# WIFI_DRIVER="nl80211" # rtl8188c
+# wget https://dietpi.com/downloads/binaries/all/hostapd_2.5_all.zip -O 60.zip
+# unzip -o 60.zip
+# chmod +x hostapd-* hostapd_*
+# mv hostapd-$WIFI_DRIVER-$ARM_VERSION $(which hostapd)
+# mv hostapd_cli-$ARM_VERSION $(which hostapd_cli)
+# rm 60.zip hostapd-* hostapd_*
 
 # copy wlan1/2 device configuration
 cp /boot/config/wifi/wlan1.conf /etc/network/interfaces.d/wlan1
