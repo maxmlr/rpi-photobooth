@@ -1,6 +1,8 @@
 #!/bin/bash
 # boot service
 
+source /boot/photobooth.conf
+
 # check correct splash screen settings
 [[ `grep -c tty3 /boot/cmdline.txt` -eq 0 ]] && sed -i -e "s/tty1/tty3/g" /boot/cmdline.txt
 [[ `grep -c splash /boot/cmdline.txt` -eq 0 ]] && sed -i 's/$/ splash &/' /boot/cmdline.txt
@@ -28,4 +30,11 @@ then
     fi
     ln -fs /opt/photobooth/conf/ap-$dongles/dnsmasq.conf /etc/dnsmasq.d/photobooth.conf
     ln -fs /opt/photobooth/conf/ap-$dongles/nodogsplash.conf /etc/nodogsplash/nodogsplash.conf
+fi
+
+# Enable eth0
+if [[ -v DEBUG ]]
+then
+ sed -i -e 's|#*allow-hotplug eth0|allow-hotplug eth0|' /etc/network/interfaces
+ ifup eth0 &> /dev/null
 fi

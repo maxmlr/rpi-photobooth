@@ -24,4 +24,4 @@ source /boot/photobooth.conf
 
 # Enable eth0
 sed -i -e 's|#*allow-hotplug eth0|allow-hotplug eth0|' /etc/network/interfaces
-ifup eth0 &>/dev/null
+ifup eth0 &> /dev/null
