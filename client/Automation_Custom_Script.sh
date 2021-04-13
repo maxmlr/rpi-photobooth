@@ -11,6 +11,7 @@ source /boot/photobooth.conf
 cp -f /boot/authorized_keys /root/.ssh/authorized_keys
 
 # setup WiFi AccessPoint
+[[ -v INSTALL_DONGLE ]] && /boot/install/install-dongle.sh
 #/boot/install/setup_wifi_ap.sh
 mkdir -p /opt/photobooth/conf
 cp -rf /boot/config/wifi/* /opt/photobooth/conf
@@ -200,8 +201,11 @@ echo "photobooth-status banner" > /boot/dietpi/.dietpi-banner_custom
 apt-get clean && apt-get autoremove -y
 
 # Disable eth0
-sed -i -e 's|.*allow-hotplug eth0|#allow-hotplug eth0|' /etc/network/interfaces
-ifdown eth0 &>/dev/null
+if [[ -z ${DEBUG+x} ]]
+then
+ sed -i -e 's|.*allow-hotplug eth0|#allow-hotplug eth0|' /etc/network/interfaces
+ ifdown eth0 &> /dev/null
+fi
 
 # setup photobooth wifi
 cp -f /boot/config/wpa_supplicant.conf /etc/wpa_supplicant
