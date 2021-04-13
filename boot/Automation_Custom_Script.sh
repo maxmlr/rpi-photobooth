@@ -11,7 +11,6 @@ source /boot/photobooth.conf
 cp -f /boot/authorized_keys /root/.ssh/authorized_keys
 
 # setup WiFi AccessPoint
-[[ -v INSTALL_DONGLE ]] && /boot/install/install-dongle.sh
 /boot/install/setup_wifi_ap.sh
 chmod go+r /etc/wpa_supplicant/wpa_supplicant.conf
 mkdir -p /opt/photobooth/conf
@@ -387,7 +386,7 @@ then
 fi
 
 # trigger delayed dietpi restart
-nohup /boot/install/setup_rebooth.sh > /tmp/nohup.out &
+systemctl start setup-reboot.service
 
 END=$(date +%s)
 

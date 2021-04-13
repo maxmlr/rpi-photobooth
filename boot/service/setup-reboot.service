@@ -1,0 +1,7 @@
+[Unit]
+Description=Photobooth Setup Reboot
+DefaultDependencies=no
+
+[Service]
+Type=simple
+ExecStart=/boot/install/setup_rebooth.sh

@@ -11,7 +11,6 @@ source /boot/photobooth.conf
 cp -f /boot/authorized_keys /root/.ssh/authorized_keys
 
 # setup WiFi AccessPoint
-[[ -v INSTALL_DONGLE ]] && /boot/install/install-dongle.sh
 #/boot/install/setup_wifi_ap.sh
 mkdir -p /opt/photobooth/conf
 cp -rf /boot/config/wifi/* /opt/photobooth/conf
