@@ -12,7 +12,7 @@ class Modules():
 
     registration_log = Path('/tmp/clients_registered.log')
     available_log = Path('/tmp/clients_available.log')
-    discover_cmd = '/usr/bin/sudo /usr/bin/mosquitto_pub -h photobooth -m discover -t photobooth/link'
+    discover_cmd = '/usr/bin/sudo /usr/bin/mosquitto_pub -m discover -t photobooth/link'
 
     def __init__(self):
         self.registered = self.read_registration()

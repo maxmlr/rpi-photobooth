@@ -8,7 +8,7 @@ from ctl_ledpanel import LEDpanelControl
 
 CONFIG = '/opt/photobooth/conf/custom/trigger.json'
 GPIO_CMD = '/usr/bin/sudo relay'
-REMOTE_CMD = '/usr/bin/sudo /usr/bin/mosquitto_pub -h photobooth'
+REMOTE_CMD = '/usr/bin/sudo /usr/bin/mosquitto_pub'
 
 
 class Trigger():
