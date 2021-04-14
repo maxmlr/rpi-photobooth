@@ -20,8 +20,6 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-// choose ESP01 or WEMOSD1
-#define ESP01
 // choose REMOTE or RELAY
 #define REMOTE
 
@@ -32,10 +30,10 @@ const char* MQTT_SERVER = "photobooth";
 unsigned int BUTTON_PIN;
 unsigned int LED_PIN;
 
-#ifdef ESP01
+#ifdef ARDUINO_ESP8266_ESP01
 #define BUTTON_PIN 0
 #define LED_PIN 2
-#elif defined(WEMOSD1)
+#elif defined(ARDUINO_ESP8266_WEMOS_D1MINI)
 #define BUTTON_PIN D6
 #define LED_PIN D7
 #endif
