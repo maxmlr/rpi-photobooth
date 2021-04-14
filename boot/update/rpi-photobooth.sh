@@ -264,6 +264,9 @@ ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled
 
 # copy nginx config
 cp /boot/config/nginx-photobooth-manager.conf /etc/nginx/sites-dietpi/photobooth-manager.conf
+
+# copy mqtt config
+cp /boot/config/mqtt-broker.photobooth.conf /etc/mosquitto/conf.d/photobooth.conf
 fi
 
 # install mqtt-launcher
