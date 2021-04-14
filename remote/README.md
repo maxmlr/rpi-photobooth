@@ -1,5 +1,5 @@
 # rpi-photobooth - remote control
-
+## Overview
 - Uses MQTT notifications and gpio based push buttons
 
 - It connects to an existing WiFi network and to a specified MQTT server, then:
@@ -12,17 +12,16 @@
 reconnect function. See the 'mqtt_reconnect_nonblocking' example for how to
 achieve the same result without blocking the main loop.
 
-## General instructions to flash the ESP8266
+## VScode and PlatformIO IDE
+Flashing a ESP8266 board using Visual Studio Code and PlatformIO
 
-Flashing a ESP8266 board (using Arduino 1.8.10+)
-
+## Arduino IDE (deprecated)
+Flashing a ESP8266 board using Arduino 1.8.10+
 ### Requirements:
-    - ESP8266 board/library
-    - ESP8266WiFi
-    - PubSubClient
- 
-### Install Arduino
-To isntall using Arduino 1.8.10:
+- ESP8266 board/library
+- ESP8266WiFi
+- PubSubClient
+### Install using Arduino 1.8.10:
 - Download and install Arduino from https://www.arduino.cc/en/Main/Software
 - Add the following 3rd party board manager under "File -> Preferences -> Additional Boards Manager URLs":
     http://arduino.esp8266.com/stable/package_esp8266com_index.json
@@ -49,10 +48,8 @@ To read via the Serial Monitor:
 - ON:  digitalWrite(BUILTIN_LED, LOW); 
 - OFF: digitalWrite(BUILTIN_LED, HIGH);
 
-## Specific instruction per board
-
-### Wemos D1 mini (v3.1.0)
-Wemos D1 mini (v3.1.0) [ESP8266]
+### Board specifics
+#### **Wemos D1 mini (v3.1.0) [ESP8266]**
 - Download and install drivers from https://wiki.wemos.cc/downloads
 - In Arduino open "Tools → Board:xxx" and select **WeMos D1 R2 & mini**
 
@@ -67,7 +64,7 @@ GPIOs:
  - 6: push button
  - 7: led
 
- ### ESP-01(S)
+ #### **ESP-01(S)**
  - Downloade and install drivers from https://github.com/adrianmihalko/ch340g-ch34g-ch34x-mac-os-x-driver
  - In Arduino open "Tools → Board:xxx" and select **Generic ESP8266 Module** 
  

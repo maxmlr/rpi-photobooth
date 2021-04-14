@@ -20,6 +20,11 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+// choose ESP01 or WEMOSD1
+#define ESP01
+// choose REMOTE or RELAY
+#define REMOTE
+
 const char* SSID = "photobooth";
 const char* PASSWORD = "";
 const char* MQTT_SERVER = "photobooth";
@@ -27,15 +32,13 @@ const char* MQTT_SERVER = "photobooth";
 unsigned int BUTTON_PIN;
 unsigned int LED_PIN;
 
-// ESP-01S
-static const uint8_t D3 = 0;
-static const uint8_t D4 = 2;
-#define BUTTON_PIN D3
-#define LED_PIN D4
-
-// Wemos D1
-// #define BUTTON_PIN D6
-// #define LED_PIN D7
+#ifdef ESP01
+#define BUTTON_PIN 0
+#define LED_PIN 2
+#elif defined(WEMOSD1)
+#define BUTTON_PIN D6
+#define LED_PIN D7
+#endif
 
 volatile bool ButtonPressedFlag = false;
 
@@ -44,6 +47,25 @@ PubSubClient client(espClient);
 String hostname = "photobooth-r" + String(ESP.getChipId());
 long lastMsg = 0;
 int countdown = 5000;
+
+void led_blink(uint8_t led, int count, int rate, bool inverse) {
+  for (int i = 0; i < count; i++)
+  {
+    if (inverse) {
+      digitalWrite(led, LOW);
+    } else {
+      digitalWrite(led, HIGH);
+    }
+    delay(rate);
+    if (inverse) {
+      digitalWrite(led, HIGH);
+    } else {
+      digitalWrite(led, LOW);
+    }
+    delay(rate);
+  }
+  return;
+}
 
 void setup_wifi() {
   delay(10);
@@ -64,7 +86,7 @@ void setup_wifi() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   Serial.println(hostname);
-  led_blink(BUILTIN_LED,2,500,true);
+  led_blink(LED_BUILTIN,2,500,true);
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -72,7 +94,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print(topic);
   Serial.print("] : ");
   String value = "";
-  for (int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++) {
     value += (char)payload[i];
   }
   Serial.println(value);
@@ -81,13 +103,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (value.startsWith("a")) {
         String action = value.substring(1);
         if (action == "1") {
-          digitalWrite(LED_PIN, LOW);
+          digitalWrite(LED_PIN, HIGH);
         } else if (action == "0") {
-          digitalWrite(LED_PIN, HIGH); 
+          digitalWrite(LED_PIN, LOW); 
         }
     } else if (value.startsWith("s")) {
       String action = value.substring(1);
-      led_blink(BUILTIN_LED,action.toInt(),100,true);
+      led_blink(LED_BUILTIN,action.toInt(),100,true);
     }
   } else if (!strcmp(topic, "photobooth/link")) {
     if (value == "discover") {
@@ -98,7 +120,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 ICACHE_RAM_ATTR void ButtonPressed() {
   int button = digitalRead(BUTTON_PIN);
-  if(button == HIGH)
+  if(button == LOW)
   {
     ButtonPressedFlag = true;
   }
@@ -106,9 +128,9 @@ ICACHE_RAM_ATTR void ButtonPressed() {
 }
 
 void setup_gpios() {
-  pinMode(BUTTON_PIN, INPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
-  attachInterrupt(BUTTON_PIN, ButtonPressed, RISING);
+  attachInterrupt(BUTTON_PIN, ButtonPressed, FALLING);
 }
 
 void reconnect() {
@@ -120,7 +142,7 @@ void reconnect() {
       client.subscribe("photobooth/link");
       client.subscribe("photobooth/remote/callback");
       client.subscribe(("photobooth/remote/" + hostname).c_str());
-      led_blink(BUILTIN_LED,3,100,true);
+      led_blink(LED_BUILTIN,3,100,true);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -130,34 +152,15 @@ void reconnect() {
   }
 }
 
-void led_blink(int led, int count, int rate, bool inverse) {
-  for (int i = 0; i < count; i++)
-  {
-    if (inverse) {
-      digitalWrite(led, LOW);
-    } else {
-      digitalWrite(led, HIGH);
-    }
-    delay(rate);
-    if (inverse) {
-      digitalWrite(led, HIGH);
-    } else {
-      digitalWrite(led, LOW);
-    }
-    delay(rate);
-  }
-  return;
-}
-
 void setup() {
-  pinMode(BUILTIN_LED, OUTPUT);
-  digitalWrite(BUILTIN_LED, LOW);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
   Serial.begin(115200);
   setup_wifi();
   setup_gpios();
   client.setServer(MQTT_SERVER, 1883);
   client.setCallback(callback);
-  digitalWrite(BUILTIN_LED, HIGH);
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void loop() {
@@ -171,10 +174,10 @@ void loop() {
       lastMsg = now;
       Serial.println("Butten pressed - sending: trigger");
       client.publish("photobooth/remote", "trigger");
-      led_blink(BUILTIN_LED,1,50,true);
+      led_blink(LED_BUILTIN,1,50,true);
       led_blink(LED_PIN,(countdown/1000)-1,1000,false);
       led_blink(LED_PIN,5,50,false);
-      digitalWrite(BUILTIN_LED, HIGH);
+      digitalWrite(LED_BUILTIN, HIGH);
     }
     ButtonPressedFlag = false;
   }
