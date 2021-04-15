@@ -1,400 +1,204 @@
 {
-    "actions": [
+  "actions": [
+    {
+      "trigger": "default",
+      "ledpanel": [
         {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.3",
-                            "color": "rgb(0,0,255)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "default"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "24",
-                            "state": "0"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "1.0",
-                            "color": "rgb(255,0,0)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "thrill"
-        },
-        {
-            "remote": [
-                {
-                    "name": "5",
-                    "slots": []
-                },
-                {
-                    "name": "4",
-                    "slots": []
-                },
-                {
-                    "name": "3",
-                    "slots": []
-                },
-                {
-                    "name": "2",
-                    "slots": []
-                },
-                {
-                    "name": "1",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "5",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "25",
-                            "state": "0"
-                        }
-                    ]
-                },
-                {
-                    "name": "4",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "16",
-                            "state": "0"
-                        }
-                    ]
-                },
-                {
-                    "name": "3",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "17",
-                            "state": "0"
-                        }
-                    ]
-                },
-                {
-                    "name": "2",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "27",
-                            "state": "0"
-                        }
-                    ]
-                },
-                {
-                    "name": "1",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "22",
-                            "state": "0"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "5",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.8",
-                            "color": "rgb(255,0,0)"
-                        }
-                    ]
-                },
-                {
-                    "name": "4",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.6",
-                            "color": "rgb(255,0,0)"
-                        }
-                    ]
-                },
-                {
-                    "name": "3",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.4",
-                            "color": "rgb(255,0,0)"
-                        }
-                    ]
-                },
-                {
-                    "name": "2",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.2",
-                            "color": "rgb(255,0,0)"
-                        }
-                    ]
-                },
-                {
-                    "name": "1",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0",
-                            "color": "rgb(255,0,0)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "startCountdown"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "24",
-                            "state": "0"
-                        },
-                        {
-                            "func": "static",
-                            "gpio": "25",
-                            "state": "1"
-                        },
-                        {
-                            "func": "static",
-                            "gpio": "16",
-                            "state": "1"
-                        },
-                        {
-                            "func": "static",
-                            "gpio": "17",
-                            "state": "1"
-                        },
-                        {
-                            "func": "static",
-                            "gpio": "27",
-                            "state": "1"
-                        },
-                        {
-                            "func": "static",
-                            "gpio": "22",
-                            "state": "1"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "1.0",
-                            "color": "rgb(255,255,255)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "cheese"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "5",
-                            "state": "0"
-                        },
-                        {
-                            "func": "static",
-                            "gpio": "24",
-                            "state": "1"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "1.0",
-                            "color": "rgb(255,255,0)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "takePic"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "24",
-                            "state": "0"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "1.0",
-                            "color": "rgb(255,165,0)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "collage"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "24",
-                            "state": "0"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.5",
-                            "color": "rgb(0,0,255)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "renderPic"
-        },
-        {
-            "remote": [
-                {
-                    "name": "default",
-                    "slots": []
-                }
-            ],
-            "gpio": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "func": "static",
-                            "gpio": "5",
-                            "state": "1"
-                        }
-                    ]
-                }
-            ],
-            "ledpanel": [
-                {
-                    "name": "default",
-                    "slots": [
-                        {
-                            "action": "setPanelColor",
-                            "args": "",
-                            "brightness": "0.5",
-                            "color": "rgb(0,255,0)"
-                        }
-                    ]
-                }
-            ],
-            "trigger": "errorPic"
+          "name": "default",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(0,0,255)",
+              "brightness": "0.3",
+              "args": ""
+            }
+          ]
         }
-    ]
+      ],
+      "gpio": [{ "name": "default", "slots": [] }],
+      "remote": [{ "name": "default", "slots": [] }]
+    },
+    {
+      "trigger": "thrill",
+      "ledpanel": [
+        {
+          "name": "default",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,0,0)",
+              "brightness": "1.0",
+              "args": ""
+            }
+          ]
+        }
+      ],
+      "gpio": [{ "name": "default", "slots": [] }],
+      "remote": [{ "name": "default", "slots": [] }]
+    },
+    {
+      "trigger": "startCountdown",
+      "ledpanel": [
+        {
+          "name": "5",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,0,0)",
+              "brightness": "0.8",
+              "args": ""
+            }
+          ]
+        },
+        {
+          "name": "4",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,0,0)",
+              "brightness": "0.6",
+              "args": ""
+            }
+          ]
+        },
+        {
+          "name": "3",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,0,0)",
+              "brightness": "0.4",
+              "args": ""
+            }
+          ]
+        },
+        {
+          "name": "2",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,0,0)",
+              "brightness": "0.2",
+              "args": ""
+            }
+          ]
+        },
+        {
+          "name": "1",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,0,0)",
+              "brightness": "0",
+              "args": ""
+            }
+          ]
+        }
+      ],
+      "gpio": [
+        { "name": "5", "slots": [] },
+        { "name": "4", "slots": [] },
+        { "name": "3", "slots": [] },
+        { "name": "2", "slots": [] },
+        { "name": "1", "slots": [] }
+      ],
+      "remote": [
+        { "name": "5", "slots": [] },
+        { "name": "4", "slots": [] },
+        { "name": "3", "slots": [] },
+        { "name": "2", "slots": [] },
+        { "name": "1", "slots": [] }
+      ]
+    },
+    {
+      "trigger": "cheese",
+      "ledpanel": [
+        {
+          "name": "default",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,255,255)",
+              "brightness": "1.0",
+              "args": ""
+            }
+          ]
+        }
+      ],
+      "gpio": [{ "name": "default", "slots": [] }],
+      "remote": [{ "name": "default", "slots": [] }]
+    },
+    {
+      "trigger": "takePic",
+      "ledpanel": [
+        {
+          "name": "default",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,255,0)",
+              "brightness": "1.0",
+              "args": ""
+            }
+          ]
+        }
+      ],
+      "gpio": [{ "name": "default", "slots": [] }],
+      "remote": [{ "name": "default", "slots": [] }]
+    },
+    {
+      "trigger": "collage",
+      "ledpanel": [
+        {
+          "name": "default",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(255,165,0)",
+              "brightness": "1.0",
+              "args": ""
+            }
+          ]
+        }
+      ],
+      "gpio": [{ "name": "default", "slots": [] }],
+      "remote": [{ "name": "default", "slots": [] }]
+    },
+    {
+      "trigger": "renderPic",
+      "ledpanel": [
+        {
+          "name": "default",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(0,0,255)",
+              "brightness": "0.5",
+              "args": ""
+            }
+          ]
+        }
+      ],
+      "gpio": [{ "name": "default", "slots": [] }],
+      "remote": [{ "name": "default", "slots": [] }]
+    },
+    {
+      "trigger": "errorPic",
+      "ledpanel": [
+        {
+          "name": "default",
+          "slots": [
+            {
+              "action": "setPanelColor",
+              "color": "rgb(0,255,0)",
+              "brightness": "0.5",
+              "args": ""
+            }
+          ]
+        }
+      ],
+      "gpio": [{ "name": "default", "slots": [] }],
+      "remote": [{ "name": "default", "slots": [] }]
+    }
+  ]
 }
