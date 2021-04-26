@@ -83,13 +83,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
           #ifdef REMOTE
           led.On();
           #elif defined(RELAY)
-          digitalWrite(BUTTON_PIN, HIGH);
+          digitalWrite(BUTTON_PIN, LOW);
           #endif
         } else if (action == "0") {
           #ifdef REMOTE
           led.Off();
           #elif defined(RELAY)
-          digitalWrite(BUTTON_PIN, LOW);
+          digitalWrite(BUTTON_PIN, HIGH);
           #endif
         }
     } else if (value.startsWith("s")) {
@@ -132,6 +132,7 @@ void setup_gpios() {
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   attachInterrupt(BUTTON_PIN, ButtonPressed, FALLING);
   #elif defined(RELAY)
+  digitalWrite(BUTTON_PIN, HIGH);
   pinMode(BUTTON_PIN, OUTPUT);
   #endif
 }
