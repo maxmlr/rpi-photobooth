@@ -7,18 +7,34 @@ from gpiozero import Button
 from signal import pause
 
 
-BUTTON_GPIO = 23
+BUTTON1_GPIO = 23
+BUTTON2_GPIO = 26
 last = time.time()
+timeout = 5
 
 
-def send_trigger():
+def send_trigger(action):
     global last
     now = time.time()
-    if int(now - last) > 5:
+    if int(now - last) > timeout:
         last = now
-        subprocess.call(["trigger"])
+        subprocess.call(["trigger", action])
 
 
-button = Button(BUTTON_GPIO)
-button.when_pressed = send_trigger
+def send_button1():
+    send_trigger(action="p")
+
+
+def send_button2():
+    send_trigger(action="c")
+
+
+button1 = Button(BUTTON1_GPIO)
+button2 = Button(BUTTON2_GPIO)
+
+
+button1.when_pressed = send_button1
+button2.when_pressed = send_button2
+
+
 pause()
