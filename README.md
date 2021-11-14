@@ -70,3 +70,11 @@ copy -rf boot/* /Volumes/<YourMicroSD>
 Insert MicroSD card in Raspberry and boot up. The automated installation might take up to 60 minues.
 
 Attach Hardware Camera Button and LED Panel as described in https://github.com/maxmlr/rpi-photobooth/tree/master/docs/img
+        
+### Photobooth Collage Mode
+
+        When you want to edit Collage frame
+        login to photobooth wifi
+        loginn terminal
+        scp /Users/maxhahn/Desktop/collage_christmas_v2.png root@photobooth:/var/www/html/manager/files/frames/collage_frame.png
+        
