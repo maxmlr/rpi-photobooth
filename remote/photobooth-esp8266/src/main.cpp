@@ -16,8 +16,11 @@
 #include <PubSubClient.h>
 #include <jled.h>
 
-// choose REMOTE or RELAY
+// choose type: [REMOTE,RELAY]
 #define REMOTE
+
+// choose trigger action: [PHOTO,COLLAGE]
+#define PHOTO
 
 const char* SSID = "photobooth";
 const char* PASSWORD = "";
@@ -34,6 +37,13 @@ unsigned int LED_PIN;
 #define BUTTON_PIN D6
 #define LED_PIN D7
 #define LED_ONBOARD LED_BUILTIN
+#endif
+
+
+#ifdef PHOTO
+String trigger = "p";
+#elif defined(COLLAGE)
+String trigger = "c";
 #endif
 
 WiFiClient espClient;
@@ -119,7 +129,7 @@ void button_update() {
     if (now - ButtonPressedLast > ButtonPressedLock) {
       ButtonPressedLast = now;
       Serial.println("Butten pressed - sending: trigger to photobooth/remote");
-      mqtt.publish("photobooth/remote", "trigger");
+      mqtt.publish("photobooth/remote", ("trigger-" + trigger).c_str());
     }
     ButtonPressedFlag = false;
   }
