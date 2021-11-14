@@ -15,6 +15,12 @@ achieve the same result without blocking the main loop.
 ## VScode and PlatformIO IDE
 Flashing a ESP8266 board using Visual Studio Code and PlatformIO
 
+Formatting eSPO can be done completely on the side menu under the alien Menu
+
+1. Build project in ES01_1m Build (if you have changed the code)
+2. Upload code to ESP (Be careful to set switch to "Prog")
+3. Unplug and plug into relay station/ switch board
+
 ## Arduino IDE (deprecated)
 Flashing a ESP8266 board using Arduino 1.8.10+
 ### Requirements:
