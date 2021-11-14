@@ -77,3 +77,7 @@ GPIOs:
  GPIOs:
  - 0: push button
  - 2: led
+
+### Setup Relay in menu
+- When Setting relay status LED mus be turned on
+- Relay can only be set up when Chrome is used with photobooth/setup
