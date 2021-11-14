@@ -25,14 +25,16 @@
          }).appendTo('head');
 
         var socket;
+        var is_collage = false;
 
         var thrill_ref = photoBooth.thrill;
         photoBooth.thrill = function (arg1){
+            is_collage = arg1 === 'collage';
             socket.emit('trigger', {action: 'thrill', args: arg1}, (response) => {
                 if (response == true) {
                     thrill_ref.apply(this, [arg1]);
                 } else {
-                    console.log('trigger in progress - skipping thirll');
+                    console.log('trigger in progress - skipping thrill');
                 }
             });
         }
@@ -78,12 +80,18 @@
         photoBooth.renderPic = function (arg1, arg2){
             socket.emit('trigger', {action: 'renderPic', args: arg1});
             renderPic_ref.apply(this, [arg1, arg2]);
+            if (is_collage == true) {
+                //photoBooth.printImage(arg1, () => {});
+                console.log("auto print:", arg1);
+                is_collage == false;
+            }
         }
 
         var errorPic_ref = photoBooth.errorPic;
         photoBooth.errorPic = function (arg1){
             socket.emit('trigger', {action: 'errorPic', args: arg1});
             errorPic_ref.apply(this, [arg1]);
+            is_collage == false;
         }
 
         // $('.gallery-button').prop("onclick", null).off("click").click((event) => {

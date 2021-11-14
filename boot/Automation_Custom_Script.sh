@@ -204,6 +204,9 @@ cd /var/www/html/manager
 composer install --no-interaction
 cd - > /dev/null
 cp -f /boot/photobooth/my.config.inc.php /var/www/html/config/my.config.inc.php
+cp -f /boot/photobooth/frontend/applyEffects.php /var/www/html/api/applyEffects.php
+cp -f /boot/photobooth/frontend/collage.php /var/www/html/lib/collage.php
+cp -f /boot/photobooth/frontend/config.php /var/www/html/lib/config.php
 
 # create ai folders
 mkdir -p /var/www/html/data/ai

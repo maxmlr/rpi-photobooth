@@ -30,11 +30,14 @@ def ledpanel_realtime_color_change(json):
 
 @socketio.on('trigger', namespace='/photobooth')
 def trigger_fire(json):
-    log.debug(f'received trigger action: {json["action"]}')
+    log.debug(f'received trigger action: {json["action"]} args: {json["args"]}')
     if json['action'] == "thrill":
         if get_trigger_lock():
-            log.info(f'trigger in progress - skipping thirll')
-            return False
+            if json['args'] == "collage":
+                log.info(f'trigger in progress - continue collage mode')
+            else:
+                log.info(f'trigger in progress - skipping thrill')
+                return False
         else:
             set_trigger_lock(True, request.sid)
     event_pool.spawn_n(trigger.fire, json['action'], json['args'])
